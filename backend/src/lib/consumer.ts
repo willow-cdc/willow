@@ -1,11 +1,21 @@
-import { type Consumer, type ConsumerSubscribeTopics, Kafka, type EachMessagePayload } from 'kafkajs'
+import {
+  type Consumer,
+  type ConsumerSubscribeTopics,
+  Kafka,
+  type EachMessagePayload
+} from 'kafkajs'
 
 export default class ExampleConsumer {
   private readonly kafkaConsumer: Consumer
-  private readonly messageProcessor: ExampleMessageProcessor
+  // private readonly messageProcessor: ExampleMessageProcessor
 
-  public constructor (messageProcessor: ExampleMessageProcessor, clientId: string, brokerArr: string[], groupId: string) {
-    this.messageProcessor = messageProcessor
+  public constructor (
+    // messageProcessor: ExampleMessageProcessor,
+    clientId: string,
+    brokerArr: string[],
+    groupId: string
+  ) {
+    // this.messageProcessor = messageProcessor;
     this.kafkaConsumer = this.createKafkaConsumer(clientId, brokerArr, groupId)
   }
 
@@ -35,7 +45,11 @@ export default class ExampleConsumer {
     await this.kafkaConsumer.disconnect()
   }
 
-  private createKafkaConsumer (clientId: string, brokerArr: string[], groupId: string): Consumer {
+  private createKafkaConsumer (
+    clientId: string,
+    brokerArr: string[],
+    groupId: string
+  ): Consumer {
     const kafka = new Kafka({
       clientId, // 'client-id'
       brokers: brokerArr // ['example.kafka.broker:9092']

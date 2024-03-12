@@ -35,5 +35,5 @@ services:
     ports:
       - 3000:3000
     build:
-      context: ./backend
+      context: ../backend
       dockerfile: Dockerfile

@@ -1,0 +1,14 @@
+{
+  "name": "testing-connector",
+  "config": {
+    "plugin.name": "pgoutput",
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "tasks.max": "1",
+    "database.hostname": "0.tcp.ngrok.io",
+    "database.port": "12516",
+    "database.user": "postgres",
+    "database.password": "postgres",
+    "database.dbname": "test",
+    "topic.prefix": "dbserver1"
+  }
+}
