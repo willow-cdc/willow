@@ -7,15 +7,15 @@ import {
 
 export default class ExampleConsumer {
   private readonly kafkaConsumer: Consumer
-  // private readonly messageProcessor: ExampleMessageProcessor
+  private readonly redis: any // this is our Redis class - update the type!
 
   public constructor (
-    // messageProcessor: ExampleMessageProcessor,
+    redis: any, // fix the typing to be our custom Redis class!
     clientId: string,
     brokerArr: string[],
     groupId: string
   ) {
-    // this.messageProcessor = messageProcessor;
+    this.redis = redis
     this.kafkaConsumer = this.createKafkaConsumer(clientId, brokerArr, groupId)
   }
 
@@ -26,14 +26,13 @@ export default class ExampleConsumer {
     }
 
     try {
+      await this.redis.connect() // should we do this connection outside of this consumer class?
       await this.kafkaConsumer.connect()
       await this.kafkaConsumer.subscribe(topic)
 
       await this.kafkaConsumer.run({
         eachMessage: async (messagePayload: EachMessagePayload) => {
-          const { topic, partition, message } = messagePayload
-          const prefix = `${topic}[${partition} | ${message.offset}] / ${message.timestamp}`
-          console.log(`- ${prefix} ${message.key}#${message.value}`)
+          this.redis.processKafkaMessage(messagePayload)
         }
       })
     } catch (error) {
