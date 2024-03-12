@@ -1,0 +1,20 @@
+{
+  "coauthors": {
+    "cb": {
+      "name": "Cameron Bibb",
+      "email": "cameron.bibb@icloud.com"
+    },
+    "an": {
+      "name": "Alessio Novi",
+      "email": "alessionovi@yahoo.com"
+    },
+    "ac": {
+      "name": "Arno Cai",
+      "email": "acai367@gmail.com"
+    },
+    "ab": {
+      "name": "Alex Bair",
+      "email": "alexbair143@gmail.com"
+    }
+  }
+}
