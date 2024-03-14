@@ -1,3 +1,3 @@
 {
-  "conventionalCommits.scopes": ["ui", "config"]
+  "conventionalCommits.scopes": ["ui", "config", "redis"]
 }
