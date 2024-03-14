@@ -45,16 +45,22 @@ router.post('/checkConnection', async (req, res) => {
   }
 });
 
-
 // create sink cache connection
-router.post('/', async (req, res)=> {
-  const url = process.env.REDIS_URL ?? '';
-  const username = process.env.REDIS_USERNAME ?? '';
-  const password = process.env.REDIS_PASSWORD ?? '';
+router.post('/create', async (req, res)=> {
+  const {url, username, password } = <RequestBody>req.body;
   const redis = new Redis(url, password, username);
   const consumer = new ExampleConsumer(redis, 'my-kafka', ['kafka:9092'], 'my-group');
-  await consumer.startConsumer(['dbserver1.public.demo']);
-  res.json({ message: 'Consumer created!' });
+  try {
+    await consumer.startConsumer(['dbserver1.public.demo']);
+    res.json({ message: 'Consumer created!' });
+  } catch (err) {
+    let errorMessage = 'Unknown error occurred.';
+    if (typeof err === 'object' && err !== null && 'message' in err && typeof err.message === 'string') {
+      errorMessage = err.message;
+    }
+
+    res.status(400).send({error: errorMessage});
+  }
 });
 
 export default router;
