@@ -1,23 +1,5 @@
 // routes for managing/checking/setting up sink cache connections
 
-/*
-POST: user sends sink connection info
-name for connection
-Redis URL
-Redis username
-Redis password
-RESPONSE:
-if unable to access sink/cache, return error.
-if able to access sink/cache, return 200 and give back demo Redis cache data in JSON (example of what it would look like).
-
-POST: user confirms to begin consuming from source DB…?
-name for connection
-Redis URL
-Redis username
-Redis password
-Establish the connection and set up the consumer to begin consuming from the source DB and stream rows into the sink. Reply with a 200.
-*/
-
 import express from 'express';
 import Redis from '../lib/redis';
 import ExampleConsumer from '../lib/consumer';
@@ -27,6 +9,8 @@ interface RequestBody {
   url: string;
   username: string;
   password: string;
+  topics: string[];
+  connectionName: string;
 }
 
 // check sink cache is accessible
@@ -47,11 +31,11 @@ router.post('/check', async (req, res) => {
 
 // create sink cache connection
 router.post('/create', async (req, res)=> {
-  const {url, username, password } = <RequestBody>req.body;
+  const {url, username, password, topics, connectionName } = <RequestBody>req.body;
   const redis = new Redis(url, password, username);
-  const consumer = new ExampleConsumer(redis, 'my-kafka', ['kafka:9092'], 'my-group');
+  const consumer = new ExampleConsumer(redis, connectionName, ['kafka:9092'], connectionName);
   try {
-    await consumer.startConsumer(['dbserver1.public.demo']);
+    await consumer.startConsumer(topics);
     res.json({ message: 'Consumer created!' });
   } catch (err) {
     let errorMessage = 'Unknown error occurred.';
