@@ -5,9 +5,11 @@ import express, { ErrorRequestHandler } from 'express';
 import sinkRoutes from './routes/sinkRoutes';
 import sourceRoutes from './routes/sourceRoutes';
 import { HttpError } from './utils/utils';
+import cors from 'cors';
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 app.get('/', (req, res) => {
   res.send('howdy there!');
