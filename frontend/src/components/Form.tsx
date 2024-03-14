@@ -1,9 +1,11 @@
 import FormControl from "@mui/material/FormControl";
 import { Button, TextField } from "@mui/material";
 import { useState } from "react";
+import { formState } from "../types/types";
+import { postSourceVerify } from "../services/source";
 
 const Form = () => {
-  const [formState, setFormState] = useState({
+  const [formStateObj, setFormStateObj] = useState<formState>({
     host: "",
     port: "",
     dbName: "",
@@ -11,9 +13,14 @@ const Form = () => {
     password: "",
   });
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    console.log(formState);
+    try {
+      const data = await postSourceVerify(formStateObj);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -26,9 +33,9 @@ const Form = () => {
             id="outlined-required"
             label="host"
             margin="normal"
-            value={formState.host}
+            value={formStateObj.host}
             onChange={(e) => {
-              setFormState({ ...formState, host: e.target.value });
+              setFormStateObj({ ...formStateObj, host: e.target.value });
             }}
           />
           <TextField
@@ -37,9 +44,9 @@ const Form = () => {
             id="outlined-required"
             label="port"
             margin="normal"
-            value={formState.port}
+            value={formStateObj.port}
             onChange={(e) => {
-              setFormState({ ...formState, port: e.target.value });
+              setFormStateObj({ ...formStateObj, port: e.target.value });
             }}
           />
           <TextField
@@ -48,9 +55,9 @@ const Form = () => {
             id="outlined-required"
             label="database name"
             margin="normal"
-            value={formState.dbName}
+            value={formStateObj.dbName}
             onChange={(e) => {
-              setFormState({ ...formState, dbName: e.target.value });
+              setFormStateObj({ ...formStateObj, dbName: e.target.value });
             }}
           />
           <TextField
@@ -59,9 +66,9 @@ const Form = () => {
             id="outlined-required"
             label="user"
             margin="normal"
-            value={formState.user}
+            value={formStateObj.user}
             onChange={(e) => {
-              setFormState({ ...formState, user: e.target.value });
+              setFormStateObj({ ...formStateObj, user: e.target.value });
             }}
           />
           <TextField
@@ -70,9 +77,9 @@ const Form = () => {
             id="outlined-required"
             label="password"
             margin="normal"
-            value={formState.password}
+            value={formStateObj.password}
             onChange={(e) => {
-              setFormState({ ...formState, password: e.target.value });
+              setFormStateObj({ ...formStateObj, password: e.target.value });
             }}
           />
           <Button type="submit" variant="contained">
@@ -85,11 +92,3 @@ const Form = () => {
 };
 
 export default Form;
-
-// const client = new Client({
-//   host: source.host,
-//   port: Number(source.port),
-//   database: source.dbName,
-//   user: source.user,
-//   password: source.password,
-// });

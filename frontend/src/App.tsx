@@ -2,7 +2,6 @@
 import willowLogo from "./assets/Willow Logo Transparent.png";
 import "./styles/App.css";
 
-import SourceForm from "./components/SourceForm";
 import Form from "./components/Form";
 
 function App() {
