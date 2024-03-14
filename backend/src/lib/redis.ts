@@ -161,10 +161,10 @@ export default class Redis {
       await this.client.del(redisKey);
       // otherwise update the key-value pair in Redis for create, update, and read events
     } else {
-      const value = JSON.stringify(parsedValue.payload.after);
+      const value = parsedValue.payload.after;
       console.log('Setting Redis key', redisKey, 'to value: ', value);
 
-      await this.client.sendCommand(['JSON.SET', redisKey, '$', JSON.stringify(parsedValue.payload.after)]);
+      await this.client.json.set(redisKey, '$', value);
     }
   }
 
