@@ -30,7 +30,7 @@ interface RequestBody {
 }
 
 // check sink cache is accessible
-router.post('/checkConnection', async (req, res) => {
+router.post('/check', async (req, res) => {
   const {url, username, password } = <RequestBody>req.body;
   try {
     await Redis.checkConnection(url, password, username);
