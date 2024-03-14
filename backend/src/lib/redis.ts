@@ -96,11 +96,6 @@ interface Value {
   payload: ValuePayload;
 }
 
-interface DebeziumEvent {
-  key: Key | null; // key is null for truncate events
-  value: Value | null; // value is null for tombstone events
-}
-
 export default class Redis {
   private readonly client: ReturnType<typeof createClient>;
 
@@ -140,6 +135,18 @@ export default class Redis {
     const key = message.key;
     const value = message.value;
 
+    if (value === null) {
+      // handle tombstone events
+      return;
+    }
+
+    // WHAT DO WE DO IF WE HAVE A TRUNCATE EVENT????? WHEN key === null
+    if (key === null) {
+      // handle truncate events - the entire table is cleared out! no rows remaining
+      // figure out and create function to appropriately han
+      return;
+    }
+
     const parsedKey = this.parseKey(key);
     const parsedValue = this.parseValue(value);
 
@@ -161,33 +168,19 @@ export default class Redis {
     }
   }
 
-  private parseKey(messageKey: Buffer | null): Key | null {
-    if (messageKey === null) {
-      return null;
-    }
-
+  private parseKey(messageKey: Buffer) {
     return JSON.parse(messageKey.toString()) as Key;
   }
 
-  private parseValue(messageValue: Buffer | null): Value | null {
-    if (messageValue === null) {
-      return null;
-    }
-
+  private parseValue(messageValue: Buffer): Value {
     return JSON.parse(messageValue.toString()) as Value;
   }
 
-  private determineOperation(parsedMessageValue: Value | null) {
-    if (parsedMessageValue === null) {
-      return null;
-    }
+  private determineOperation(parsedMessageValue: Value) {
     return parsedMessageValue.payload.op;
   }
 
-  private determineRedisKey(parsedMessageKey: Key | null) {
-    if (parsedMessageKey === null) {
-      return null;
-    }
+  private determineRedisKey(parsedMessageKey: Key) {
     // extract value of primary key
     const primaryKey = Object.values(parsedMessageKey.payload)[0]; // this assumes that there will ALWAYS be a single primary key (no less and no more than 1 PK)
 
