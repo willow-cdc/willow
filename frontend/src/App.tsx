@@ -1,6 +1,8 @@
 // import { useState } from "react";
-import willowLogo from "/willow-logo.ico";
+import willowLogo from "./assets/Willow Logo Transparent.png";
 import "./styles/App.css";
+
+import SignUp from "./components/SourceForm";
 
 function App() {
   return (
@@ -8,7 +10,7 @@ function App() {
       <div>
         <img src={willowLogo} className="logo" alt="Willow logo" />
       </div>
-      <h1>WILLOW</h1>
+      <SignUp />
     </>
   );
 }
