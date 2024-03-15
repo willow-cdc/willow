@@ -14,18 +14,13 @@ interface RequestBody {
 }
 
 // check sink cache is accessible
-router.post('/check', async (req, res) => {
+router.post('/check', async (req, res, next) => {
   const {url, username, password } = <RequestBody>req.body;
   try {
     await Redis.checkConnection(url, password, username);
     res.status(200).send({message: 'Connection successful.'});
   } catch (err) {
-    let errorMessage = 'Unknown error occurred.';
-    if (typeof err === 'object' && err !== null && 'message' in err && typeof err.message === 'string') {
-      errorMessage = err.message;
-    }
-
-    res.status(400).send({error: errorMessage});
+    next(err);
   }
 });
 
