@@ -2,15 +2,15 @@
 import willowLogo from "./assets/Willow Logo Transparent.png";
 import "./styles/App.css";
 
-import SignUp from "./components/SourceForm";
+import Form from "./components/Form";
 
 function App() {
   return (
     <>
       <div>
         <img src={willowLogo} className="logo" alt="Willow logo" />
+        <Form />
       </div>
-      <SignUp />
     </>
   );
 }

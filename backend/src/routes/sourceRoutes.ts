@@ -9,7 +9,6 @@ const router = express.Router();
 
 router.post('/verify', async (req, res, next) => {
   const source = req.body as SourceRequestBody;
-
   try {
     const client = new Client({
       host: source.host,
