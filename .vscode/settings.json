@@ -1,3 +1,9 @@
 {
-  "conventionalCommits.scopes": ["ui", "config", "redis"]
+  "conventionalCommits.scopes": [
+    "ui",
+    "config",
+    "redis",
+    "routes",
+    "error_handling"
+  ]
 }

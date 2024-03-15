@@ -2,7 +2,7 @@
 
 import { type EachMessagePayload } from 'kafkajs';
 import { createClient } from 'redis';
-
+import { RedisError } from '../utils/utils';
 // SHARED TYPES
 
 interface Row {
@@ -111,8 +111,8 @@ export default class Redis {
   public static async checkConnection(url: string, password: string, username: string): Promise<boolean> {
     const client = createClient({ url, password, username });
     await client
-      .on('error', (err) => {
-        throw new Error(`Redis Client Error ${err}`);
+      .on('error', (err: Error) => {
+        throw new RedisError(401, err.message);
       })
       .connect();
 
@@ -124,8 +124,8 @@ export default class Redis {
 
   public async connect(): Promise<void> {
     await this.client
-      .on('error', (err) => {
-        throw new Error(`Redis Client Error ${err}`);
+      .on('error', (err: Error) => {
+        throw new RedisError(401, err.message);
       })
       .connect();
   }

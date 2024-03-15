@@ -71,3 +71,11 @@ export class HttpError extends Error {
     this.status = status;
   }
 }
+
+export class RedisError extends Error {
+  public status: number;
+  constructor(status: number, message: string) {
+    super(`Redis Client Error - ${message}`);
+    this.status = status;
+  }
+}
