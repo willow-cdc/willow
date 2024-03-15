@@ -15,7 +15,8 @@ app.use('/consumer', sinkRoutes);
 app.use('/source', sourceRoutes);
 
 app.use((_request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' });
+  const status = 404;
+  response.status(status).send({ status, message: 'Unknown endpoint.' });
 });
 
 app.use(((err: unknown, req, res, _next) => {
