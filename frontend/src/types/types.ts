@@ -5,3 +5,14 @@ export interface formState {
   user: string;
   password: string;
 }
+
+export interface RedisConnectionDetails {
+  url: string;
+  username: string;
+  password: string;
+}
+
+export interface RedisSinkFormState extends RedisConnectionDetails {
+  topics: string[];
+  connectionName: string;
+}
