@@ -14,15 +14,21 @@ app.get('/', (req, res) => {
 app.use('/consumer', sinkRoutes);
 app.use('/source', sourceRoutes);
 
-app.use(((err: unknown, req, res, next) => {
+app.use((_request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' });
+});
+
+app.use(((err: unknown, req, res, _next) => {
   if (err instanceof HttpError) {
     const { status, message } = err;
     res.status(status).json({ status, message });
   } else if (err instanceof RedisError) {
     const { status, message } = err;
     res.status(status).json({ status, message });
+  } else {
+    const status = 500;
+    res.status(status).json({ status, message: 'Unknown error occurred.' });
   }
-  next();
 }) as ErrorRequestHandler); // ok
 
 app.listen(process.env.PORT ?? 3000, () => {
