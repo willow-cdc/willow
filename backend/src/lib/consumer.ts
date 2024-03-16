@@ -25,22 +25,18 @@ export default class ExampleConsumer {
       fromBeginning: true
     }
 
-    try {
-      await this.kafkaConsumer.connect()
-      await this.kafkaConsumer.subscribe(topic)
+    await this.kafkaConsumer.connect()
+    await this.kafkaConsumer.subscribe(topic)
 
-      await this.kafkaConsumer.run({
-        eachMessage: async (messagePayload: EachMessagePayload) => {
-          try {
-            await this.redis.processKafkaMessage(messagePayload)
-          } catch(err) {
-            console.error(err);
-          }
+    await this.kafkaConsumer.run({
+      eachMessage: async (messagePayload: EachMessagePayload) => {
+        try {
+          await this.redis.processKafkaMessage(messagePayload)
+        } catch(err) {
+          console.error(err);
         }
-      })
-    } catch (error) {
-      console.log('Error: ', error)
-    }
+      }
+    })
   }
 
   public async shutdown (): Promise<void> {
