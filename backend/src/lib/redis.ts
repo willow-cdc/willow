@@ -140,18 +140,19 @@ export default class Redis {
       return;
     }
 
-    // WHAT DO WE DO IF WE HAVE A TRUNCATE EVENT????? WHEN key === null
+    const parsedValue = this.parseValue(value);
+
     if (key === null) {
       // handle truncate events - the entire table is cleared out! no rows remaining
-      // figure out and create function to appropriately han
+      console.log('TRUNCATE EVENT');
+      const keyPattern = this.determineRedisKeyPattern(parsedValue) + '*';
+      await this.deleteKeysMatchingPattern(keyPattern);
       return;
     }
 
     const parsedKey = this.parseKey(key);
-    const parsedValue = this.parseValue(value);
-
     const operation = this.determineOperation(parsedValue);
-    const redisKey = this.determineRedisKey(parsedKey);
+    const redisKey = this.determineRedisKey(parsedKey, parsedValue);
 
     console.log('Performing', operation, 'operation on Redis key ', redisKey);
 
@@ -180,16 +181,32 @@ export default class Redis {
     return parsedMessageValue.payload.op;
   }
 
-  private determineRedisKey(parsedMessageKey: Key) {
+  private determineRedisKey(parsedMessageKey: Key, parsedValue: Value) {
     // extract value of primary key
     const primaryKey = Object.values(parsedMessageKey.payload)[0]; // this assumes that there will ALWAYS be a single primary key (no less and no more than 1 PK)
 
-    // extract the topic prefix (the database name) and the table
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [database, _schema, table] = parsedMessageKey.schema.name.split('.');
-
-    const redisKey = `${database}.${table}.${primaryKey}`;
+    // Redis key is database.table.primaryKey
+    const redisKey = this.determineRedisKeyPattern(parsedValue) + primaryKey;
     console.log('Redis key should be: ', redisKey);
     return redisKey;
+  }
+
+  private determineRedisKeyPattern(parsedValue: Value) {
+    const {db, table} = parsedValue.payload.source;
+    const redisKeyPattern = `${db}.${table}.`;
+    return redisKeyPattern;
+  }
+
+  private async deleteKeysMatchingPattern(pattern: string) {
+    console.log('Deleting keys matching pattern', pattern);
+
+    for await (const key of this.client.scanIterator({
+      MATCH: pattern,
+      TYPE: 'ReJSON-RL',
+    })) {
+      console.log('Deleting Redis key:', key);
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      this.client.del(key);
+    }
   }
 }
