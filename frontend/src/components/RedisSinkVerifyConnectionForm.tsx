@@ -47,7 +47,7 @@ const RedisSinkVerifyConnectionForm = ({isValidConnection, setIsValidConnection,
           size="small"
           required
           variant="outlined"
-          label="user"
+          label="username"
           fullWidth
           margin="normal"
           value={formStateObj.username}

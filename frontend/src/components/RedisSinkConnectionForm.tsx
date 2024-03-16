@@ -24,7 +24,6 @@ const RedisSinkConnectionForm = ({topics, url, username, password} : {topics: st
 
   return (
     <>
-    {/* <Container maxWidth="md"> */}
       <form onSubmit={handleSubmit}>
         <Typography variant="h4" gutterBottom>
           CREATE SINK CONNECTION
@@ -49,7 +48,6 @@ const RedisSinkConnectionForm = ({topics, url, username, password} : {topics: st
           Create Connection
         </Button>
       </form>
-    {/* </Container> */}
   </>
   )
 }
