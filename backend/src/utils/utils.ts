@@ -54,6 +54,7 @@ export const setupConnectorPayload = (source: SourceRequestBody) => {
       'database.password': source.password,
       'database.dbname': source.dbName,
       'topic.prefix': 'dbserver1', //must agree on how to define this for each connector!!!!
+      'skipped.operations': 'none'
     },
   };
 
