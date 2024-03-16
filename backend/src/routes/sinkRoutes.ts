@@ -30,6 +30,7 @@ router.post('/create', async (req, res, next)=> {
   const redis = new Redis(url, password, username);
   const consumer = new ExampleConsumer(redis, connectionName, ['kafka:9092'], connectionName);
   try {
+    await redis.connect();
     await consumer.startConsumer(topics);
     res.json({ message: 'Consumer created!' });
   } catch (err) {

@@ -26,7 +26,6 @@ export default class ExampleConsumer {
     }
 
     try {
-      await this.redis.connect() // should we do this connection outside of this consumer class?
       await this.kafkaConsumer.connect()
       await this.kafkaConsumer.subscribe(topic)
 
