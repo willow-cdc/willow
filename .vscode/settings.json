@@ -4,6 +4,7 @@
     "config",
     "redis",
     "routes",
-    "error_handling"
+    "error_handling",
+    "consumer"
   ]
 }

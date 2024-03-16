@@ -2,7 +2,7 @@
 
 import express from 'express';
 import Redis from '../lib/redis';
-import ExampleConsumer from '../lib/consumer';
+import KafkaConsumer from '../lib/consumer';
 const router = express.Router();
 
 interface RequestBody {
@@ -28,7 +28,7 @@ router.post('/check', async (req, res, next) => {
 router.post('/create', async (req, res, next)=> {
   const {url, username, password, topics, connectionName } = <RequestBody>req.body;
   const redis = new Redis(url, password, username);
-  const consumer = new ExampleConsumer(redis, connectionName, ['kafka:9092'], connectionName);
+  const consumer = new KafkaConsumer(redis, connectionName, ['kafka:9092'], connectionName);
   try {
     await redis.connect();
     await consumer.startConsumer(topics);
