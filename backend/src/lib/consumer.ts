@@ -32,7 +32,11 @@ export default class ExampleConsumer {
 
       await this.kafkaConsumer.run({
         eachMessage: async (messagePayload: EachMessagePayload) => {
-          this.redis.processKafkaMessage(messagePayload)
+          try {
+            await this.redis.processKafkaMessage(messagePayload)
+          } catch(err) {
+            console.error(err);
+          }
         }
       })
     } catch (error) {
