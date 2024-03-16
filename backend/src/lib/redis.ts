@@ -2,7 +2,12 @@
 
 import { type EachMessagePayload } from 'kafkajs';
 import { createClient } from 'redis';
-import { RedisError } from '../utils/utils';
+import { RedisError, NoPrimaryKeyError } from '../utils/utils';
+
+// CONSTANTS
+const TRUNCATE = 't';
+const DELETE = 'd';
+
 // SHARED TYPES
 
 interface Row {
@@ -132,6 +137,7 @@ export default class Redis {
 
   public async processKafkaMessage(messagePayload: EachMessagePayload): Promise<void> {
     const { message } = messagePayload;
+    // console.log('HERE', message);
     const key = message.key;
     const value = message.value;
 
@@ -141,9 +147,10 @@ export default class Redis {
     }
 
     const parsedValue = this.parseValue(value);
+    const operation = this.determineOperation(parsedValue);
 
     // NEED TO UPDATE THIS CONDITIONAL; we also erroneously enter this if-statement if the Postgres source table does not have a primary key. How will we distinguish between the two? Is there a difference between the schema event of a truncate op versus a non-truncate op for a table without a primary key? Need to investigate.
-    if (key === null) {
+    if (key === null && operation === TRUNCATE) {
       // handle truncate events - the entire table is cleared out! no rows remaining
       console.log('TRUNCATE EVENT');
       const keyPattern = this.determineRedisKeyPattern(parsedValue) + '*';
@@ -151,14 +158,18 @@ export default class Redis {
       return;
     }
 
+    // Throw error if table has no primary key. 
+    if (key === null) {
+      throw new NoPrimaryKeyError(400, 'Cannot have tables without primary keys');
+    }
+
     const parsedKey = this.parseKey(key);
-    const operation = this.determineOperation(parsedValue);
     const redisKey = this.determineRedisKey(parsedKey, parsedValue);
 
     console.log('Performing', operation, 'operation on Redis key ', redisKey);
 
     // if we see a delete event, then delete that key-value pair from Redis
-    if (operation === 'd') {
+    if (operation === DELETE) {
       console.log('Deleting', redisKey, 'from Redis.');
       await this.client.del(redisKey);
       // otherwise update the key-value pair in Redis for create, update, and read events
@@ -194,7 +205,7 @@ export default class Redis {
   }
 
   private determineRedisKeyPattern(parsedValue: Value) {
-    const {db, table} = parsedValue.payload.source;
+    const { db, table } = parsedValue.payload.source;
     const redisKeyPattern = `${db}.${table}.`;
     return redisKeyPattern;
   }
