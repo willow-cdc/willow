@@ -3,10 +3,10 @@ import { RedisSink } from './types';
 
 export default class KafkaConsumer {
   private readonly kafkaConsumer: Consumer;
-  private readonly redis: RedisSink; // this is our Redis class - update the type!
+  private readonly redis: RedisSink;
 
   public constructor(
-    redis: RedisSink, // fix the typing to be our custom Redis class!
+    redis: RedisSink,
     clientId: string,
     brokerArr: string[],
     groupId: string
@@ -41,8 +41,8 @@ export default class KafkaConsumer {
 
   private createKafkaConsumer(clientId: string, brokerArr: string[], groupId: string): Consumer {
     const kafka = new Kafka({
-      clientId, // 'client-id'
-      brokers: brokerArr, // ['example.kafka.broker:9092']
+      clientId,
+      brokers: brokerArr,
     });
     const consumer = kafka.consumer({ groupId });
     return consumer;
