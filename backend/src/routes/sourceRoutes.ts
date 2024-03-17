@@ -9,15 +9,15 @@ const router = express.Router();
 
 router.post('/verify', async (req: TypedRequest<SourceRequestBody>, res, next) => {
   const source = req.body;
-  try {
-    const client = new Client({
-      host: source.host,
-      port: Number(source.port),
-      database: source.dbName,
-      user: source.user,
-      password: source.password,
-    });
+  const client = new Client({
+    host: source.host,
+    port: Number(source.port),
+    database: source.dbName,
+    user: source.user,
+    password: source.password,
+  });
 
+  try {
     const data = await extractDbInfo(client, source.dbName);
     await client.end();
     res.json({ data });
@@ -29,16 +29,21 @@ router.post('/verify', async (req: TypedRequest<SourceRequestBody>, res, next) =
   }
 });
 
-router.post('/connect', async (req: TypedRequest<SourceRequestBody>, res) => {
+router.post('/connect', async (req: TypedRequest<SourceRequestBody>, res, next) => {
   const source = req.body;
+  const kafkaConnectPayload = setupConnectorPayload(source);
 
   try {
-    const kafkaConnectPayload = setupConnectorPayload(source);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { data } = await axios.post('http://connect:8083/connectors/', kafkaConnectPayload);
     console.log(data);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     res.json({ data });
-  } catch {
-    res.status(401).end(); //needs refactor
+  } catch (error) {
+    if (error instanceof Error) {
+      const err = new HttpError(400, `Connection failed with error: ${error.message}`);
+      next(err);
+    }
   }
 });
 
