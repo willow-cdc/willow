@@ -1,14 +1,14 @@
 // routes for managing/checking/setting up source database connections
 import express from 'express';
-import { SourceRequestBody } from './types';
+import { TypedRequest, SourceRequestBody } from './types';
 import { HttpError, extractDbInfo, setupConnectorPayload } from '../utils/utils';
 import { Client } from 'pg';
 import axios from 'axios';
 
 const router = express.Router();
 
-router.post('/verify', async (req, res, next) => {
-  const source = req.body as SourceRequestBody;
+router.post('/verify', async (req: TypedRequest<SourceRequestBody>, res, next) => {
+  const source = req.body;
   try {
     const client = new Client({
       host: source.host,
@@ -29,8 +29,8 @@ router.post('/verify', async (req, res, next) => {
   }
 });
 
-router.post('/connect', async (req, res) => {
-  const source = req.body as SourceRequestBody;
+router.post('/connect', async (req: TypedRequest<SourceRequestBody>, res) => {
+  const source = req.body;
 
   try {
     const kafkaConnectPayload = setupConnectorPayload(source);

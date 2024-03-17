@@ -3,12 +3,12 @@
 import express from 'express';
 import Redis from '../lib/redis';
 import KafkaConsumer from '../lib/consumer';
-import { SinkRequestBody } from './types';
+import { TypedRequest, SinkRequestBody } from './types';
 const router = express.Router();
 
 // check sink cache is accessible
-router.post('/check', async (req, res, next) => {
-  const {url, username, password } = <SinkRequestBody>req.body;
+router.post('/check', async (req: TypedRequest<SinkRequestBody>, res, next) => {
+  const {url, username, password } = req.body;
   try {
     await Redis.checkConnection(url, password, username);
     res.status(200).send({message: 'Connection successful.'});
@@ -18,8 +18,8 @@ router.post('/check', async (req, res, next) => {
 });
 
 // create sink cache connection
-router.post('/create', async (req, res, next)=> {
-  const {url, username, password, topics, connectionName } = <SinkRequestBody>req.body;
+router.post('/create', async (req: TypedRequest<SinkRequestBody>, res, next)=> {
+  const {url, username, password, topics, connectionName } = req.body;
   const redis = new Redis(url, password, username);
   const consumer = new KafkaConsumer(redis, connectionName, ['kafka:9092'], connectionName);
   try {
