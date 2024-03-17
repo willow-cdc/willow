@@ -149,7 +149,6 @@ export default class Redis {
     const parsedValue = this.parseValue(value);
     const operation = this.determineOperation(parsedValue);
 
-    // NEED TO UPDATE THIS CONDITIONAL; we also erroneously enter this if-statement if the Postgres source table does not have a primary key. How will we distinguish between the two? Is there a difference between the schema event of a truncate op versus a non-truncate op for a table without a primary key? Need to investigate.
     if (key === null && operation === TRUNCATE) {
       // handle truncate events - the entire table is cleared out! no rows remaining
       console.log('TRUNCATE EVENT');
@@ -195,7 +194,6 @@ export default class Redis {
 
   private determineRedisKey(parsedMessageKey: Key, parsedValue: Value) {
     // extract value of primary key
-    //console.log('HERE', parsedMessageKey.payload);
     const primaryKey = Object.values(parsedMessageKey.payload).join('.'); // allows for multiple primary keys.
 
     // Redis key is database.table.primaryKey1.primaryKey2...primaryKeyN
