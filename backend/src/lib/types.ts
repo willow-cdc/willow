@@ -1,3 +1,13 @@
+import { type EachMessagePayload } from 'kafkajs';
+import { createClient } from 'redis';
+
+// interface for the public instance methods of the Redis class in redis.ts
+export interface RedisSink {
+  createNewClient(url: string, password: string, username: string): ReturnType<typeof createClient>;
+  connect(): void;
+  processKafkaMessage(messagePayload: EachMessagePayload): Promise<void>;
+}
+
 // Types for Debezium event messages, used in redis.ts
 
 // SHARED

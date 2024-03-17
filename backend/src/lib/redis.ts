@@ -4,8 +4,9 @@ import { type EachMessagePayload } from 'kafkajs';
 import { createClient } from 'redis';
 import { RedisError } from '../utils/utils';
 import { Key, Value } from './types';
+import { RedisSink } from './types';
 
-export default class Redis {
+export default class Redis implements RedisSink {
   private readonly client: ReturnType<typeof createClient>;
 
   public constructor(url: string, password: string, username: string) {

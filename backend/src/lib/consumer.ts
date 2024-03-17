@@ -1,11 +1,12 @@
 import { type Consumer, type ConsumerSubscribeTopics, Kafka, type EachMessagePayload } from 'kafkajs';
+import { RedisSink } from './types';
 
 export default class KafkaConsumer {
   private readonly kafkaConsumer: Consumer;
-  private readonly redis: any; // this is our Redis class - update the type!
+  private readonly redis: RedisSink; // this is our Redis class - update the type!
 
   public constructor(
-    redis: any, // fix the typing to be our custom Redis class!
+    redis: RedisSink, // fix the typing to be our custom Redis class!
     clientId: string,
     brokerArr: string[],
     groupId: string

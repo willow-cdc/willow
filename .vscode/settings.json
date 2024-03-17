@@ -5,6 +5,7 @@
     "redis",
     "routes",
     "error_handling",
-    "consumer"
+    "consumer",
+    "types"
   ]
 }
