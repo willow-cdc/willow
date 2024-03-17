@@ -47,7 +47,7 @@ export const setupConnectorPayload = (source: SourceRequestBody) => {
       'database.user': source.user,
       'database.password': source.password,
       'database.dbname': source.dbName,
-      'topic.prefix': 'dbserver1', //must agree on how to define this for each connector!!!!
+      'topic.prefix': source.connectionName,
       'skipped.operations': 'none',
       "decimal.handling.mode": "double"
     },
