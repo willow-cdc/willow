@@ -2,9 +2,12 @@
 
 import { type EachMessagePayload } from 'kafkajs';
 import { createClient } from 'redis';
-import { RedisError } from '../utils/utils';
-import { Key, Value } from './types';
-import { RedisSink } from './types';
+import { Key, Value, RedisSink } from './types';
+import { RedisError, NoPrimaryKeyError } from '../utils/utils';
+
+// CONSTANTS
+const TRUNCATE = 't';
+const DELETE = 'd';
 
 export default class Redis implements RedisSink {
   private readonly client: ReturnType<typeof createClient>;
@@ -42,6 +45,7 @@ export default class Redis implements RedisSink {
 
   public async processKafkaMessage(messagePayload: EachMessagePayload): Promise<void> {
     const { message } = messagePayload;
+    // console.log('HERE', message);
     const key = message.key;
     const value = message.value;
 
@@ -51,8 +55,9 @@ export default class Redis implements RedisSink {
     }
 
     const parsedValue = this.parseValue(value);
+    const operation = this.determineOperation(parsedValue);
 
-    if (key === null) {
+    if (key === null && operation === TRUNCATE) {
       // handle truncate events - the entire table is cleared out! no rows remaining
       console.log('TRUNCATE EVENT');
       const keyPattern = this.determineRedisKeyPattern(parsedValue) + '*';
@@ -60,14 +65,18 @@ export default class Redis implements RedisSink {
       return;
     }
 
+    // Throw error if table has no primary key. 
+    if (key === null) {
+      throw new NoPrimaryKeyError(400, 'Cannot have tables without primary keys');
+    }
+
     const parsedKey = this.parseKey(key);
-    const operation = this.determineOperation(parsedValue);
     const redisKey = this.determineRedisKey(parsedKey, parsedValue);
 
     console.log('Performing', operation, 'operation on Redis key ', redisKey);
 
     // if we see a delete event, then delete that key-value pair from Redis
-    if (operation === 'd') {
+    if (operation === DELETE) {
       console.log('Deleting', redisKey, 'from Redis.');
       await this.client.del(redisKey);
       // otherwise update the key-value pair in Redis for create, update, and read events
@@ -93,16 +102,16 @@ export default class Redis implements RedisSink {
 
   private determineRedisKey(parsedMessageKey: Key, parsedValue: Value) {
     // extract value of primary key
-    const primaryKey = Object.values(parsedMessageKey.payload)[0]; // this assumes that there will ALWAYS be a single primary key (no less and no more than 1 PK)
+    const primaryKey = Object.values(parsedMessageKey.payload).join('.'); // allows for multiple primary keys.
 
-    // Redis key is database.table.primaryKey
+    // Redis key is database.table.primaryKey1.primaryKey2...primaryKeyN
     const redisKey = this.determineRedisKeyPattern(parsedValue) + primaryKey;
     console.log('Redis key should be: ', redisKey);
     return redisKey;
   }
 
   private determineRedisKeyPattern(parsedValue: Value) {
-    const {db, table} = parsedValue.payload.source;
+    const { db, table } = parsedValue.payload.source;
     const redisKeyPattern = `${db}.${table}.`;
     return redisKeyPattern;
   }
