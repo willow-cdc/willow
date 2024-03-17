@@ -81,3 +81,11 @@ export class RedisError extends Error {
     this.status = status;
   }
 }
+
+export class NoPrimaryKeyError extends Error {
+  public status: number;
+  constructor(status: number, message: string) {
+    super(message);
+    this.status = status;
+  }
+}
