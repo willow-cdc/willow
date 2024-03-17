@@ -1,12 +1,6 @@
 import { Client } from 'pg';
 import { SourceRequestBody } from '../routes/types';
 
-// export const testSourceConnection = async (client: Client) => {
-//   await client.connect();
-//   await client.end();
-//   console.log('Connection attempt succesful');
-// };
-
 export const extractDbInfo = async (client: Client, dbName: string) => {
   await client.connect();
 

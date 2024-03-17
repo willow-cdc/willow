@@ -18,7 +18,6 @@ router.post('/verify', async (req, res, next) => {
       password: source.password,
     });
 
-    // await testSourceConnection(client);
     const data = await extractDbInfo(client, source.dbName);
     await client.end();
     res.json({ data });

@@ -5,6 +5,8 @@
     "redis",
     "routes",
     "error_handling",
+    "consumer",
+    "types",
     "debezium"
   ]
 }
