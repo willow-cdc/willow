@@ -1,13 +1,14 @@
 import {
-  Button,
-  TextField,
   Grid,
   Typography,
   Container,
   Box,
-  FormControlLabel,
-  FormGroup,
   Switch,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  ListSubheader,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 
@@ -22,7 +23,7 @@ const mockData = {
         },
         {
           table_name: "demo2",
-          columns: ["id", "data"],
+          columns: ["id", "data", "asdasda", "ggdfgdfgf"],
         },
       ],
     },
@@ -30,8 +31,12 @@ const mockData = {
       schema_name: "public2",
       tables: [
         {
+          table_name: "demo2",
+          columns: ["id", "data", "asdasda", "ggdfgdfgf"],
+        },
+        {
           table_name: "demo3",
-          columns: ["id", "data", "asdasd"],
+          columns: ["id", "data", "asdasda", "ggdfgdfgf"],
         },
       ],
     },
@@ -44,12 +49,11 @@ const mockData = {
   {
     table_name: 'test',
     schema_name: 'public',
+    dbzTableValue: 'public.test',
     columns: [{column: "id", selected: true, dbzColumnValue: "public.test.id"}, {column: "data", selected: true, dbzColumnValue: "public.test.data"}],
     selected: true
   },
 ]
-
-"table.include.list": ["public.table1", "public.table2"]
 */
 
 type ColumnObj = { column: string; selected: boolean; dbzColumnValue: string };
@@ -65,6 +69,7 @@ type SelectDataFormData = SelectDataFormDataObj[];
 
 const SelectDataForm = () => {
   const [formData, setFormData] = useState<SelectDataFormData>([]);
+  const [activeColumns, setActiveColumns] = useState<ColumnObj[]>([]);
 
   const handleTableSwitchChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -80,6 +85,52 @@ const SelectDataForm = () => {
     );
   };
 
+  const handleColumTableDisplay = (value: string) => {
+    const [schema, table] = value.split(".");
+    const formDataObj = formData.find(
+      (obj) => obj.schema_name === schema && obj.table_name === table
+    );
+
+    if (formDataObj != undefined) {
+      const columnArrClone = formDataObj.columns.map((obja) => {
+        return { ...obja };
+      });
+      setActiveColumns(columnArrClone);
+    }
+  };
+
+  const handleColumnSwitchChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    value: string
+  ) => {
+    const [schema, table, column] = value.split(".");
+
+    let newActiveArr!: ColumnObj[];
+    setFormData((old) => {
+      return old.map((obj) => {
+        if (obj.schema_name !== schema || obj.table_name !== table) {
+          return obj;
+        } else {
+          const newObj = { ...obj };
+          const newArr = newObj.columns.map((c) => {
+            if (c.column !== column) {
+              return c;
+            } else {
+              return { ...c, selected: event.target.checked };
+            }
+          });
+          newObj.columns = newArr;
+          newActiveArr = newArr.map((obja) => {
+            return { ...obja };
+          });
+          return newObj;
+        }
+      });
+    });
+
+    setActiveColumns(newActiveArr);
+  };
+
   useEffect(() => {
     const result = [];
 
@@ -90,6 +141,7 @@ const SelectDataForm = () => {
         result.push({
           table_name: currentTable.table_name,
           schema_name: mockData.data[i].schema_name,
+          dbzTableValue: `${mockData.data[i].schema_name}.${currentTable.table_name}`,
           columns: currentTable.columns.map((column) => {
             return {
               column,
@@ -103,7 +155,6 @@ const SelectDataForm = () => {
     }
     setFormData(result);
   }, []);
-  console.log(formData);
   return (
     <>
       <Container maxWidth="md">
@@ -116,43 +167,102 @@ const SelectDataForm = () => {
           settings, schema. Instructions for data: tables, settings, schema.
           Instructions for data: tables, settings, schema.
         </Typography>
-        <Typography variant="h4" gutterBottom>
+        <Typography marginTop={4} variant="h4" gutterBottom>
           Tables and Columns
         </Typography>
-        <Typography variant="body1" gutterBottom>
+        <Typography marginBottom={2} variant="body1" gutterBottom>
           Please select the tables you would like to capture and stream.
         </Typography>
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <Box
               height={300}
-              sx={{ background: "#D9D9D9", borderRadius: 2, padding: 2 }}
+              overflow={"auto"}
+              sx={{ background: "#D9D9D9", borderRadius: 2 }}
             >
-              {/* list of tables here */}
-              <FormGroup>
+              <List
+                subheader={
+                  <ListSubheader sx={{ background: "#D9D9D9" }}>
+                    Tables
+                  </ListSubheader>
+                }
+              >
                 {formData.map((data) => {
                   return (
-                    <FormControlLabel
+                    <ListItem
+                      sx={{ padding: 0 }}
                       key={`${data.schema_name}.${data.table_name}`}
-                      control={
+                      secondaryAction={
                         <Switch
+                          color="willowGreen"
                           checked={data.selected}
                           onChange={handleTableSwitchChange}
                           value={`${data.schema_name}.${data.table_name}`}
+                          inputProps={{
+                            "aria-label": `${data.schema_name}.${data.table_name}`,
+                          }}
                         />
                       }
-                      label={data.table_name}
-                    />
+                    >
+                      <ListItemButton
+                        onClick={() =>
+                          handleColumTableDisplay(
+                            `${data.schema_name}.${data.table_name}`
+                          )
+                        }
+                        sx={{ paddingTop: 0, paddingBottom: 0 }}
+                      >
+                        <ListItemText primary={data.table_name}></ListItemText>
+                      </ListItemButton>
+                    </ListItem>
                   );
                 })}
-              </FormGroup>
+              </List>
             </Box>
           </Grid>
           <Grid item xs={6}>
             <Box
               height={300}
-              sx={{ background: "#D9D9D9", borderRadius: 2, padding: 2 }}
-            ></Box>
+              overflow={"auto"}
+              sx={{ background: "#D9D9D9", borderRadius: 2 }}
+            >
+              {activeColumns.length > 1 && (
+                <List
+                  subheader={
+                    <ListSubheader sx={{ background: "#D9D9D9" }}>
+                      Columns
+                    </ListSubheader>
+                  }
+                >
+                  {activeColumns.map((data) => {
+                    return (
+                      <ListItem
+                        sx={{ padding: 0 }}
+                        key={data.dbzColumnValue}
+                        secondaryAction={
+                          <Switch
+                            color="willowGreen"
+                            checked={data.selected}
+                            onChange={(e) =>
+                              handleColumnSwitchChange(e, data.dbzColumnValue)
+                            }
+                            value={data.dbzColumnValue}
+                            inputProps={{
+                              "aria-label": data.dbzColumnValue,
+                            }}
+                          />
+                        }
+                      >
+                        <ListItemText
+                          sx={{ paddingLeft: 2 }}
+                          primary={data.column}
+                        ></ListItemText>
+                      </ListItem>
+                    );
+                  })}
+                </List>
+              )}
+            </Box>
           </Grid>
         </Grid>
       </Container>

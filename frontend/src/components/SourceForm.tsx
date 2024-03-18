@@ -5,13 +5,14 @@ import {
   Typography,
   Container,
   FormControl,
+  Box,
   // FormHelperText,
 } from "@mui/material";
-import { useState } from "react";
+import React, { useState } from "react";
 import { formState } from "../types/types";
 import { postSourceVerify } from "../services/source";
 
-const TestForm = () => {
+const SourceForm = () => {
   const [formStateObj, setFormStateObj] = useState<formState>({
     host: "",
     port: "",
@@ -20,7 +21,7 @@ const TestForm = () => {
     password: "",
   });
 
-  async function handleSubmit(event) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
       const data = await postSourceVerify(formStateObj);
@@ -43,12 +44,11 @@ const TestForm = () => {
             database and what is expected to happen. Instructions for connecting
             the source database and what is expected to happen.
           </Typography>
-          <Grid container spacing={1} alignItems="center">
+          <Grid container rowSpacing={4} columnSpacing={2} alignItems="center">
             <Grid item xs={6}>
               <TextField
                 size="small"
                 required
-                id="outlined-required"
                 label="host"
                 fullWidth
                 margin="normal"
@@ -63,9 +63,8 @@ const TestForm = () => {
                 <TextField
                   size="small"
                   required
-                  id="outlined-required"
                   label="port"
-                  // fullWidth
+                  fullWidth
                   // margin="normal"
                   value={formStateObj.port}
                   onChange={(e) => {
@@ -76,7 +75,7 @@ const TestForm = () => {
               </FormControl>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="body2">
+              <Typography marginTop={-3} align="center" variant="body2">
                 The host is the IP address for the database from which you want
                 to stream. This will need to be exposed publicly which can be
                 done by using a tool like ngrok or if your database has a public
@@ -87,7 +86,6 @@ const TestForm = () => {
               <TextField
                 size="small"
                 required
-                id="outlined-required"
                 label="database name"
                 fullWidth
                 margin="normal"
@@ -107,7 +105,6 @@ const TestForm = () => {
               <TextField
                 size="small"
                 required
-                id="outlined-required"
                 label="user"
                 fullWidth
                 margin="normal"
@@ -121,7 +118,6 @@ const TestForm = () => {
               <TextField
                 size="small"
                 required
-                id="outlined-required"
                 label="password"
                 fullWidth
                 margin="normal"
@@ -134,14 +130,22 @@ const TestForm = () => {
                 }}
               />
             </Grid>
+            <Grid item xs={12}>
+              <Typography marginTop={-3} align="center" variant="body2">
+                This is the username and password for the database you entered
+                above.
+              </Typography>
+            </Grid>
           </Grid>
-          <Button type="submit" variant="contained">
-            Submit
-          </Button>
+          <Box marginTop={3} display="flex" justifyContent="center">
+            <Button color="willowGreen" type="submit" variant="contained">
+              Connect
+            </Button>
+          </Box>
         </form>
       </Container>
     </>
   );
 };
 
-export default TestForm;
+export default SourceForm;
