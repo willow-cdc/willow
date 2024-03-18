@@ -1,9 +1,9 @@
 // routes for managing/checking/setting up sink cache connections
-
 import express from 'express';
 import Redis from '../lib/redis';
 import KafkaConsumer from '../lib/consumer';
 import { TypedRequest, SinkRequestBody } from './types';
+import { sinks } from '../data/sinks';
 const router = express.Router();
 
 // check sink cache is accessible
@@ -25,9 +25,47 @@ router.post('/create', async (req: TypedRequest<SinkRequestBody>, res, next)=> {
   try {
     await redis.connect();
     await consumer.startConsumer(topics);
+    sinks.add(connectionName, consumer);
     res.json({ message: 'Consumer created!' });
   } catch (err) {
     next(err);
+  }
+});
+
+router.get('/', (_req, res, next) => {
+  try {
+    console.log('Fetching all sinks.');
+    const s = sinks.getAll();
+    console.log('Fetched all sinks.');
+    res.json(s);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/:name', (req, res, next) => {
+  const name = req.params.name;
+
+  try {
+    console.log('Fetching sink', name);
+    const sink = sinks.find(name);
+    console.log('Fetched sink', name);
+    res.json(sink);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete('/:name', (req, res, next) => {
+  const name = req.params.name;
+
+  try {
+    console.log('Deleting sink', name);
+    const sink = sinks.delete(name);
+    console.log('Deleted sink', name);
+    res.json(sink);
+  } catch (error) {
+    next(error);
   }
 });
 
