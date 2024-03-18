@@ -6,6 +6,7 @@ export interface RedisSink {
   createNewClient(url: string, password: string, username: string): ReturnType<typeof createClient>;
   connect(): void;
   processKafkaMessage(messagePayload: EachMessagePayload): Promise<void>;
+  disconnect(): Promise<void>;
 }
 
 // Types for Debezium event messages, used in redis.ts
