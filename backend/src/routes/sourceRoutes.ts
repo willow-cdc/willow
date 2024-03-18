@@ -74,11 +74,12 @@ router.get('/:name', (req, res, next) => {
   }
 });
 
-router.delete('/:name', (req, res, next) => {
+router.delete('/:name', async (req, res, next) => {
   const name = req.params.name;
 
   try {
     console.log('Deleting source', name);
+    await axios.delete(`http://connect:8083/connectors/${name}`);
     const source = sources.delete(name);
     console.log('Deleted source', name);
     res.json(source);
