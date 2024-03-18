@@ -1,38 +1,65 @@
 import { Client } from 'pg';
 import { SourceRequestBody } from '../routes/types';
 
-export const extractDbInfo = async (client: Client, dbName: string) => {
-  await client.connect();
+interface Table {
+  table_name: string;
+  columns: string[];
+}
 
+interface Schema {
+  schema_name: string;
+  tables: Table[];
+}
+
+interface ColumnName {
+  column_name: string;
+}
+
+const retrieveSchema = async (client: Client, dbName: string) => {
   const schemaTextQuery =
-    "SELECT schema_name FROM information_schema.schemata WHERE schema_name NOT LIKE 'pg%' AND schema_name NOT LIKE 'information_schema' AND catalog_name LIKE $1";
+  "SELECT schema_name FROM information_schema.schemata WHERE schema_name NOT LIKE 'pg%' AND schema_name NOT LIKE 'information_schema' AND catalog_name LIKE $1";
   const schemaQueryValue = [dbName];
   const schemaQueryResult = await client.query(schemaTextQuery, schemaQueryValue);
 
-  const resultArr = schemaQueryResult.rows;
+  return schemaQueryResult.rows as Schema[];
+};
 
-  for (let i = 0; i < resultArr.length; i += 1) {
-    const currentSchema = resultArr[i];
+const retrieveTables = async (client: Client, schema: Schema) => {
+  const tableTextQuery =
+  "SELECT table_name FROM information_schema.tables WHERE table_schema=$1 AND table_type='BASE TABLE'";
+  const tableQueryValue = [schema.schema_name];
+  const tableQueryResult = await client.query(tableTextQuery, tableQueryValue);
+  return tableQueryResult.rows as Table[];
+};
 
-    const tableTextQuery =
-      "SELECT table_name FROM information_schema.tables WHERE table_schema=$1 AND table_type='BASE TABLE'";
-    const tableQueryValue = [currentSchema.schema_name];
-    const tableQueryResult = await client.query(tableTextQuery, tableQueryValue);
-    currentSchema.tables = tableQueryResult.rows;
+const retrieveColumns = async (client: Client, schemaName: string, table: Table) => {
+  const columnTextQuery =
+  'select column_name from information_schema.columns where table_name = $1 and table_schema = $2';
+  const columnQueryValue = [table.table_name, schemaName];
+  const columnQueryResult = await client.query(columnTextQuery, columnQueryValue);
 
-    for (let j = 0; j < currentSchema.tables.length; j += 1) {
-      const currentTable = currentSchema.tables[j];
+  const columnsArr = columnQueryResult.rows as ColumnName[];
+  const columns = columnsArr.map((columObj) => columObj.column_name);
+  return columns;
+};
 
-      const columnTextQuery =
-        'select column_name from information_schema.columns where table_name = $1 and table_schema = $2';
-      const columnQueryValue = [currentTable.table_name, currentSchema.schema_name];
-      const columnQueryResult = await client.query(columnTextQuery, columnQueryValue);
-      const columns = columnQueryResult.rows.map((columObj) => columObj.column_name);
-      currentTable.columns = columns;
+export const extractDbInfo = async (client: Client, dbName: string) => {
+  const schemaArr = await retrieveSchema(client, dbName);
+
+  for (let i = 0; i < schemaArr.length; i += 1) {
+    const currentSchema = schemaArr[i];
+
+    const tables = await retrieveTables(client, currentSchema);
+    currentSchema.tables = tables;
+
+    for (let j = 0; j < tables.length; j += 1) {
+      const currentTable = tables[j];
+
+      currentTable.columns = await retrieveColumns(client, currentSchema.schema_name, currentTable);
     }
   }
 
-  return resultArr;
+  return schemaArr;
 };
 
 export const setupConnectorPayload = (source: SourceRequestBody) => {
@@ -47,7 +74,7 @@ export const setupConnectorPayload = (source: SourceRequestBody) => {
       'database.user': source.user,
       'database.password': source.password,
       'database.dbname': source.dbName,
-      'topic.prefix': 'dbserver1', //must agree on how to define this for each connector!!!!
+      'topic.prefix': source.connectionName,
       'skipped.operations': 'none',
       "decimal.handling.mode": "double"
     },

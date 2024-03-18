@@ -1,3 +1,7 @@
+export interface TypedRequest<T> extends Express.Request {
+  body: T;
+}
+
 export interface SourceRequestBody {
   user: string;
   password: string;
