@@ -4,6 +4,7 @@ import { TypedRequest, SourceRequestBody } from './types';
 import { HttpError, extractDbInfo, setupConnectorPayload } from '../utils/utils';
 import { Client } from 'pg';
 import axios from 'axios';
+import { sources } from '../data/sources';
 
 const router = express.Router();
 
@@ -38,6 +39,7 @@ router.post('/connect', async (req: TypedRequest<SourceRequestBody>, res, next) 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { data } = await axios.post('http://connect:8083/connectors/', kafkaConnectPayload);
     console.log(data);
+    sources.add(source.connectionName);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     res.json({ data });
   } catch (error) {
@@ -45,6 +47,43 @@ router.post('/connect', async (req: TypedRequest<SourceRequestBody>, res, next) 
       const err = new HttpError(400, `Connection failed with error: ${error.message}`);
       next(err);
     }
+  }
+});
+
+router.get('/', (_req, res, next) => {
+  try {
+    console.log('Fetching all sources.');
+    const s = sources.getAll();
+    console.log('Fetched all sources.');
+    res.json(s);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/:name', (req, res, next) => {
+  const name = req.params.name;
+
+  try {
+    console.log('Fetching source', name);
+    const source = sources.find(name);
+    console.log('Fetched source', name);
+    res.json(source);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete('/:name', (req, res, next) => {
+  const name = req.params.name;
+
+  try {
+    console.log('Deleting source', name);
+    const source = sources.delete(name);
+    console.log('Deleted source', name);
+    res.json(source);
+  } catch (error) {
+    next(error);
   }
 });
 
