@@ -56,12 +56,15 @@ router.get('/:name', (req, res, next) => {
   }
 });
 
-router.delete('/:name', (req, res, next) => {
+router.delete('/:name', async (req, res, next) => {
   const name = req.params.name;
 
   try {
     console.log('Deleting sink', name);
     const sink = sinks.delete(name);
+    if (sink) {
+      await sink.consumer.shutdown();
+    }
     console.log('Deleted sink', name);
     res.json(sink);
   } catch (error) {
