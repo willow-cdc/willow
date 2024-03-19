@@ -1,5 +1,19 @@
 import { Client } from 'pg';
 
+interface SourceRow {
+  db: string;
+  tables: string;
+  host: string;
+  port: number;
+  dbUser: string;
+}
+
+interface SinkRow {
+  url: string;
+  usename: string;
+  topics: string;
+}
+
 export default class Database {
   private client: Client; // double-check typing for this.
 
@@ -53,5 +67,37 @@ export default class Database {
 
     const result = await this.client.query(query, values);
     return result.rowCount as number;
+  }
+
+  public async retrieveSource(connectionName: string): Promise<SourceRow | undefined> {
+    const GET_SOURCE_INFO = 'SELECT db, tables, host, port, dbUser FROM sources WHERE name = $1';
+
+    let result = await this.client.query(GET_SOURCE_INFO, [connectionName]);
+    let activity: SourceRow | undefined = result.rows[0];
+    return activity;
+  }
+
+  public async deleteSource(connectionName: string): Promise<boolean> {
+    const DELETE_SOURCE_INFO = 'DELETE FROM sources WHERE name = $1';
+
+    let result = await this.client.query(DELETE_SOURCE_INFO, [connectionName]);
+    let rowCount = result.rowCount as number;
+    return rowCount === 1;
+  }
+
+  public async retrieveSink(connectionName: string): Promise<SinkRow | undefined> {
+    const GET_SINK_INFO = 'SELECT url, username, topics FROM sinks WHERE name = $1';
+
+    let result = await this.client.query(GET_SINK_INFO, [connectionName]);
+    let activity: SinkRow | undefined = result.rows[0];
+    return activity;
+  }
+
+  public async deleteSink(connectionName: string): Promise<boolean> {
+    const DELETE_SINK_INFO = 'DELETE FROM sinks WHERE name = $1';
+
+    let result = await this.client.query(DELETE_SINK_INFO, [connectionName]);
+    let rowCount = result.rowCount as number;
+    return rowCount === 1;
   }
 }
