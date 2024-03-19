@@ -5,7 +5,6 @@ import { HttpError, extractDbInfo, setupConnectorPayload } from '../utils/utils'
 import { Client } from 'pg';
 import Database from '../lib/dataPersistence';
 import axios from 'axios';
-import { sources } from '../data/sources';
 
 const router = express.Router();
 
@@ -62,7 +61,6 @@ router.post('/connect', async (req: TypedRequest<FinalSourceRequestBody>, res, n
     
     console.log('The source insert result is', result);
 
-    sources.add(source.connectionName);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     res.json({ data });
   } catch (error) {
