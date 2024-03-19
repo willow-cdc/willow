@@ -1,5 +1,5 @@
 import { Client } from 'pg';
-import { SourceRequestBody } from '../routes/types';
+import { FinalSourceRequestBody } from '../routes/types';
 
 interface Table {
   table_name: string;
@@ -62,7 +62,7 @@ export const extractDbInfo = async (client: Client, dbName: string) => {
   return schemaArr;
 };
 
-export const setupConnectorPayload = (source: SourceRequestBody) => {
+export const setupConnectorPayload = (source: FinalSourceRequestBody) => {
   const connectorObj = {
     name: source.connectionName,
     config: {
@@ -80,8 +80,32 @@ export const setupConnectorPayload = (source: SourceRequestBody) => {
     },
   };
 
-  if (source.tables) {
-    connectorObj.config['table.include.list'] = source.tables.join(',');
+  if (source.formData.length > 0) {
+    const tablesToExclude = source.formData
+      .filter((obj) => obj.selected === false)
+      .map((objToExclue) => objToExclue.dbzTableValue);
+
+    const tablesToInclude = source.formData.filter((obj) => obj.selected === true);
+    const columnsToExclude: string[] = [];
+
+    tablesToInclude.forEach((obj) => {
+      obj.columns.forEach((colObj) => {
+        if (obj.columns.every((colObj) => colObj.selected === false)) {
+          //if all the columns are excluded, exclude the table wholly
+          tablesToExclude.push(obj.dbzTableValue);
+        } else if (colObj.selected === false) {
+          columnsToExclude.push(colObj.dbzColumnValue);
+        }
+      });
+    });
+
+    if (tablesToExclude.length > 0) {
+      connectorObj.config['table.exclude.list'] = tablesToExclude.join(',');
+    }
+
+    if (columnsToExclude.length > 0) {
+      connectorObj.config['column.exclude.list'] = columnsToExclude.join(',');
+    }
   }
 
   return connectorObj;
