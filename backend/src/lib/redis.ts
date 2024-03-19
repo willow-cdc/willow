@@ -88,6 +88,10 @@ export default class Redis implements RedisSink {
     }
   }
 
+  public async disconnect() {
+    await this.client.quit();
+  }
+
   private parseKey(messageKey: Buffer) {
     return JSON.parse(messageKey.toString()) as Key;
   }

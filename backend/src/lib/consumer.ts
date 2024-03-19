@@ -37,6 +37,7 @@ export default class KafkaConsumer {
 
   public async shutdown(): Promise<void> {
     await this.kafkaConsumer.disconnect();
+    await this.redis.disconnect();
   }
 
   private createKafkaConsumer(clientId: string, brokerArr: string[], groupId: string): Consumer {
