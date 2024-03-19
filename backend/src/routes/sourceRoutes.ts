@@ -58,6 +58,8 @@ router.post('/connect', async (req: TypedRequest<FinalSourceRequestBody>, res, n
       source.user
     );
 
+    await database.end();
+    
     console.log('The source insert result is', result);
 
     sources.add(source.connectionName);
@@ -71,10 +73,16 @@ router.post('/connect', async (req: TypedRequest<FinalSourceRequestBody>, res, n
   }
 });
 
-router.get('/', (_req, res, next) => {
+router.get('/', async (_req, res, next) => {
+  const database = new Database('postgres://postgres:postgres@db:5432');
+
   try {
     console.log('Fetching all sources.');
-    const s = sources.getAll();
+
+    await database.connect();
+    const s = await database.retrieveAllSources();
+    await database.end();
+
     console.log('Fetched all sources.');
     res.json(s);
   } catch (error) {
@@ -82,12 +90,17 @@ router.get('/', (_req, res, next) => {
   }
 });
 
-router.get('/:name', (req, res, next) => {
+router.get('/:name', async (req, res, next) => {
   const name = req.params.name;
+  const database = new Database('postgres://postgres:postgres@db:5432');
 
   try {
     console.log('Fetching source', name);
-    const source = sources.find(name);
+
+    await database.connect();
+    const source = await database.retrieveSource(name);
+    await database.end();
+
     console.log('Fetched source', name);
     res.json(source);
   } catch (error) {
@@ -97,11 +110,16 @@ router.get('/:name', (req, res, next) => {
 
 router.delete('/:name', async (req, res, next) => {
   const name = req.params.name;
+  const database = new Database('postgres://postgres:postgres@db:5432');
 
   try {
     console.log('Deleting source', name);
     await axios.delete(`http://connect:8083/connectors/${name}`);
-    const source = sources.delete(name);
+
+    await database.connect();
+    const source = await database.deleteSource(name);
+    await database.end();
+
     console.log('Deleted source', name);
     res.json(source);
   } catch (error) {
