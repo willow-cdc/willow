@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { RedisConnectionDetails } from '../types/types';
 import RedisSinkConnectionForm from './RedisSinkConnectionForm';
 import RedisSinkVerifyConnectionForm from './RedisSinkVerifyConnectionForm';
+import { useContext } from 'react';
+import TopicsContext from '../context/TopicsContext';
 
 const RedisSinkForm = () => {
   const [formStateObj, setFormStateObj] = useState<RedisConnectionDetails>({
@@ -12,6 +14,7 @@ const RedisSinkForm = () => {
   });
 
   const [isValidConnection, setIsValidConnection] = useState(false);
+  const { topics } = useContext(TopicsContext);
 
   return (
     <>
@@ -25,7 +28,7 @@ const RedisSinkForm = () => {
 
         {isValidConnection && (
           <RedisSinkConnectionForm
-            topics={['dbserver1.public.demo']} // need to remove the hard code. how do we get topics from the source connector into here?
+            topics={topics}
             url={formStateObj.url}
             username={formStateObj.username}
             password={formStateObj.password}
