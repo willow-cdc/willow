@@ -22,10 +22,10 @@ interface ConnectionDatabase {
   insertSource: (
     name: string,
     db: string,
-    tables: string,
+    tables: string | undefined,
     host: string,
     port: number,
-    dbUser: string
+    dbUser: string,
   ) => Promise<number>;
   insertSink: (name: string, url: string, username: string, topics: string) => Promise<number>;
   retrieveSource: (connectionName: string) => Promise<SourceRow | undefined>;
@@ -69,7 +69,7 @@ export default class Database implements ConnectionDatabase {
   public async insertSource(
     name: string,
     db: string,
-    tables: string,
+    tables: string | undefined,
     host: string,
     port: number,
     dbUser: string
