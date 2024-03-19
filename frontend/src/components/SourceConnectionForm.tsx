@@ -6,7 +6,7 @@ import {
 import SourceForm from "./SourceForm";
 import SelectDataForm from "./SelectDataForm";
 
-const SourceConnectionForm = () => {
+const SourceConnectionForm = ({ handleNext }: {handleNext: () => void}) => {
   const [formStateObj, setFormStateObj] = useState<SourceFormConnectionDetails>(
     {
       host: "",
@@ -40,6 +40,7 @@ const SourceConnectionForm = () => {
         <SelectDataForm
           rawTablesAndColumnsData={rawTablesAndColumnsData}
           formStateObj={formStateObj}
+          handleNext={handleNext}
         />
       )}
     </>

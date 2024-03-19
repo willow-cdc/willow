@@ -54,14 +54,14 @@ const theme = createTheme({
 
 import "./styles/App.css";
 
-import SourceConnectionForm from "./components/SourceConnectionForm";
+import FormStepper from "./components/FormStepper";
 
 function App() {
   return (
     <>
       <ThemeProvider theme={theme}>
         <img src={willowLogo} className="logo" alt="Willow logo" />
-        <SourceConnectionForm />
+        <FormStepper />
       </ThemeProvider>
     </>
   );

@@ -23,9 +23,11 @@ import { postSourceKafkaConnect } from "../services/source";
 const SelectDataForm = ({
   rawTablesAndColumnsData,
   formStateObj,
+  handleNext
 }: {
   rawTablesAndColumnsData: rawTablesAndColumnsData;
   formStateObj: SourceFormConnectionDetails;
+  handleNext: () => void;
 }) => {
   const [formData, setFormData] = useState<SelectDataFormData>([]);
   const [activeColumns, setActiveColumns] = useState<SelectDataFormColumnObj[]>(
@@ -96,6 +98,7 @@ const SelectDataForm = ({
     const submissionObj = { ...formStateObj, formData };
     try {
       console.log(submissionObj);
+      handleNext() //IN FINAL VERSION PUT THIS AFTER postSourceKafkaConnect!!!!!
       await postSourceKafkaConnect(submissionObj);
     } catch (error) {
       console.log(error);
