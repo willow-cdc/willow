@@ -8,6 +8,8 @@
     "consumer",
     "types",
     "debezium",
+    "docker",
+    "dataPersistence"
     "connections"
   ]
 }
