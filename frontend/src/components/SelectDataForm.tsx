@@ -10,27 +10,32 @@ import {
   ListItemText,
   ListSubheader,
   Button,
-} from "@mui/material";
-import { useEffect, useState } from "react";
+} from '@mui/material';
+import { useEffect, useState } from 'react';
 import {
   SelectDataFormColumnObj,
   SelectDataFormData,
   SourceFormConnectionDetails,
   rawTablesAndColumnsData,
-} from "../types/types";
-import { postSourceKafkaConnect } from "../services/source";
+} from '../types/types';
+import { postSourceKafkaConnect } from '../services/source';
+import { useContext } from 'react';
+import TopicsContext from '../context/TopicsContext';
 
 const SelectDataForm = ({
   rawTablesAndColumnsData,
   formStateObj,
+  handleNext,
 }: {
   rawTablesAndColumnsData: rawTablesAndColumnsData;
   formStateObj: SourceFormConnectionDetails;
+  handleNext: () => void;
 }) => {
   const [formData, setFormData] = useState<SelectDataFormData>([]);
   const [activeColumns, setActiveColumns] = useState<SelectDataFormColumnObj[]>(
     []
   );
+  const { setTopics } = useContext(TopicsContext);
 
   const handleTableSwitchChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -47,7 +52,7 @@ const SelectDataForm = ({
   };
 
   const handleColumTableDisplay = (value: string) => {
-    const [schema, table] = value.split(".");
+    const [schema, table] = value.split('.');
     const formDataObj = formData.find(
       (obj) => obj.schema_name === schema && obj.table_name === table
     );
@@ -64,7 +69,7 @@ const SelectDataForm = ({
     event: React.ChangeEvent<HTMLInputElement>,
     value: string
   ) => {
-    const [schema, table, column] = value.split(".");
+    const [schema, table, column] = value.split('.');
 
     let newActiveArr!: SelectDataFormColumnObj[];
     setFormData((old) => {
@@ -94,9 +99,14 @@ const SelectDataForm = ({
 
   const handleKafkaConnectSubmit = async () => {
     const submissionObj = { ...formStateObj, formData };
+    const topics = submissionObj.formData
+      .filter((obj) => obj.selected === true)
+      .map((obj) => `${submissionObj.connectionName}.${obj.dbzTableValue}`);
     try {
       console.log(submissionObj);
       await postSourceKafkaConnect(submissionObj);
+      handleNext();
+      setTopics(topics);
     } catch (error) {
       console.log(error);
     }
@@ -120,7 +130,7 @@ const SelectDataForm = ({
               dbzColumnValue: `${rawTablesAndColumnsData[i].schema_name}.${currentTable.table_name}.${column}`,
             };
           }),
-          selected: true, // should we default this to false?
+          selected: true,
         });
       }
     }
@@ -148,12 +158,12 @@ const SelectDataForm = ({
           <Grid item xs={6}>
             <Box
               height={300}
-              overflow={"auto"}
-              sx={{ background: "#D9D9D9", borderRadius: 2 }}
+              overflow={'auto'}
+              sx={{ background: '#D9D9D9', borderRadius: 2 }}
             >
               <List
                 subheader={
-                  <ListSubheader sx={{ background: "#D9D9D9" }}>
+                  <ListSubheader sx={{ background: '#D9D9D9' }}>
                     Tables
                   </ListSubheader>
                 }
@@ -170,7 +180,7 @@ const SelectDataForm = ({
                           onChange={handleTableSwitchChange}
                           value={`${data.schema_name}.${data.table_name}`}
                           inputProps={{
-                            "aria-label": `${data.schema_name}.${data.table_name}`,
+                            'aria-label': `${data.schema_name}.${data.table_name}`,
                           }}
                         />
                       }
@@ -194,13 +204,13 @@ const SelectDataForm = ({
           <Grid item xs={6}>
             <Box
               height={300}
-              overflow={"auto"}
-              sx={{ background: "#D9D9D9", borderRadius: 2 }}
+              overflow={'auto'}
+              sx={{ background: '#D9D9D9', borderRadius: 2 }}
             >
               {activeColumns.length > 1 && (
                 <List
                   subheader={
-                    <ListSubheader sx={{ background: "#D9D9D9" }}>
+                    <ListSubheader sx={{ background: '#D9D9D9' }}>
                       Columns
                     </ListSubheader>
                   }
@@ -219,7 +229,7 @@ const SelectDataForm = ({
                             }
                             value={data.dbzColumnValue}
                             inputProps={{
-                              "aria-label": data.dbzColumnValue,
+                              'aria-label': data.dbzColumnValue,
                             }}
                           />
                         }
