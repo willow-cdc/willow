@@ -30,10 +30,10 @@ router.post('/create', async (req: TypedRequest<SinkRequestBody>, res, next) => 
     await consumer.startConsumer(topics);
 
     await database.connect();
-
     const result = await database.insertSink(connectionName, url, username, JSON.stringify(topics));
-    console.log('sink result', result);
+    await database.end();
 
+    console.log('sink result', result);
     sinks.add(connectionName, consumer);
     
     res.json({ message: 'Consumer created!' });
@@ -42,10 +42,16 @@ router.post('/create', async (req: TypedRequest<SinkRequestBody>, res, next) => 
   }
 });
 
-router.get('/', (_req, res, next) => {
+router.get('/', async (_req, res, next) => {
+  const database = new Database('postgres://postgres:postgres@db:5432');
+
   try {
     console.log('Fetching all sinks.');
-    const s = sinks.getAll();
+
+    await database.connect();
+    const s = await database.retrieveAllSinks();
+    await database.end();
+
     console.log('Fetched all sinks.');
     res.json(s);
   } catch (error) {
@@ -53,12 +59,17 @@ router.get('/', (_req, res, next) => {
   }
 });
 
-router.get('/:name', (req, res, next) => {
+router.get('/:name', async (req, res, next) => {
   const name = req.params.name;
+  const database = new Database('postgres://postgres:postgres@db:5432');
 
   try {
     console.log('Fetching sink', name);
-    const sink = sinks.find(name);
+
+    await database.connect();
+    const sink = await database.retrieveSink(name);
+    await database.end();
+
     console.log('Fetched sink', name);
     res.json(sink);
   } catch (error) {
@@ -68,13 +79,19 @@ router.get('/:name', (req, res, next) => {
 
 router.delete('/:name', async (req, res, next) => {
   const name = req.params.name;
+  const database = new Database('postgres://postgres:postgres@db:5432');
 
   try {
     console.log('Deleting sink', name);
-    const sink = sinks.delete(name);
-    if (sink) {
-      await sink.consumer.shutdown();
+    const sinkInMemory = sinks.delete(name);
+    if (sinkInMemory) {
+      await sinkInMemory.consumer.shutdown();
     }
+
+    await database.connect();
+    const sink = await database.deleteSink(name);
+    await database.end();
+
     console.log('Deleted sink', name);
     res.json(sink);
   } catch (error) {
