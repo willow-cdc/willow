@@ -4,6 +4,7 @@ export interface SourceFormConnectionDetails {
   dbName: string;
   user: string;
   password: string;
+  connectionName: string
 }
 
 export interface RedisConnectionDetails {

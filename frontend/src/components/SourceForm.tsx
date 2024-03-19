@@ -7,13 +7,13 @@ import {
   FormControl,
   Box,
   // FormHelperText,
-} from "@mui/material";
-import React from "react";
+} from '@mui/material';
+import React from 'react';
 import {
   SourceFormConnectionDetails,
   rawTablesAndColumnsData,
-} from "../types/types";
-import { postSourceVerify } from "../services/source";
+} from '../types/types';
+import { postSourceVerify } from '../services/source';
 
 const SourceForm = ({
   formStateObj,
@@ -59,6 +59,27 @@ const SourceForm = ({
             the source database and what is expected to happen.
           </Typography>
           <Grid container rowSpacing={4} columnSpacing={2} alignItems="center">
+            <Grid item xs={12}>
+              <TextField
+                size="small"
+                required
+                label="connection name"
+                fullWidth
+                margin="normal"
+                value={formStateObj.connectionName}
+                onChange={(e) => {
+                  setFormStateObj({
+                    ...formStateObj,
+                    connectionName: e.target.value,
+                  });
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography marginTop={-3} align="center" variant="body2">
+                Provide a unique name for this source connection.
+              </Typography>
+            </Grid>
             <Grid item xs={6}>
               <TextField
                 size="small"

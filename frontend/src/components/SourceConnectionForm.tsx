@@ -14,6 +14,7 @@ const SourceConnectionForm = () => {
       dbName: "",
       user: "",
       password: "",
+      connectionName: ""
     }
   );
 
