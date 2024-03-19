@@ -14,7 +14,27 @@ interface SinkRow {
   topics: string;
 }
 
-export default class Database {
+interface ConnectionDatabase {
+  connect: () => Promise<void>;
+  end: () => Promise<void>;
+  sourceExists: (connectionName: string) => Promise<boolean>;
+  sinkExists: (connectionName: string) => Promise<boolean>;
+  insertSource: (
+    name: string,
+    db: string,
+    tables: string,
+    host: string,
+    port: number,
+    dbUser: string
+  ) => Promise<number>;
+  insertSink: (name: string, url: string, username: string, topics: string) => Promise<number>;
+  retrieveSource: (connectionName: string) => Promise<SourceRow | undefined>;
+  deleteSource: (connectionName: string) => Promise<boolean>;
+  retrieveSink: (connectionName: string) => Promise<SinkRow | undefined>;
+  deleteSink: (connectionName: string) => Promise<boolean>;
+}
+
+export default class Database implements ConnectionDatabase {
   private client: Client; // double-check typing for this.
 
   public constructor(connectionString: string) {
@@ -46,7 +66,7 @@ export default class Database {
     return (result.rowCount as number) > 0;
   }
 
-  public async insertSourceInfo(
+  public async insertSource(
     name: string,
     db: string,
     tables: string,
@@ -61,7 +81,7 @@ export default class Database {
     return result.rowCount as number;
   }
 
-  public async insertSinkInfo(name: string, url: string, username: string, topics: string): Promise<number> {
+  public async insertSink(name: string, url: string, username: string, topics: string): Promise<number> {
     const query = 'INSERT INTO sinks (name, url, username, topics) VALUES ($1, $2, $3, $4)';
     const values = [name, url, username, topics];
 
