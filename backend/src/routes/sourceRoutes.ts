@@ -38,11 +38,10 @@ router.post('/connect', async (req: TypedRequest<FinalSourceRequestBody>, res, n
   const database = new Database('postgres://postgres:postgres@db:5432');
 
   const mappedTables = source.formData
-    .filter((obj) => obj.selected === true)
+    .filter((obj) => obj.selected === false)
     .map((includedTable) => includedTable.table_name);
 
   const tables = mappedTables.join(',');
-  console.log(kafkaConnectPayload);
 
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

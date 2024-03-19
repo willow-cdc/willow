@@ -20,50 +20,6 @@ import {
 } from "../types/types";
 import { postSourceKafkaConnect } from "../services/source";
 
-// const mockData = {
-//   data: [
-//     {
-//       schema_name: "public",
-//       tables: [
-//         {
-//           table_name: "demo",
-//           columns: ["id", "data"],
-//         },
-//         {
-//           table_name: "demo2",
-//           columns: ["id", "data", "asdasda", "ggdfgdfgf"],
-//         },
-//       ],
-//     },
-//     {
-//       schema_name: "public2",
-//       tables: [
-//         {
-//           table_name: "demo2",
-//           columns: ["id", "data", "asdasda", "ggdfgdfgf"],
-//         },
-//         {
-//           table_name: "demo3",
-//           columns: ["id", "data", "asdasda", "ggdfgdfgf"],
-//         },
-//       ],
-//     },
-//   ],
-// };
-
-/*
-
-[
-  {
-    "table_name": "test",
-    "schema_name": "public",
-    "dbzTableValue": "public.test",
-    "columns": [{"column": "id", "selected": true, "dbzColumnValue": "public.test.id"}, {"column": "data", "selected": true, "dbzColumnValue": "public.test.data"}],
-    "selected": true
-  }
-]
-*/
-
 const SelectDataForm = ({
   rawTablesAndColumnsData,
   formStateObj,

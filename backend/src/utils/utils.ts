@@ -86,6 +86,7 @@ export const setupConnectorPayload = (source: FinalSourceRequestBody) => {
       .map((objToExclue) => objToExclue.dbzTableValue);
 
     const tablesToInclude = source.formData.filter((obj) => obj.selected === true);
+
     const columnsToExclude: string[] = [];
 
     tablesToInclude.forEach((obj) => {
@@ -99,8 +100,10 @@ export const setupConnectorPayload = (source: FinalSourceRequestBody) => {
       });
     });
 
+    const settablesToExclude = [...new Set(tablesToExclude)];
+
     if (tablesToExclude.length > 0) {
-      connectorObj.config['table.exclude.list'] = tablesToExclude.join(',');
+      connectorObj.config['table.exclude.list'] = settablesToExclude.join(',');
     }
 
     if (columnsToExclude.length > 0) {
