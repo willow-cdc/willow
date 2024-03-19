@@ -36,13 +36,13 @@ export default class Database {
 
   public async sourceExists(connectionName: string): Promise<boolean> {
     const CHECK_CONNECTION_NAME = 'SELECT NULL FROM sources WHERE name = $1';
-    let result = await this.client.query(CHECK_CONNECTION_NAME, [connectionName]);
+    const result = await this.client.query(CHECK_CONNECTION_NAME, [connectionName]);
     return (result.rowCount as number) > 0;
   }
 
   public async sinkExists(connectionName: string): Promise<boolean> {
     const CHECK_CONNECTION_NAME = 'SELECT NULL FROM sinks WHERE name = $1';
-    let result = await this.client.query(CHECK_CONNECTION_NAME, [connectionName]);
+    const result = await this.client.query(CHECK_CONNECTION_NAME, [connectionName]);
     return (result.rowCount as number) > 0;
   }
 
@@ -72,32 +72,32 @@ export default class Database {
   public async retrieveSource(connectionName: string): Promise<SourceRow | undefined> {
     const GET_SOURCE_INFO = 'SELECT db, tables, host, port, dbUser FROM sources WHERE name = $1';
 
-    let result = await this.client.query(GET_SOURCE_INFO, [connectionName]);
-    let activity: SourceRow | undefined = result.rows[0];
+    const result = await this.client.query(GET_SOURCE_INFO, [connectionName]);
+    const activity = result.rows[0] as SourceRow | undefined;
     return activity;
   }
 
   public async deleteSource(connectionName: string): Promise<boolean> {
     const DELETE_SOURCE_INFO = 'DELETE FROM sources WHERE name = $1';
 
-    let result = await this.client.query(DELETE_SOURCE_INFO, [connectionName]);
-    let rowCount = result.rowCount as number;
+    const result = await this.client.query(DELETE_SOURCE_INFO, [connectionName]);
+    const rowCount = result.rowCount as number;
     return rowCount === 1;
   }
 
   public async retrieveSink(connectionName: string): Promise<SinkRow | undefined> {
     const GET_SINK_INFO = 'SELECT url, username, topics FROM sinks WHERE name = $1';
 
-    let result = await this.client.query(GET_SINK_INFO, [connectionName]);
-    let activity: SinkRow | undefined = result.rows[0];
+    const result = await this.client.query(GET_SINK_INFO, [connectionName]);
+    const activity = result.rows[0] as SinkRow | undefined;
     return activity;
   }
 
   public async deleteSink(connectionName: string): Promise<boolean> {
     const DELETE_SINK_INFO = 'DELETE FROM sinks WHERE name = $1';
 
-    let result = await this.client.query(DELETE_SINK_INFO, [connectionName]);
-    let rowCount = result.rowCount as number;
+    const result = await this.client.query(DELETE_SINK_INFO, [connectionName]);
+    const rowCount = result.rowCount as number;
     return rowCount === 1;
   }
 }
