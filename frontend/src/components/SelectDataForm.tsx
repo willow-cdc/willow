@@ -47,21 +47,26 @@ const mockData = {
 
 [
   {
-    table_name: 'test',
-    schema_name: 'public',
-    dbzTableValue: 'public.test',
-    columns: [{column: "id", selected: true, dbzColumnValue: "public.test.id"}, {column: "data", selected: true, dbzColumnValue: "public.test.data"}],
-    selected: true
-  },
+    "table_name": "test",
+    "schema_name": "public",
+    "dbzTableValue": "public.test",
+    "columns": [{"column": "id", "selected": true, "dbzColumnValue": "public.test.id"}, {"column": "data", "selected": true, "dbzColumnValue": "public.test.data"}],
+    "selected": true
+  }
 ]
 */
 
-type ColumnObj = { column: string; selected: boolean; dbzColumnValue: string };
+type SelectDataFormColumnObj = {
+  column: string;
+  selected: boolean;
+  dbzColumnValue: string;
+};
 
 interface SelectDataFormDataObj {
   table_name: string;
   schema_name: string;
-  columns: ColumnObj[];
+  dbzTableValue: string;
+  columns: SelectDataFormColumnObj[];
   selected: boolean;
 }
 
@@ -69,7 +74,9 @@ type SelectDataFormData = SelectDataFormDataObj[];
 
 const SelectDataForm = () => {
   const [formData, setFormData] = useState<SelectDataFormData>([]);
-  const [activeColumns, setActiveColumns] = useState<ColumnObj[]>([]);
+  const [activeColumns, setActiveColumns] = useState<SelectDataFormColumnObj[]>(
+    []
+  );
 
   const handleTableSwitchChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -105,7 +112,7 @@ const SelectDataForm = () => {
   ) => {
     const [schema, table, column] = value.split(".");
 
-    let newActiveArr!: ColumnObj[];
+    let newActiveArr!: SelectDataFormColumnObj[];
     setFormData((old) => {
       return old.map((obj) => {
         if (obj.schema_name !== schema || obj.table_name !== table) {
@@ -149,7 +156,7 @@ const SelectDataForm = () => {
               dbzColumnValue: `${mockData.data[i].schema_name}.${currentTable.table_name}.${column}`,
             };
           }),
-          selected: true,
+          selected: true, // should we default this to false?
         });
       }
     }

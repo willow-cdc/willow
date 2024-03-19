@@ -17,7 +17,7 @@ interface ColumnName {
 
 const retrieveSchema = async (client: Client, dbName: string) => {
   const schemaTextQuery =
-  "SELECT schema_name FROM information_schema.schemata WHERE schema_name NOT LIKE 'pg%' AND schema_name NOT LIKE 'information_schema' AND catalog_name LIKE $1";
+    "SELECT schema_name FROM information_schema.schemata WHERE schema_name NOT LIKE 'pg%' AND schema_name NOT LIKE 'information_schema' AND catalog_name LIKE $1";
   const schemaQueryValue = [dbName];
   const schemaQueryResult = await client.query(schemaTextQuery, schemaQueryValue);
 
@@ -26,7 +26,7 @@ const retrieveSchema = async (client: Client, dbName: string) => {
 
 const retrieveTables = async (client: Client, schema: Schema) => {
   const tableTextQuery =
-  "SELECT table_name FROM information_schema.tables WHERE table_schema=$1 AND table_type='BASE TABLE'";
+    "SELECT table_name FROM information_schema.tables WHERE table_schema=$1 AND table_type='BASE TABLE'";
   const tableQueryValue = [schema.schema_name];
   const tableQueryResult = await client.query(tableTextQuery, tableQueryValue);
   return tableQueryResult.rows as Table[];
@@ -34,7 +34,7 @@ const retrieveTables = async (client: Client, schema: Schema) => {
 
 const retrieveColumns = async (client: Client, schemaName: string, table: Table) => {
   const columnTextQuery =
-  'select column_name from information_schema.columns where table_name = $1 and table_schema = $2';
+    'select column_name from information_schema.columns where table_name = $1 and table_schema = $2';
   const columnQueryValue = [table.table_name, schemaName];
   const columnQueryResult = await client.query(columnTextQuery, columnQueryValue);
 
@@ -76,7 +76,7 @@ export const setupConnectorPayload = (source: SourceRequestBody) => {
       'database.dbname': source.dbName,
       'topic.prefix': source.connectionName,
       'skipped.operations': 'none',
-      "decimal.handling.mode": "double"
+      'decimal.handling.mode': 'double',
     },
   };
 

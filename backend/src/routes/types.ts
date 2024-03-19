@@ -9,7 +9,26 @@ export interface SourceRequestBody {
   port: string;
   dbName: string;
   connectionName: string;
-  tables?: string[];
+}
+
+type SelectDataFormColumnObj = {
+  column: string;
+  selected: boolean;
+  dbzColumnValue: string;
+};
+
+interface SelectDataFormDataObj {
+  table_name: string;
+  schema_name: string;
+  dbzTableValue: string;
+  columns: SelectDataFormColumnObj[];
+  selected: boolean;
+}
+
+type SelectDataFormData = SelectDataFormDataObj[];
+
+export interface FinalSourceRequestBody extends SourceRequestBody {
+  formData: SelectDataFormData;
 }
 
 export interface SinkRequestBody {
