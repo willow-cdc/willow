@@ -42,6 +42,7 @@ router.post('/connect', async (req: TypedRequest<FinalSourceRequestBody>, res, n
     .map((includedTable) => includedTable.table_name);
 
   const tables = mappedTables.join(',');
+  console.log(kafkaConnectPayload);
 
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
