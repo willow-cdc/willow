@@ -1,6 +1,7 @@
 import { Client } from 'pg';
 
 interface SourceRow {
+  name?: string;
   db: string;
   tables: string;
   host: string;
@@ -9,6 +10,7 @@ interface SourceRow {
 }
 
 interface SinkRow {
+  name?: string;
   url: string;
   usename: string;
   topics: string;
@@ -25,13 +27,15 @@ interface ConnectionDatabase {
     tables: string | undefined,
     host: string,
     port: number,
-    dbUser: string,
+    dbUser: string
   ) => Promise<number>;
   insertSink: (name: string, url: string, username: string, topics: string) => Promise<number>;
   retrieveSource: (connectionName: string) => Promise<SourceRow | undefined>;
   deleteSource: (connectionName: string) => Promise<boolean>;
   retrieveSink: (connectionName: string) => Promise<SinkRow | undefined>;
   deleteSink: (connectionName: string) => Promise<boolean>;
+  retrieveAllSources: () => Promise<SourceRow[] | unknown[]>;
+  retrieveAllSinks: () => Promise<SinkRow[] | unknown[]>;
 }
 
 export default class Database implements ConnectionDatabase {
@@ -97,12 +101,12 @@ export default class Database implements ConnectionDatabase {
     return activity;
   }
 
-  public async deleteSource(connectionName: string): Promise<boolean> {
-    const DELETE_SOURCE_INFO = 'DELETE FROM sources WHERE name = $1';
+  public async retrieveAllSources(): Promise<SourceRow[] | unknown[]> {
+    const GET_SOURCE_INFO = 'SELECT name, db, tables, host, port, dbUser FROM sources';
 
-    const result = await this.client.query(DELETE_SOURCE_INFO, [connectionName]);
-    const rowCount = result.rowCount as number;
-    return rowCount === 1;
+    const result = await this.client.query(GET_SOURCE_INFO);
+    const activity = result.rows as SourceRow[] | unknown[];
+    return activity;
   }
 
   public async retrieveSink(connectionName: string): Promise<SinkRow | undefined> {
@@ -111,6 +115,22 @@ export default class Database implements ConnectionDatabase {
     const result = await this.client.query(GET_SINK_INFO, [connectionName]);
     const activity = result.rows[0] as SinkRow | undefined;
     return activity;
+  }
+
+  public async retrieveAllSinks(): Promise<SinkRow[] | unknown[]> {
+    const GET_SINK_INFO = 'SELECT name, url, username, topics FROM sinks';
+
+    const result = await this.client.query(GET_SINK_INFO);
+    const activity = result.rows as SinkRow[] | unknown[];
+    return activity;
+  }
+
+  public async deleteSource(connectionName: string): Promise<boolean> {
+    const DELETE_SOURCE_INFO = 'DELETE FROM sources WHERE name = $1';
+
+    const result = await this.client.query(DELETE_SOURCE_INFO, [connectionName]);
+    const rowCount = result.rowCount as number;
+    return rowCount === 1;
   }
 
   public async deleteSink(connectionName: string): Promise<boolean> {
