@@ -10,5 +10,6 @@
     "debezium",
     "docker",
     "dataPersistence"
+    "connections"
   ]
 }
