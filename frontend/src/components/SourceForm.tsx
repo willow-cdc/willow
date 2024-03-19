@@ -8,25 +8,39 @@ import {
   Box,
   // FormHelperText,
 } from "@mui/material";
-import React, { useState } from "react";
-import { formState } from "../types/types";
+import React from "react";
+import {
+  SourceFormConnectionDetails,
+  rawTablesAndColumnsData,
+} from "../types/types";
 import { postSourceVerify } from "../services/source";
 
-const SourceForm = () => {
-  const [formStateObj, setFormStateObj] = useState<formState>({
-    host: "",
-    port: "",
-    dbName: "",
-    user: "",
-    password: "",
-  });
-
+const SourceForm = ({
+  formStateObj,
+  setFormStateObj,
+  isValidSourceConnection,
+  setIsValidSourceConnection,
+  setrawTablesAndColumnsData,
+}: {
+  formStateObj: SourceFormConnectionDetails;
+  setFormStateObj: React.Dispatch<
+    React.SetStateAction<SourceFormConnectionDetails>
+  >;
+  isValidSourceConnection: boolean;
+  setIsValidSourceConnection: React.Dispatch<React.SetStateAction<boolean>>;
+  setrawTablesAndColumnsData: React.Dispatch<
+    React.SetStateAction<rawTablesAndColumnsData>
+  >;
+}) => {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
       const data = await postSourceVerify(formStateObj);
-      console.log(data);
+      setIsValidSourceConnection(true);
+      setrawTablesAndColumnsData(data);
     } catch (error) {
+      setIsValidSourceConnection(false);
+      setrawTablesAndColumnsData([]);
       console.log(error);
     }
   }
@@ -138,7 +152,12 @@ const SourceForm = () => {
             </Grid>
           </Grid>
           <Box marginTop={3} display="flex" justifyContent="center">
-            <Button color="willowGreen" type="submit" variant="contained">
+            <Button
+              disabled={isValidSourceConnection}
+              color="willowGreen"
+              type="submit"
+              variant="contained"
+            >
               Connect
             </Button>
           </Box>

@@ -1,5 +1,5 @@
 import { Client } from 'pg';
-import { SourceRequestBody } from '../routes/types';
+import { FinalSourceRequestBody } from '../routes/types';
 
 interface Table {
   table_name: string;
@@ -17,7 +17,7 @@ interface ColumnName {
 
 const retrieveSchema = async (client: Client, dbName: string) => {
   const schemaTextQuery =
-  "SELECT schema_name FROM information_schema.schemata WHERE schema_name NOT LIKE 'pg%' AND schema_name NOT LIKE 'information_schema' AND catalog_name LIKE $1";
+    "SELECT schema_name FROM information_schema.schemata WHERE schema_name NOT LIKE 'pg%' AND schema_name NOT LIKE 'information_schema' AND catalog_name LIKE $1";
   const schemaQueryValue = [dbName];
   const schemaQueryResult = await client.query(schemaTextQuery, schemaQueryValue);
 
@@ -26,7 +26,7 @@ const retrieveSchema = async (client: Client, dbName: string) => {
 
 const retrieveTables = async (client: Client, schema: Schema) => {
   const tableTextQuery =
-  "SELECT table_name FROM information_schema.tables WHERE table_schema=$1 AND table_type='BASE TABLE'";
+    "SELECT table_name FROM information_schema.tables WHERE table_schema=$1 AND table_type='BASE TABLE'";
   const tableQueryValue = [schema.schema_name];
   const tableQueryResult = await client.query(tableTextQuery, tableQueryValue);
   return tableQueryResult.rows as Table[];
@@ -34,7 +34,7 @@ const retrieveTables = async (client: Client, schema: Schema) => {
 
 const retrieveColumns = async (client: Client, schemaName: string, table: Table) => {
   const columnTextQuery =
-  'select column_name from information_schema.columns where table_name = $1 and table_schema = $2';
+    'select column_name from information_schema.columns where table_name = $1 and table_schema = $2';
   const columnQueryValue = [table.table_name, schemaName];
   const columnQueryResult = await client.query(columnTextQuery, columnQueryValue);
 
@@ -62,7 +62,7 @@ export const extractDbInfo = async (client: Client, dbName: string) => {
   return schemaArr;
 };
 
-export const setupConnectorPayload = (source: SourceRequestBody) => {
+export const setupConnectorPayload = (source: FinalSourceRequestBody) => {
   const connectorObj = {
     name: source.connectionName,
     config: {
@@ -76,12 +76,39 @@ export const setupConnectorPayload = (source: SourceRequestBody) => {
       'database.dbname': source.dbName,
       'topic.prefix': source.connectionName,
       'skipped.operations': 'none',
-      "decimal.handling.mode": "double"
+      'decimal.handling.mode': 'double',
     },
   };
 
-  if (source.tables) {
-    connectorObj.config['table.include.list'] = source.tables.join(',');
+  if (source.formData.length > 0) {
+    const tablesToExclude = source.formData
+      .filter((obj) => obj.selected === false)
+      .map((objToExclue) => objToExclue.dbzTableValue);
+
+    const tablesToInclude = source.formData.filter((obj) => obj.selected === true);
+
+    const columnsToExclude: string[] = [];
+
+    tablesToInclude.forEach((obj) => {
+      obj.columns.forEach((colObj) => {
+        if (obj.columns.every((colObj) => colObj.selected === false)) {
+          //if all the columns are excluded, exclude the table wholly
+          tablesToExclude.push(obj.dbzTableValue);
+        } else if (colObj.selected === false) {
+          columnsToExclude.push(colObj.dbzColumnValue);
+        }
+      });
+    });
+
+    const settablesToExclude = [...new Set(tablesToExclude)];
+
+    if (tablesToExclude.length > 0) {
+      connectorObj.config['table.exclude.list'] = settablesToExclude.join(',');
+    }
+
+    if (columnsToExclude.length > 0) {
+      connectorObj.config['column.exclude.list'] = columnsToExclude.join(',');
+    }
   }
 
   return connectorObj;

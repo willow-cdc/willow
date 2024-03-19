@@ -1,6 +1,6 @@
 // routes for managing/checking/setting up source database connections
 import express from 'express';
-import { TypedRequest, SourceRequestBody } from './types';
+import { TypedRequest, SourceRequestBody, FinalSourceRequestBody } from './types';
 import { HttpError, extractDbInfo, setupConnectorPayload } from '../utils/utils';
 import { Client } from 'pg';
 import Database from '../lib/dataPersistence';
@@ -32,12 +32,16 @@ router.post('/verify', async (req: TypedRequest<SourceRequestBody>, res, next) =
   }
 });
 
-router.post('/connect', async (req: TypedRequest<SourceRequestBody>, res, next) => {
+router.post('/connect', async (req: TypedRequest<FinalSourceRequestBody>, res, next) => {
   const source = req.body;
   const kafkaConnectPayload = setupConnectorPayload(source);
   const database = new Database('postgres://postgres:postgres@db:5432');
 
-  const tables = source.tables ? source.tables.join(',') : undefined;
+  const mappedTables = source.formData
+    .filter((obj) => obj.selected === false)
+    .map((includedTable) => includedTable.table_name);
+
+  const tables = mappedTables.join(',');
 
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

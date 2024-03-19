@@ -9,67 +9,28 @@ import {
   ListItemButton,
   ListItemText,
   ListSubheader,
+  Button,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import {
+  SelectDataFormColumnObj,
+  SelectDataFormData,
+  SourceFormConnectionDetails,
+  rawTablesAndColumnsData,
+} from "../types/types";
+import { postSourceKafkaConnect } from "../services/source";
 
-const mockData = {
-  data: [
-    {
-      schema_name: "public",
-      tables: [
-        {
-          table_name: "demo",
-          columns: ["id", "data"],
-        },
-        {
-          table_name: "demo2",
-          columns: ["id", "data", "asdasda", "ggdfgdfgf"],
-        },
-      ],
-    },
-    {
-      schema_name: "public2",
-      tables: [
-        {
-          table_name: "demo2",
-          columns: ["id", "data", "asdasda", "ggdfgdfgf"],
-        },
-        {
-          table_name: "demo3",
-          columns: ["id", "data", "asdasda", "ggdfgdfgf"],
-        },
-      ],
-    },
-  ],
-};
-
-/*
-
-[
-  {
-    table_name: 'test',
-    schema_name: 'public',
-    dbzTableValue: 'public.test',
-    columns: [{column: "id", selected: true, dbzColumnValue: "public.test.id"}, {column: "data", selected: true, dbzColumnValue: "public.test.data"}],
-    selected: true
-  },
-]
-*/
-
-type ColumnObj = { column: string; selected: boolean; dbzColumnValue: string };
-
-interface SelectDataFormDataObj {
-  table_name: string;
-  schema_name: string;
-  columns: ColumnObj[];
-  selected: boolean;
-}
-
-type SelectDataFormData = SelectDataFormDataObj[];
-
-const SelectDataForm = () => {
+const SelectDataForm = ({
+  rawTablesAndColumnsData,
+  formStateObj,
+}: {
+  rawTablesAndColumnsData: rawTablesAndColumnsData;
+  formStateObj: SourceFormConnectionDetails;
+}) => {
   const [formData, setFormData] = useState<SelectDataFormData>([]);
-  const [activeColumns, setActiveColumns] = useState<ColumnObj[]>([]);
+  const [activeColumns, setActiveColumns] = useState<SelectDataFormColumnObj[]>(
+    []
+  );
 
   const handleTableSwitchChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -105,7 +66,7 @@ const SelectDataForm = () => {
   ) => {
     const [schema, table, column] = value.split(".");
 
-    let newActiveArr!: ColumnObj[];
+    let newActiveArr!: SelectDataFormColumnObj[];
     setFormData((old) => {
       return old.map((obj) => {
         if (obj.schema_name !== schema || obj.table_name !== table) {
@@ -131,30 +92,40 @@ const SelectDataForm = () => {
     setActiveColumns(newActiveArr);
   };
 
+  const handleKafkaConnectSubmit = async () => {
+    const submissionObj = { ...formStateObj, formData };
+    try {
+      console.log(submissionObj);
+      await postSourceKafkaConnect(submissionObj);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     const result = [];
 
-    for (let i = 0; i < mockData.data.length; i++) {
-      const currentSchemaTables = mockData.data[i].tables;
+    for (let i = 0; i < rawTablesAndColumnsData.length; i++) {
+      const currentSchemaTables = rawTablesAndColumnsData[i].tables;
       for (let j = 0; j < currentSchemaTables.length; j++) {
         const currentTable = currentSchemaTables[j];
         result.push({
           table_name: currentTable.table_name,
-          schema_name: mockData.data[i].schema_name,
-          dbzTableValue: `${mockData.data[i].schema_name}.${currentTable.table_name}`,
+          schema_name: rawTablesAndColumnsData[i].schema_name,
+          dbzTableValue: `${rawTablesAndColumnsData[i].schema_name}.${currentTable.table_name}`,
           columns: currentTable.columns.map((column) => {
             return {
               column,
               selected: true,
-              dbzColumnValue: `${mockData.data[i].schema_name}.${currentTable.table_name}.${column}`,
+              dbzColumnValue: `${rawTablesAndColumnsData[i].schema_name}.${currentTable.table_name}.${column}`,
             };
           }),
-          selected: true,
+          selected: true, // should we default this to false?
         });
       }
     }
     setFormData(result);
-  }, []);
+  }, [rawTablesAndColumnsData]);
   return (
     <>
       <Container maxWidth="md">
@@ -265,6 +236,16 @@ const SelectDataForm = () => {
             </Box>
           </Grid>
         </Grid>
+        <Box marginTop={3} display="flex" justifyContent="center">
+          <Button
+            onClick={handleKafkaConnectSubmit}
+            color="willowGreen"
+            type="submit"
+            variant="contained"
+          >
+            Submit
+          </Button>
+        </Box>
       </Container>
     </>
   );
