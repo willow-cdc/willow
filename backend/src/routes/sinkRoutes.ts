@@ -5,12 +5,14 @@ import KafkaConsumer from '../lib/consumer';
 import { TypedRequest, SinkRequestBody } from './types';
 import Database from '../lib/dataPersistence';
 import { sinks } from '../data/sinks';
+import { validateSinkBody, validateSinkConnectionDetails } from '../utils/validation';
 const router = express.Router();
 
 // check sink cache is accessible
 router.post('/check', async (req: TypedRequest<SinkRequestBody>, res, next) => {
   const { url, username, password } = req.body;
   try {
+    validateSinkConnectionDetails(url, username, password);
     await Redis.checkConnection(url, password, username);
     res.status(200).send({ message: 'Connection successful.' });
   } catch (err) {
@@ -26,6 +28,7 @@ router.post('/create', async (req: TypedRequest<SinkRequestBody>, res, next) => 
 
   const database = new Database('postgres://postgres:postgres@db:5432');
   try {
+    validateSinkBody(req.body);
     await redis.connect();
     await consumer.startConsumer(topics);
 

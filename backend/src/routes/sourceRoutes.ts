@@ -5,6 +5,7 @@ import { HttpError, extractDbInfo, setupConnectorPayload } from '../utils/utils'
 import { Client } from 'pg';
 import Database from '../lib/dataPersistence';
 import axios from 'axios';
+import { validateSourceBody } from '../utils/validation';
 
 const router = express.Router();
 
@@ -19,6 +20,7 @@ router.post('/verify', async (req: TypedRequest<SourceRequestBody>, res, next) =
   });
 
   try {
+    validateSourceBody(source);
     await client.connect();
     const data = await extractDbInfo(client, source.dbName);
     await client.end();
@@ -43,6 +45,7 @@ router.post('/connect', async (req: TypedRequest<FinalSourceRequestBody>, res, n
   const tables = mappedTables.join(',');
 
   try {
+    validateSourceBody(source);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { data } = await axios.post('http://connect:8083/connectors/', kafkaConnectPayload);
     console.log(data);
