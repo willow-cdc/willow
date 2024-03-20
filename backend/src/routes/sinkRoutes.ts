@@ -6,6 +6,7 @@ import { TypedRequest, SinkRequestBody } from './types';
 import Database from '../lib/dataPersistence';
 import { sinks } from '../data/sinks';
 import { validateSinkBody, validateSinkConnectionDetails } from '../utils/validation';
+import { parseSourceName } from '../utils/utils';
 const router = express.Router();
 
 // check sink cache is accessible
@@ -34,6 +35,8 @@ router.post('/create', async (req: TypedRequest<SinkRequestBody>, res, next) => 
 
     await database.connect();
     const result = await database.insertSink(connectionName, url, username, JSON.stringify(topics));
+    const sourceName = parseSourceName(topics);
+    await database.insertPipeline(sourceName, connectionName);
     await database.end();
 
     console.log('sink result', result);
