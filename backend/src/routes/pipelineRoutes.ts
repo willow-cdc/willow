@@ -15,7 +15,7 @@ router.get('/', async (_req, res, next) => {
 
     await database.end();
     const data = formatPipelineRows(result);
-    res.json(data);
+    res.json({data});
   } catch (err) {
     next(err);
   }
