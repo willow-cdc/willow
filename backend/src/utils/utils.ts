@@ -4,6 +4,7 @@ import { FinalSourceRequestBody, FormTableObj } from '../routes/types';
 interface Table {
   table_name: string;
   columns: string[];
+  primaryKeys?: string[];
 }
 
 interface Schema {
@@ -15,12 +16,18 @@ interface QueryRow {
   schema: string;
   table: string;
   column: string;
+  isPrimaryKey?: boolean;
+}
+
+interface PrimaryKeyQueryRow {
+  schema: string;
+  table: string;
+  primary_key: string;
 }
 
 interface DebeziumConfig {
   [property: string]: string;
 }
-
 
 const formatResult = (rows: QueryRow[]) => {
   const formattedResult: Schema[] = [];
@@ -38,27 +45,72 @@ const formatResult = (rows: QueryRow[]) => {
 
     let table = schema.tables.find(t => t.table_name === row.table);
     if (!table) {
-      table = {table_name: row.table, columns: []};
+      table = {table_name: row.table, columns: [], primaryKeys: []};
       schema.tables.push(table);
     }
 
     table.columns.push(row.column);
+    // if the column is a primary key, then add it to the primary key array on the table
+    if (row.isPrimaryKey && table.primaryKeys) {
+      table.primaryKeys.push(row.column);
+    }
   });
 
   return formattedResult;
 };
 
-export const extractDbInfo = async (client: Client) => {
+const retrieveSchemaTablesColumns = async (client: Client) => {
   const text = `
-    SELECT table_schema AS schema, table_name AS table, column_name AS column
-    FROM information_schema.columns
-    WHERE table_schema != 'information_schema' AND table_schema != 'pg_catalog';`;
+  SELECT table_schema AS schema, table_name AS table, column_name AS column
+  FROM information_schema.columns
+  WHERE table_schema != 'information_schema' AND table_schema != 'pg_catalog';`;
+
+  const result = await client.query(text);
+
+  const rows = result.rows as QueryRow[];
+
+  return rows;
+};
+
+const retrievePrimaryKeys = async (client: Client) => {
+  const text = `
+    SELECT tc.table_schema AS schema, tc.table_name AS table, kc.column_name AS primary_key
+    FROM information_schema.table_constraints tc
+      JOIN information_schema.key_column_usage kc
+        ON kc.table_name = tc.table_name AND kc.table_schema = tc.table_schema AND kc.constraint_name = tc.constraint_name
+    WHERE tc.constraint_type = 'PRIMARY KEY'
+      AND kc.ordinal_position IS NOT NULL
+      AND tc.table_schema != 'pg_catalog'
+    ORDER BY tc.table_schema,
+            tc.table_name,
+            kc.position_in_unique_constraint;`;
 
     const result = await client.query(text);
 
-    const rows = result.rows as QueryRow[];
+    const rows = result.rows as PrimaryKeyQueryRow[];
 
-    return formatResult(rows);
+    return rows;
+};
+
+const addPrimaryKeyInfo = (schemaTableColumnRows: QueryRow[], primaryKeyRows: PrimaryKeyQueryRow[]) => {
+  schemaTableColumnRows.forEach(row => {
+    const isPrimaryKey = !!primaryKeyRows.find(pkRow => {
+      return row.schema === pkRow.schema 
+              && row.table === pkRow.table 
+              && row.column === pkRow.primary_key;
+    });
+
+    row.isPrimaryKey = isPrimaryKey;
+  });
+};
+
+export const extractDbInfo = async (client: Client) => {
+  const schemaTableColumnRows = await retrieveSchemaTablesColumns(client);
+  const primaryKeyRows = await retrievePrimaryKeys(client);
+
+  addPrimaryKeyInfo(schemaTableColumnRows, primaryKeyRows);
+
+  return formatResult(schemaTableColumnRows);
 };
 
 const hasAllUnselectedColumns = (table: FormTableObj) => {
