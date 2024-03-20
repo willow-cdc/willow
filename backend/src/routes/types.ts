@@ -11,24 +11,24 @@ export interface SourceRequestBody {
   connectionName: string;
 }
 
-type SelectDataFormColumnObj = {
+type FormColumnObj = {
   column: string;
   selected: boolean;
   dbzColumnValue: string;
 };
 
-export interface SelectDataFormDataObj {
+export interface FormTableObj {
   table_name: string;
   schema_name: string;
   dbzTableValue: string;
-  columns: SelectDataFormColumnObj[];
+  columns: FormColumnObj[];
   selected: boolean;
 }
 
-type SelectDataFormData = SelectDataFormDataObj[];
+type FormData = FormTableObj[];
 
 export interface FinalSourceRequestBody extends SourceRequestBody {
-  formData: SelectDataFormData;
+  formData: FormData;
 }
 
 export interface SinkRequestBody {

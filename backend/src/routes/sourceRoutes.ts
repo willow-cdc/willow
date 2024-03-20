@@ -22,7 +22,7 @@ router.post('/verify', async (req: TypedRequest<SourceRequestBody>, res, next) =
   try {
     validateSourceBody(source);
     await client.connect();
-    const data = await extractDbInfo(client, source.dbName);
+    const data = await extractDbInfo(client);
     await client.end();
     res.json({ data });
   } catch (error) {
