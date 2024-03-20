@@ -7,13 +7,13 @@ import {
   FormControl,
   Box,
   // FormHelperText,
-} from '@mui/material';
-import React from 'react';
+} from "@mui/material";
+import React from "react";
 import {
   SourceFormConnectionDetails,
   rawTablesAndColumnsData,
-} from '../types/types';
-import { postSourceVerify } from '../services/source';
+} from "../types/types";
+import { postSourceVerify } from "../services/source";
 
 const SourceForm = ({
   formStateObj,
@@ -47,7 +47,7 @@ const SourceForm = ({
 
   return (
     <>
-      <Container maxWidth="md">
+      <Container maxWidth="md" sx={{ marginBottom: 10 }}>
         <form onSubmit={handleSubmit}>
           <Typography variant="h4" gutterBottom>
             CONNECT TO SOURCE

@@ -1,12 +1,12 @@
-import Box from '@mui/material/Box';
-import Stepper from '@mui/material/Stepper';
-import Step from '@mui/material/Step';
-import StepLabel from '@mui/material/StepLabel';
-import SourceConnectionForm from './SourceConnectionForm';
-import RedisSinkForm from './RedisSinkForm';
-import { useState } from 'react';
+import Box from "@mui/material/Box";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import SourceConnectionForm from "./SourceConnectionForm";
+import RedisSinkForm from "./RedisSinkForm";
+import { useState } from "react";
 
-const steps = ['CONNECT TO SOURCE', 'CONNECT TO CACHE'];
+const steps = ["CONNECT TO SOURCE", "CONNECT TO CACHE"];
 
 export default function FormStepper() {
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -16,7 +16,7 @@ export default function FormStepper() {
     if (activeStep + 1 <= 2) {
       setActiveStep((prev) => prev + 1);
     } else {
-      console.log('steps complete');
+      console.log("steps complete");
     }
   };
 
@@ -27,13 +27,17 @@ export default function FormStepper() {
       case 1:
         return <RedisSinkForm />;
       default:
-        throw new Error('Unknown step');
+        throw new Error("Unknown step");
     }
   };
 
   return (
-    <Box sx={{ marginBottom: 10, width: '100%' }}>
-      <Stepper activeStep={activeStep} alternativeLabel>
+    <Box sx={{ marginBottom: 10, width: "100%" }}>
+      <Stepper
+        activeStep={activeStep}
+        alternativeLabel
+        sx={{ marginBottom: 10 }}
+      >
         {steps.map((label) => (
           <Step key={label}>
             <StepLabel>{label}</StepLabel>
