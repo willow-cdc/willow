@@ -11,55 +11,50 @@ interface Schema {
   tables: Table[];
 }
 
-interface ColumnName {
-  column_name: string;
+interface QueryRow {
+  schema: string;
+  table: string;
+  column: string;
 }
 
-const retrieveSchema = async (client: Client, dbName: string) => {
-  const schemaTextQuery =
-    "SELECT schema_name FROM information_schema.schemata WHERE schema_name NOT LIKE 'pg%' AND schema_name NOT LIKE 'information_schema' AND catalog_name LIKE $1";
-  const schemaQueryValue = [dbName];
-  const schemaQueryResult = await client.query(schemaTextQuery, schemaQueryValue);
 
-  return schemaQueryResult.rows as Schema[];
-};
+const formatResult = (rows: QueryRow[]) => {
+  const formattedResult: Schema[] = [];
 
-const retrieveTables = async (client: Client, schema: Schema) => {
-  const tableTextQuery =
-    "SELECT table_name FROM information_schema.tables WHERE table_schema=$1 AND table_type='BASE TABLE'";
-  const tableQueryValue = [schema.schema_name];
-  const tableQueryResult = await client.query(tableTextQuery, tableQueryValue);
-  return tableQueryResult.rows as Table[];
-};
+  // sort the order of the rows by the column name to make sure the column ordering is consistent
+  rows = rows.sort((obj1, obj2) => obj1.column.localeCompare(obj2.column));
 
-const retrieveColumns = async (client: Client, schemaName: string, table: Table) => {
-  const columnTextQuery =
-    'select column_name from information_schema.columns where table_name = $1 and table_schema = $2';
-  const columnQueryValue = [table.table_name, schemaName];
-  const columnQueryResult = await client.query(columnTextQuery, columnQueryValue);
-
-  const columnsArr = columnQueryResult.rows as ColumnName[];
-  const columns = columnsArr.map((columObj) => columObj.column_name);
-  return columns;
-};
-
-export const extractDbInfo = async (client: Client, dbName: string) => {
-  const schemaArr = await retrieveSchema(client, dbName);
-
-  for (let i = 0; i < schemaArr.length; i += 1) {
-    const currentSchema = schemaArr[i];
-
-    const tables = await retrieveTables(client, currentSchema);
-    currentSchema.tables = tables;
-
-    for (let j = 0; j < tables.length; j += 1) {
-      const currentTable = tables[j];
-
-      currentTable.columns = await retrieveColumns(client, currentSchema.schema_name, currentTable);
+  // build the formatted result object
+  rows.forEach(row => {
+    let schema = formattedResult.find(s => s.schema_name == row.schema);
+    if (!schema) {
+      schema = {schema_name: row.schema, tables: []};
+      formattedResult.push(schema);
     }
-  }
 
-  return schemaArr;
+    let table = schema.tables.find(t => t.table_name === row.table);
+    if (!table) {
+      table = {table_name: row.table, columns: []};
+      schema.tables.push(table);
+    }
+
+    table.columns.push(row.column);
+  });
+
+  return formattedResult;
+};
+
+export const extractDbInfo = async (client: Client) => {
+  const text = `
+    SELECT table_schema AS schema, table_name AS table, column_name AS column
+    FROM information_schema.columns
+    WHERE table_schema != 'information_schema' AND table_schema != 'pg_catalog';`;
+
+    const result = await client.query(text);
+
+    const rows = result.rows as QueryRow[];
+
+    return formatResult(rows);
 };
 
 export const setupConnectorPayload = (source: FinalSourceRequestBody) => {
