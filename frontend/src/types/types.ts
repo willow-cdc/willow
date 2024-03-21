@@ -21,6 +21,7 @@ export interface RedisSinkFormState extends RedisConnectionDetails {
 interface RawTableDataObj {
   table_name: string;
   columns: string[];
+  primaryKeys: string[];
 }
 
 interface RawTablesAndColumnsDataObj {
