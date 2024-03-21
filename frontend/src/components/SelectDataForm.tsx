@@ -119,6 +119,7 @@ const SelectDataForm = ({
       const currentSchemaTables = rawTablesAndColumnsData[i].tables;
       for (let j = 0; j < currentSchemaTables.length; j++) {
         const currentTable = currentSchemaTables[j];
+        if (currentTable.primaryKeys.length < 1) {continue}
         result.push({
           table_name: currentTable.table_name,
           schema_name: rawTablesAndColumnsData[i].schema_name,
