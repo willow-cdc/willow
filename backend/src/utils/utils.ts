@@ -169,8 +169,6 @@ export const setupConnectorPayload = (source: FinalSourceRequestBody) => {
       'topic.prefix': source.connectionName,
       'skipped.operations': 'none',
       'decimal.handling.mode': 'double',
-      'publication.name': 'willow_publication',
-      'slot.name': `willow_${source.connectionName}`,
     },
   };
 
