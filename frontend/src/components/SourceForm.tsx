@@ -6,10 +6,10 @@ import {
   Container,
   FormControl,
   Box,
-  // FormHelperText,
 } from "@mui/material";
 import React from "react";
 import {
+  AlertSeverity,
   SourceFormConnectionDetails,
   rawTablesAndColumnsData,
 } from "../types/types";
@@ -21,6 +21,7 @@ const SourceForm = ({
   isValidSourceConnection,
   setIsValidSourceConnection,
   setrawTablesAndColumnsData,
+  showAlertSnackbar,
 }: {
   formStateObj: SourceFormConnectionDetails;
   setFormStateObj: React.Dispatch<
@@ -31,6 +32,7 @@ const SourceForm = ({
   setrawTablesAndColumnsData: React.Dispatch<
     React.SetStateAction<rawTablesAndColumnsData>
   >;
+  showAlertSnackbar: (message: string, severity: AlertSeverity) => void;
 }) => {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -38,9 +40,11 @@ const SourceForm = ({
       const data = await postSourceVerify(formStateObj);
       setIsValidSourceConnection(true);
       setrawTablesAndColumnsData(data);
+      showAlertSnackbar("Connection to source database successful.", "success");
     } catch (error) {
       setIsValidSourceConnection(false);
       setrawTablesAndColumnsData([]);
+      showAlertSnackbar("An error occured. Please try again.", "error");
       console.log(error);
     }
   }
@@ -100,13 +104,11 @@ const SourceForm = ({
                   required
                   label="port"
                   fullWidth
-                  // margin="normal"
                   value={formStateObj.port}
                   onChange={(e) => {
                     setFormStateObj({ ...formStateObj, port: e.target.value });
                   }}
                 />
-                {/* <FormHelperText>Required</FormHelperText> */}
               </FormControl>
             </Grid>
             <Grid item xs={12}>

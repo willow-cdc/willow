@@ -2,11 +2,18 @@ import { useState } from "react";
 import {
   SourceFormConnectionDetails,
   rawTablesAndColumnsData,
+  AlertSeverity,
 } from "../types/types";
 import SourceForm from "./SourceForm";
 import SelectDataForm from "./SelectDataForm";
 
-const SourceConnectionForm = ({ handleNext }: { handleNext: () => void }) => {
+const SourceConnectionForm = ({
+  handleNext,
+  showAlertSnackbar,
+}: {
+  handleNext: () => void;
+  showAlertSnackbar: (message: string, severity: AlertSeverity) => void;
+}) => {
   const [formStateObj, setFormStateObj] = useState<SourceFormConnectionDetails>(
     {
       host: "",
@@ -35,15 +42,19 @@ const SourceConnectionForm = ({ handleNext }: { handleNext: () => void }) => {
           isValidSourceConnection={isValidSourceConnection}
           setIsValidSourceConnection={setIsValidSourceConnection}
           setrawTablesAndColumnsData={setrawTablesAndColumnsData}
+          showAlertSnackbar={showAlertSnackbar}
         />
       )}
 
       {isValidSourceConnection && (
-        <SelectDataForm
-          rawTablesAndColumnsData={rawTablesAndColumnsData}
-          formStateObj={formStateObj}
-          handleNext={handleNext}
-        />
+        <>
+          <SelectDataForm
+            rawTablesAndColumnsData={rawTablesAndColumnsData}
+            formStateObj={formStateObj}
+            handleNext={handleNext}
+            showAlertSnackbar={showAlertSnackbar}
+          />
+        </>
       )}
     </>
   );

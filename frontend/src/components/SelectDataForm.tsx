@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import {
+  AlertSeverity,
   SelectDataFormColumnObj,
   SelectDataFormData,
   SourceFormConnectionDetails,
@@ -26,10 +27,12 @@ const SelectDataForm = ({
   rawTablesAndColumnsData,
   formStateObj,
   handleNext,
+  showAlertSnackbar,
 }: {
   rawTablesAndColumnsData: rawTablesAndColumnsData;
   formStateObj: SourceFormConnectionDetails;
   handleNext: () => void;
+  showAlertSnackbar: (message: string, severity: AlertSeverity) => void;
 }) => {
   const [formData, setFormData] = useState<SelectDataFormData>([]);
   const [activeColumns, setActiveColumns] = useState<SelectDataFormColumnObj[]>(
@@ -105,9 +108,11 @@ const SelectDataForm = ({
     try {
       console.log(submissionObj);
       await postSourceKafkaConnect(submissionObj);
+      showAlertSnackbar("Data selection successful.", "success");
       handleNext();
       setTopics(topics);
     } catch (error) {
+      showAlertSnackbar("An error occured. Please try again.", "error");
       console.log(error);
     }
   };

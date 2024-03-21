@@ -4,7 +4,7 @@ export interface SourceFormConnectionDetails {
   dbName: string;
   user: string;
   password: string;
-  connectionName: string
+  connectionName: string;
 }
 
 export interface RedisConnectionDetails {
@@ -49,3 +49,5 @@ export type SelectDataFormData = SelectDataFormDataObj[];
 export interface KafkaConnectPayload extends SourceFormConnectionDetails {
   formData: SelectDataFormData;
 }
+
+export type AlertSeverity = "error" | "warning" | "info" | "success";
