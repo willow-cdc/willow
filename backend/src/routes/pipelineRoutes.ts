@@ -1,8 +1,7 @@
 // routes for retrieving existing pipelines
 import express from 'express';
 import Database, { Pipeline } from '../lib/dataPersistence';
-import { formatPipelineRows, PipelineResult} from '../utils/utils';
-
+import { formatPipelineRows, HttpError, PipelineResult} from '../utils/utils';
 
 const router = express.Router();
 
@@ -31,6 +30,9 @@ router.get('/:id', async (req, res, next) => {
 
     await database.end();
     const data = formatPipelineRows(result);
+    if (data.length < 1) {
+      throw new HttpError(404, `Pipeline with id ${id} not found.`)
+    }
     res.json({data: data[0]});
   } catch (err) {
     next(err);
