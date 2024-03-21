@@ -16,6 +16,19 @@ interface SinkRow {
   topics: string;
 }
 
+export interface Pipeline {
+  source_name: string;
+  source_database: string; 
+  source_host: string;
+  source_port: string;
+  source_user: string;
+  sink_name: string;
+  sink_url: string;
+  sink_user: string
+  sink_topics: string;
+  pipeline_id: string;
+}
+
 interface ConnectionDatabase {
   connect: () => Promise<void>;
   end: () => Promise<void>;
@@ -36,6 +49,8 @@ interface ConnectionDatabase {
   deleteSink: (connectionName: string) => Promise<boolean>;
   retrieveAllSources: () => Promise<SourceRow[] | unknown[]>;
   retrieveAllSinks: () => Promise<SinkRow[] | unknown[]>;
+  insertPipeline: (sourceName: string, sinkName: string) => Promise<boolean>;
+  retrieveAllPipelines: () => Promise<Pipeline[] | unknown[]>;
 }
 
 export default class Database implements ConnectionDatabase {
@@ -79,7 +94,10 @@ export default class Database implements ConnectionDatabase {
     dbUser: string
   ): Promise<number> {
     const query = 'INSERT INTO sources (name, db, tables, host, port, dbUser) VALUES ($1, $2, $3, $4, $5, $6)';
-    const values = [name, db, tables, host, port, dbUser];
+    if (!tables) {
+      tables = '';
+    }
+    const values = [name, db, tables, host, String(port), dbUser];
 
     const result = await this.client.query(query, values);
     return result.rowCount as number;
@@ -139,5 +157,32 @@ export default class Database implements ConnectionDatabase {
     const result = await this.client.query(DELETE_SINK_INFO, [connectionName]);
     const rowCount = result.rowCount as number;
     return rowCount === 1;
+  }
+
+  // Insert into join table
+  public async insertPipeline(sourceName: string, sinkName: string): Promise<boolean> {
+    const INSERT_PIPELINE_INFO = 'INSERT INTO sourceSink (source_name, sink_name) VALUES ($1, $2)';
+
+    const result = await this.client.query(INSERT_PIPELINE_INFO, [sourceName, sinkName]);
+    const rowCount = result.rowCount as number;
+    return rowCount === 1;
+  }
+
+  // Get all the pipelines
+  public async retrieveAllPipelines(): Promise<Pipeline[] | unknown[]> {
+    const GET_ALL_PIPELINE_INFO =
+      `SELECT 
+        sources.name AS source_name, sources.db AS source_database, sources.host AS source_host, sources.port AS source_port, 
+        sources.dbUser AS source_user, sinks.name AS sink_name, sinks.url AS sink_url, sinks.username AS sink_user, 
+        sinks.topics AS sink_topics, ss.id AS pipeline_id FROM sources 
+      INNER JOIN sourceSink AS ss 
+        ON sources.name = ss.source_name 
+      INNER JOIN sinks 
+        ON ss.sink_name = sinks.name`;
+
+    const result = await this.client.query(GET_ALL_PIPELINE_INFO);
+    const activity = result.rows as Pipeline[] | unknown[];
+    return activity;
+    
   }
 }

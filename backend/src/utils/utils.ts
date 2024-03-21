@@ -1,5 +1,6 @@
 import { Client } from 'pg';
 import { FinalSourceRequestBody, FormTableObj } from '../routes/types';
+import { Pipeline } from '../lib/dataPersistence';
 import shortUuid from 'short-uuid';
 
 interface Table {
@@ -28,6 +29,10 @@ interface PrimaryKeyQueryRow {
 
 interface DebeziumConfig {
   [property: string]: string;
+}
+
+export interface PipelineResult extends Pipeline {
+  tables: string[];
 }
 
 const formatResult = (rows: QueryRow[]) => {
@@ -184,6 +189,29 @@ export const setupConnectorPayload = (source: FinalSourceRequestBody) => {
 
   return connectorObj;
 };
+
+export const parseSourceName = (topics: string[]) => {
+  const topic = topics[0];
+
+  const delimitedTopic = topic.split('.');
+
+  // need to drop the last two elements (the schema name and table name)
+  const delimitedSourceName = delimitedTopic.slice(0, delimitedTopic.length - 2);
+
+  return delimitedSourceName.join('.');
+};
+
+export const formatPipelineRows = (result: PipelineResult[]) => {
+  return result.map(row => {
+    const topics = JSON.parse(row.sink_topics as string);
+    const tables = topics.map(t => t.split('.').at(-1));
+    const newRow: Partial<PipelineResult> = {...row, tables}
+
+    delete newRow.sink_topics;
+
+    return newRow;
+  })
+}
 
 export class HttpError extends Error {
   public status: number;

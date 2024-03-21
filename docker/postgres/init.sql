@@ -17,3 +17,10 @@ CREATE TABLE sinks (
     username varchar NOT NULL,
     topics varchar NOT NULL
 );
+
+CREATE TABLE sourceSink (
+    id serial PRIMARY KEY,
+    source_name varchar NOT NULL REFERENCES sources (name),
+    sink_name varchar NOT NULL REFERENCES sinks (name)
+);
+

@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import sinkRoutes from './routes/sinkRoutes';
 import sourceRoutes from './routes/sourceRoutes';
+import pipelineRoutes from './routes/pipelineRoutes';
 import { unknownEndpointHandler } from './middlewares/unknownEndpointHandler';
 import { errorHandler } from './middlewares/errorHandler';
 import cors from 'cors';
@@ -17,6 +18,7 @@ app.get('/', (req, res) => {
 
 app.use('/consumer', sinkRoutes);
 app.use('/source', sourceRoutes);
+app.use('/pipelines', pipelineRoutes);
 
 app.get('/pingPostgresContainer', async (_req, res) => {
   const client = new Client({
