@@ -1,9 +1,22 @@
 import { Button, TextField, Typography, Grid } from "@mui/material";
 import { useState } from "react";
 import { postSinkCreate } from "../services/sink";
+import { AlertSeverity } from "../types/types";
 
-const RedisSinkConnectionForm = ({topics, url, username, password} : {topics: string[], url: string, username: string, password: string}) => {
-  const [connectionName, setConnectionName] = useState<string>('');
+const RedisSinkConnectionForm = ({
+  topics,
+  url,
+  username,
+  password,
+  showAlertSnackbar,
+}: {
+  topics: string[];
+  url: string;
+  username: string;
+  password: string;
+  showAlertSnackbar: (message: string, severity: AlertSeverity) => void;
+}) => {
+  const [connectionName, setConnectionName] = useState<string>("");
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -13,11 +26,13 @@ const RedisSinkConnectionForm = ({topics, url, username, password} : {topics: st
         username,
         password,
         topics,
-        connectionName
-      }
+        connectionName,
+      };
       const data = await postSinkCreate(connectionDetails);
       console.log(data);
+      showAlertSnackbar("Connection to sink created.", "success");
     } catch (error) {
+      showAlertSnackbar("An error occured. Please try again.", "error");
       console.log(error);
     }
   }
@@ -48,8 +63,8 @@ const RedisSinkConnectionForm = ({topics, url, username, password} : {topics: st
           Create Connection
         </Button>
       </form>
-  </>
-  )
-}
+    </>
+  );
+};
 
 export default RedisSinkConnectionForm;

@@ -21,6 +21,7 @@ export interface RedisSinkFormState extends RedisConnectionDetails {
 interface RawTableDataObj {
   table_name: string;
   columns: string[];
+  primaryKeys: string[];
 }
 
 interface RawTablesAndColumnsDataObj {
@@ -42,6 +43,7 @@ interface SelectDataFormDataObj {
   dbzTableValue: string;
   columns: SelectDataFormColumnObj[];
   selected: boolean;
+  visible: boolean;
 }
 
 export type SelectDataFormData = SelectDataFormDataObj[];
@@ -64,3 +66,4 @@ interface PipeLineObj {
 }
 
 export type PipeLineArr = PipeLineObj[];
+export type AlertSeverity = "error" | "warning" | "info" | "success";

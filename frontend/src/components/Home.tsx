@@ -1,5 +1,5 @@
 import { Button, Grid, Typography } from "@mui/material";
-import OriginalLogo from "../assets/Original Logo Symbol.png";
+import TransparentLogo from "../assets/Transparent Logo No Name.png";
 import { Link } from "react-router-dom";
 
 const Home = () => {
@@ -7,7 +7,7 @@ const Home = () => {
     <Grid container alignItems={"center"} spacing={15}>
       <Grid item xs={6} style={{ marginLeft: "5%" }}>
         <img
-          src={OriginalLogo}
+          src={TransparentLogo}
           className="homeLogo"
           alt="Willow logo"
           style={{ maxWidth: "100%", width: "100%", height: "100%" }}

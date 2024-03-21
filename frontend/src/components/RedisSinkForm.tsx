@@ -1,16 +1,20 @@
-import { Container } from '@mui/material';
-import { useState } from 'react';
-import { RedisConnectionDetails } from '../types/types';
-import RedisSinkConnectionForm from './RedisSinkConnectionForm';
-import RedisSinkVerifyConnectionForm from './RedisSinkVerifyConnectionForm';
-import { useContext } from 'react';
-import TopicsContext from '../context/TopicsContext';
+import { Container } from "@mui/material";
+import { useState } from "react";
+import { AlertSeverity, RedisConnectionDetails } from "../types/types";
+import RedisSinkConnectionForm from "./RedisSinkConnectionForm";
+import RedisSinkVerifyConnectionForm from "./RedisSinkVerifyConnectionForm";
+import { useContext } from "react";
+import TopicsContext from "../context/TopicsContext";
 
-const RedisSinkForm = () => {
+const RedisSinkForm = ({
+  showAlertSnackbar,
+}: {
+  showAlertSnackbar: (message: string, severity: AlertSeverity) => void;
+}) => {
   const [formStateObj, setFormStateObj] = useState<RedisConnectionDetails>({
-    url: '', // url must have "redis://" specified. should we change this?
-    username: '',
-    password: '',
+    url: "", // url must have "redis://" specified. should we change this?
+    username: "",
+    password: "",
   });
 
   const [isValidConnection, setIsValidConnection] = useState(false);
@@ -24,6 +28,7 @@ const RedisSinkForm = () => {
           setIsValidConnection={setIsValidConnection}
           formStateObj={formStateObj}
           setFormStateObj={setFormStateObj}
+          showAlertSnackbar={showAlertSnackbar}
         />
 
         {isValidConnection && (
@@ -32,6 +37,7 @@ const RedisSinkForm = () => {
             url={formStateObj.url}
             username={formStateObj.username}
             password={formStateObj.password}
+            showAlertSnackbar={showAlertSnackbar}
           />
         )}
       </Container>

@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import {
+  AlertSeverity,
   SelectDataFormColumnObj,
   SelectDataFormData,
   SourceFormConnectionDetails,
@@ -26,10 +27,12 @@ const SelectDataForm = ({
   rawTablesAndColumnsData,
   formStateObj,
   handleNext,
+  showAlertSnackbar,
 }: {
   rawTablesAndColumnsData: rawTablesAndColumnsData;
   formStateObj: SourceFormConnectionDetails;
   handleNext: () => void;
+  showAlertSnackbar: (message: string, severity: AlertSeverity) => void;
 }) => {
   const [formData, setFormData] = useState<SelectDataFormData>([]);
   const [activeColumns, setActiveColumns] = useState<SelectDataFormColumnObj[]>(
@@ -105,9 +108,11 @@ const SelectDataForm = ({
     try {
       console.log(submissionObj);
       await postSourceKafkaConnect(submissionObj);
+      showAlertSnackbar("Data selection successful.", "success");
       handleNext();
       setTopics(topics);
     } catch (error) {
+      showAlertSnackbar("An error occured. Please try again.", "error");
       console.log(error);
     }
   };
@@ -119,6 +124,7 @@ const SelectDataForm = ({
       const currentSchemaTables = rawTablesAndColumnsData[i].tables;
       for (let j = 0; j < currentSchemaTables.length; j++) {
         const currentTable = currentSchemaTables[j];
+        const hasPrimaryKeys = currentTable.primaryKeys.length > 0;
         result.push({
           table_name: currentTable.table_name,
           schema_name: rawTablesAndColumnsData[i].schema_name,
@@ -130,7 +136,8 @@ const SelectDataForm = ({
               dbzColumnValue: `${rawTablesAndColumnsData[i].schema_name}.${currentTable.table_name}.${column}`,
             };
           }),
-          selected: true,
+          selected: hasPrimaryKeys,
+          visible: hasPrimaryKeys,
         });
       }
     }
@@ -170,6 +177,7 @@ const SelectDataForm = ({
               >
                 {formData.map((data) => {
                   return (
+                    data.visible &&
                     <ListItem
                       sx={{ padding: 0 }}
                       key={`${data.schema_name}.${data.table_name}`}
