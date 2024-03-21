@@ -52,7 +52,7 @@ export interface KafkaConnectPayload extends SourceFormConnectionDetails {
   formData: SelectDataFormData;
 }
 
-interface PipeLineObj {
+export interface PipeLineObj {
   source_name: string;
   source_database: string;
   source_host: string;
