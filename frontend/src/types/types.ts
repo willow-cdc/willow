@@ -4,7 +4,7 @@ export interface SourceFormConnectionDetails {
   dbName: string;
   user: string;
   password: string;
-  connectionName: string
+  connectionName: string;
 }
 
 export interface RedisConnectionDetails {
@@ -49,3 +49,18 @@ export type SelectDataFormData = SelectDataFormDataObj[];
 export interface KafkaConnectPayload extends SourceFormConnectionDetails {
   formData: SelectDataFormData;
 }
+
+interface PipeLineObj {
+  source_name: string;
+  source_database: string;
+  source_host: string;
+  source_port: number;
+  source_user: string;
+  sink_name: string;
+  sink_url: string;
+  sink_user: string;
+  pipeline_id: string;
+  tables: string[];
+}
+
+export type PipeLineArr = PipeLineObj[];

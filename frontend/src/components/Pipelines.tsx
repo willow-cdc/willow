@@ -1,8 +1,3 @@
-// import List from "@mui/material/List";
-// import ListItem from "@mui/material/ListItem";
-// import { Container, ListItemButton, ListItemText } from "@mui/material";
-// import Grid from "@mui/material/Grid";
-
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -10,6 +5,10 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import { useEffect, useState } from "react";
+import { getAllPipelines } from "../services/pipelines";
+import { PipeLineArr } from "../types/types";
+import { useNavigate } from "react-router-dom";
 
 const mockData = {
   data: [
@@ -69,6 +68,24 @@ const mockData = {
 };
 
 const Pipelines = () => {
+  const [pipelinesData, setpipelinesData] = useState<PipeLineArr>([]);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchPipeLinesData = async () => {
+      try {
+        const data = await getAllPipelines();
+        setpipelinesData(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchPipeLinesData();
+  }, []);
+
+  console.log("PIPES", pipelinesData);
+
   return (
     <TableContainer
       component={Paper}
@@ -84,8 +101,9 @@ const Pipelines = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {mockData.data.map((row) => (
+          {pipelinesData.map((row) => (
             <TableRow
+              onClick={() => navigate(`/pipelines/${row.pipeline_id}`)}
               hover
               key={row.pipeline_id}
               sx={{
