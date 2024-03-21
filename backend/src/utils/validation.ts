@@ -1,11 +1,12 @@
 import { SinkRequestBody, SourceRequestBody } from "../routes/types";
 import { ValidationError } from "./utils";
-
+import Database from "../lib/dataPersistence";
 const MIN_PORT = 0;
 const MAX_PORT = 65535;
-const TOPIC_PREFIX_REGEX = /^[\w\d.-]+$/i;
+const TOPIC_PREFIX_REGEX = /^[\w\d]+$/i;
 const INVALID_PORT_MESSAGE = 'Invalid port.';
-const INVALID_CONNECTION_NAME_MESSAGE = 'Invalid connection name.';
+const INVALID_CONNECTION_NAME_MESSAGE = 'Invalid connection name. Conection name may only contain alphanumeric characters or underscores.';
+const NON_UNIQUE_CONNECTION_NAME_MESSAGE = 'Connection name has already been used. Please choose a different connection name.';
 const MISSING_PARAMETERS_MESSAGE = 'Required parameters missing from request body.';
 const INVALID_TOPICS_MESSAGE = 'Invalid topics array.';
 
@@ -16,6 +17,13 @@ function isValidPort(input: string) {
 
 function isValidConnectionName(input: string) {
   return TOPIC_PREFIX_REGEX.test(input);
+}
+
+async function isNotUniqueConnectionName(name: string) {
+  const database = new Database('postgres://postgres:postgres@db:5432');
+  const bool = await database.sourceExists(name);
+  database.end();
+  return bool;
 }
 
 function isPresent(...inputs) {
@@ -33,7 +41,7 @@ function isValidTopics(topicsArr: string[]) {
   return topicsArr.filter(t => t !== '').length > 0;
 }
 
-export function validateSourceBody(body: SourceRequestBody) {
+export async function validateSourceBody(body: SourceRequestBody) {
   const {user, password, host, port, dbName, connectionName} = body;
 
   if (!isPresent(user, password, host, dbName)) {
@@ -46,6 +54,10 @@ export function validateSourceBody(body: SourceRequestBody) {
 
   if (!isValidConnectionName(connectionName)) {
     throw new ValidationError(INVALID_CONNECTION_NAME_MESSAGE);
+  }
+
+  if (await isNotUniqueConnectionName(connectionName)) {
+    throw new ValidationError(NON_UNIQUE_CONNECTION_NAME_MESSAGE);
   }
 }
 

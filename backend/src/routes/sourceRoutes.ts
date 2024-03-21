@@ -20,7 +20,7 @@ router.post('/verify', async (req: TypedRequest<SourceRequestBody>, res, next) =
   });
 
   try {
-    validateSourceBody(source);
+    await validateSourceBody(source);
     await client.connect();
     const data = await extractDbInfo(client);
     await client.end();
@@ -45,7 +45,7 @@ router.post('/connect', async (req: TypedRequest<FinalSourceRequestBody>, res, n
   const tables = mappedTables.join(',');
 
   try {
-    validateSourceBody(source);
+    await validateSourceBody(source);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { data } = await axios.post('http://connect:8083/connectors/', kafkaConnectPayload);
     console.log(data);
