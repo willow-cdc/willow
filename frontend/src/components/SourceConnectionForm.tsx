@@ -6,7 +6,7 @@ import {
 import SourceForm from "./SourceForm";
 import SelectDataForm from "./SelectDataForm";
 
-const SourceConnectionForm = ({ handleNext }: {handleNext: () => void}) => {
+const SourceConnectionForm = ({ handleNext }: { handleNext: () => void }) => {
   const [formStateObj, setFormStateObj] = useState<SourceFormConnectionDetails>(
     {
       host: "",
@@ -14,7 +14,7 @@ const SourceConnectionForm = ({ handleNext }: {handleNext: () => void}) => {
       dbName: "",
       user: "",
       password: "",
-      connectionName: ""
+      connectionName: "",
     }
   );
 
@@ -28,13 +28,15 @@ const SourceConnectionForm = ({ handleNext }: {handleNext: () => void}) => {
 
   return (
     <>
-      <SourceForm
-        formStateObj={formStateObj}
-        setFormStateObj={setFormStateObj}
-        isValidSourceConnection={isValidSourceConnection}
-        setIsValidSourceConnection={setIsValidSourceConnection}
-        setrawTablesAndColumnsData={setrawTablesAndColumnsData}
-      />
+      {!isValidSourceConnection && (
+        <SourceForm
+          formStateObj={formStateObj}
+          setFormStateObj={setFormStateObj}
+          isValidSourceConnection={isValidSourceConnection}
+          setIsValidSourceConnection={setIsValidSourceConnection}
+          setrawTablesAndColumnsData={setrawTablesAndColumnsData}
+        />
+      )}
 
       {isValidSourceConnection && (
         <SelectDataForm
