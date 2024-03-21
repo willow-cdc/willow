@@ -43,6 +43,7 @@ interface SelectDataFormDataObj {
   dbzTableValue: string;
   columns: SelectDataFormColumnObj[];
   selected: boolean;
+  visible: boolean;
 }
 
 export type SelectDataFormData = SelectDataFormDataObj[];

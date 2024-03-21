@@ -119,7 +119,7 @@ const SelectDataForm = ({
       const currentSchemaTables = rawTablesAndColumnsData[i].tables;
       for (let j = 0; j < currentSchemaTables.length; j++) {
         const currentTable = currentSchemaTables[j];
-        if (currentTable.primaryKeys.length < 1) {continue}
+        const hasPrimaryKeys = currentTable.primaryKeys.length > 0;
         result.push({
           table_name: currentTable.table_name,
           schema_name: rawTablesAndColumnsData[i].schema_name,
@@ -131,7 +131,8 @@ const SelectDataForm = ({
               dbzColumnValue: `${rawTablesAndColumnsData[i].schema_name}.${currentTable.table_name}.${column}`,
             };
           }),
-          selected: true,
+          selected: hasPrimaryKeys,
+          visible: hasPrimaryKeys,
         });
       }
     }
@@ -171,6 +172,7 @@ const SelectDataForm = ({
               >
                 {formData.map((data) => {
                   return (
+                    data.visible &&
                     <ListItem
                       sx={{ padding: 0 }}
                       key={`${data.schema_name}.${data.table_name}`}
