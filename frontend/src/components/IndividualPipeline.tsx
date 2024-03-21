@@ -11,7 +11,6 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { PipeLineObj } from '../types/types';
 import { getPipeLineById } from '../services/pipelines';
-// path = /pipelines/:pipeline_id
 
 const IndividualPipeline = () => {
   const { pipeline_id } = useParams();
@@ -54,7 +53,7 @@ const IndividualPipeline = () => {
 
             <List>
               <ListItem>
-                <ListItemText primary={'Source name:'} secondary={pipeLineData.source_database} />
+                <ListItemText primary={'Source name:'} secondary={pipeLineData.source_name} />
               </ListItem>
               <ListItem>
                 <ListItemText primary={'Database:'} secondary={pipeLineData.source_database} />
