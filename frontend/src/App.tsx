@@ -6,6 +6,9 @@ import { TopicsContextProvider } from "./context/TopicsContext";
 import SideBar from "./components/SideBar";
 import { Container, alpha } from "@mui/material";
 import Home from "./components/Home";
+import Pipelines from "./components/Pipelines";
+import Test from "./components/Test";
+import IndividualPipeline from "./components/IndividualPipeline";
 
 // Augment the palette to include an willowGreen color
 declare module "@mui/material/styles" {
@@ -69,6 +72,18 @@ const theme = createTheme({
         },
       },
     },
+    MuiStepIcon: {
+      styleOverrides: {
+        root: {
+          "&.Mui-active": {
+            color: "#409935",
+          },
+          "&.Mui-completed": {
+            color: "#265c20",
+          },
+        },
+      },
+    },
   },
 });
 
@@ -78,13 +93,17 @@ function App() {
       <BrowserRouter>
         <TopicsContextProvider>
           <ThemeProvider theme={theme}>
-            <SideBar />
-            <Container>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/new" element={<FormStepper />} />
-                <Route path="*" element={<p>NOT FOUND ROUTE TO MAKE??</p>} />
-              </Routes>
+            <Container sx={{ display: "flex" }}>
+              <SideBar />
+              <Container sx={{ flexGrow: 1 }}>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/new" element={<FormStepper />} />
+                  <Route path="/pipelines" element={<Pipelines />} /> 
+                  <Route path="/pipeline/:id" element={<IndividualPipeline />} /> 
+                  <Route path="*" element={<p>NOT FOUND ROUTE TO MAKE??</p>} />
+                </Routes>
+              </Container>
             </Container>
           </ThemeProvider>
         </TopicsContextProvider>
