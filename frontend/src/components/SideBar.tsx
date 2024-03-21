@@ -20,7 +20,18 @@ const SideBar = () => {
   };
   return (
     <>
-      <Drawer variant="permanent" anchor="left">
+      <Drawer
+        variant="permanent"
+        anchor="left"
+        sx={{
+          width: 193,
+          flexShrink: 0,
+          "& .MuiDrawer-paper": {
+            width: 193,
+            boxSizing: "border-box",
+          },
+        }}
+      >
         <Logo />
         <List component="nav" aria-label="main mailbox folders">
           <ListItemButton
