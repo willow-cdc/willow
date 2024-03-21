@@ -1,5 +1,6 @@
 import { Client } from 'pg';
 import { FinalSourceRequestBody, FormTableObj } from '../routes/types';
+import shortUuid from 'short-uuid';
 
 interface Table {
   table_name: string;
@@ -154,7 +155,10 @@ const addTablesAndColumnsToConfig = (source: FinalSourceRequestBody, config: Deb
   }
 };
 
+const ALLOWED_SLOT_NAME_CHARACTERS = '0123456789abcdefghijkmnopqrstuvwxyz_'
+
 export const setupConnectorPayload = (source: FinalSourceRequestBody) => {
+  const uuid = shortUuid(ALLOWED_SLOT_NAME_CHARACTERS).generate();
   const connectorObj = {
     name: source.connectionName,
     config: {
@@ -169,6 +173,8 @@ export const setupConnectorPayload = (source: FinalSourceRequestBody) => {
       'topic.prefix': source.connectionName,
       'skipped.operations': 'none',
       'decimal.handling.mode': 'double',
+      'publication.name': 'willow_publication',
+      'slot.name': `willow_${uuid}`,
     },
   };
 
