@@ -13,7 +13,6 @@ router.get('/', async (_req, res, next) => {
     const data = await database.retrieveAllPipelines() as BasicPipeline[];
 
     await database.end();
-    console.log(data);
     res.json({data});
   } catch (err) {
     next(err);
