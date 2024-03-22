@@ -16,6 +16,12 @@ interface SinkRow {
   topics: string;
 }
 
+export interface BasicPipeline {
+  pipeline_id: string;
+  source_name: string;
+  sink_name: string;
+}
+
 export interface Pipeline {
   source_name: string;
   source_database: string; 
@@ -50,7 +56,7 @@ interface ConnectionDatabase {
   retrieveAllSources: () => Promise<SourceRow[] | unknown[]>;
   retrieveAllSinks: () => Promise<SinkRow[] | unknown[]>;
   insertPipeline: (sourceName: string, sinkName: string) => Promise<boolean>;
-  retrieveAllPipelines: () => Promise<Pipeline[] | unknown[]>;
+  retrieveAllPipelines: () => Promise<BasicPipeline[] | unknown[]>;
   retrievePipeline: (id: string) => Promise<Pipeline[]| unknown[] >;
 }
 
@@ -170,19 +176,12 @@ export default class Database implements ConnectionDatabase {
   }
 
   // Get all the pipelines
-  public async retrieveAllPipelines(): Promise<Pipeline[] | unknown[]> {
+  public async retrieveAllPipelines(): Promise<BasicPipeline[] | unknown[]> {
     const GET_ALL_PIPELINE_INFO =
-      `SELECT 
-        sources.name AS source_name, sources.db AS source_database, sources.host AS source_host, sources.port AS source_port, 
-        sources.dbUser AS source_user, sinks.name AS sink_name, sinks.url AS sink_url, sinks.username AS sink_user, 
-        sinks.topics AS sink_topics, ss.id AS pipeline_id FROM sources 
-      INNER JOIN sourceSink AS ss 
-        ON sources.name = ss.source_name 
-      INNER JOIN sinks 
-        ON ss.sink_name = sinks.name`;
+      `SELECT id AS pipeline_id, source_name, sink_name FROM sourceSink`;
 
     const result = await this.client.query(GET_ALL_PIPELINE_INFO);
-    const activity = result.rows as Pipeline[] | unknown[];
+    const activity = result.rows as BasicPipeline[] | unknown[];
     return activity;
   }
 
