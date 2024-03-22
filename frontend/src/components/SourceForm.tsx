@@ -153,6 +153,7 @@ const SourceForm = ({
             </Grid>
             <Grid item xs={6}>
               <TextField
+                type="password"
                 size="small"
                 required
                 label="password"

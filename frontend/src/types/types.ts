@@ -52,4 +52,18 @@ export interface KafkaConnectPayload extends SourceFormConnectionDetails {
   formData: SelectDataFormData;
 }
 
+export interface PipeLineObj {
+  source_name: string;
+  source_database: string;
+  source_host: string;
+  source_port: number;
+  source_user: string;
+  sink_name: string;
+  sink_url: string;
+  sink_user: string;
+  pipeline_id: string;
+  tables: string[];
+}
+
+export type PipeLineArr = PipeLineObj[];
 export type AlertSeverity = "error" | "warning" | "info" | "success";

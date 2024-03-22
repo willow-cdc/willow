@@ -2,6 +2,7 @@ import { Button, TextField, Typography, Grid } from "@mui/material";
 import { useState } from "react";
 import { postSinkCreate } from "../services/sink";
 import { AlertSeverity } from "../types/types";
+import { useNavigate } from "react-router-dom";
 
 const RedisSinkConnectionForm = ({
   topics,
@@ -17,6 +18,7 @@ const RedisSinkConnectionForm = ({
   showAlertSnackbar: (message: string, severity: AlertSeverity) => void;
 }) => {
   const [connectionName, setConnectionName] = useState<string>("");
+  const navigate = useNavigate();
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -31,6 +33,7 @@ const RedisSinkConnectionForm = ({
       const data = await postSinkCreate(connectionDetails);
       console.log(data);
       showAlertSnackbar("Connection to sink created.", "success");
+      navigate("/pipelines");
     } catch (error) {
       showAlertSnackbar("An error occured. Please try again.", "error");
       console.log(error);
