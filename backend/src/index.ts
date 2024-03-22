@@ -7,10 +7,12 @@ import { unknownEndpointHandler } from './middlewares/unknownEndpointHandler';
 import { errorHandler } from './middlewares/errorHandler';
 import cors from 'cors';
 import { Client } from 'pg';
+import morgan from 'morgan';
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use(morgan("common"));
 
 app.get('/', (req, res) => {
   res.send('howdy there!');
