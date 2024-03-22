@@ -34,12 +34,11 @@ router.post('/create', async (req: TypedRequest<SinkRequestBody>, res, next) => 
     await consumer.startConsumer(topics);
 
     await database.connect();
-    const result = await database.insertSink(connectionName, url, username, JSON.stringify(topics));
+    await database.insertSink(connectionName, url, username, JSON.stringify(topics));
     const sourceName = parseSourceName(topics);
     await database.insertPipeline(sourceName, connectionName);
     await database.end();
 
-    console.log('sink result', result);
     sinks.add(connectionName, consumer);
     
     res.json({ message: 'Consumer created!' });
@@ -52,13 +51,10 @@ router.get('/', async (_req, res, next) => {
   const database = new Database('postgres://postgres:postgres@db:5432');
 
   try {
-    console.log('Fetching all sinks.');
-
     await database.connect();
     const s = await database.retrieveAllSinks();
     await database.end();
 
-    console.log('Fetched all sinks.');
     res.json(s);
   } catch (error) {
     next(error);
@@ -70,13 +66,10 @@ router.get('/:name', async (req, res, next) => {
   const database = new Database('postgres://postgres:postgres@db:5432');
 
   try {
-    console.log('Fetching sink', name);
-
     await database.connect();
     const sink = await database.retrieveSink(name);
     await database.end();
 
-    console.log('Fetched sink', name);
     res.json(sink);
   } catch (error) {
     next(error);
@@ -88,7 +81,6 @@ router.delete('/:name', async (req, res, next) => {
   const database = new Database('postgres://postgres:postgres@db:5432');
 
   try {
-    console.log('Deleting sink', name);
     const sinkInMemory = sinks.delete(name);
     if (sinkInMemory) {
       await sinkInMemory.consumer.shutdown();
@@ -98,7 +90,6 @@ router.delete('/:name', async (req, res, next) => {
     const sink = await database.deleteSink(name);
     await database.end();
 
-    console.log('Deleted sink', name);
     res.json(sink);
   } catch (error) {
     next(error);
