@@ -48,10 +48,9 @@ router.post('/connect', async (req: TypedRequest<FinalSourceRequestBody>, res, n
     validateSourceBody(source);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { data } = await axios.post('http://connect:8083/connectors/', kafkaConnectPayload);
-    console.log(data);
     await database.connect();
 
-    const result = await database.insertSource(
+    await database.insertSource(
       source.connectionName,
       source.dbName,
       tables,
@@ -62,8 +61,6 @@ router.post('/connect', async (req: TypedRequest<FinalSourceRequestBody>, res, n
 
     await database.end();
     
-    console.log('The source insert result is', result);
-
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     res.json({ data });
   } catch (error) {
@@ -78,13 +75,10 @@ router.get('/', async (_req, res, next) => {
   const database = new Database('postgres://postgres:postgres@db:5432');
 
   try {
-    console.log('Fetching all sources.');
-
     await database.connect();
     const s = await database.retrieveAllSources();
     await database.end();
 
-    console.log('Fetched all sources.');
     res.json(s);
   } catch (error) {
     next(error);
@@ -96,13 +90,11 @@ router.get('/:name', async (req, res, next) => {
   const database = new Database('postgres://postgres:postgres@db:5432');
 
   try {
-    console.log('Fetching source', name);
 
     await database.connect();
     const source = await database.retrieveSource(name);
     await database.end();
 
-    console.log('Fetched source', name);
     res.json(source);
   } catch (error) {
     next(error);
@@ -114,14 +106,12 @@ router.delete('/:name', async (req, res, next) => {
   const database = new Database('postgres://postgres:postgres@db:5432');
 
   try {
-    console.log('Deleting source', name);
     await axios.delete(`http://connect:8083/connectors/${name}`);
 
     await database.connect();
     const source = await database.deleteSource(name);
     await database.end();
 
-    console.log('Deleted source', name);
     res.json(source);
   } catch (error) {
     next(error);

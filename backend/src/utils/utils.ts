@@ -205,7 +205,7 @@ export const formatPipelineRows = (result: PipelineResult[]) => {
   return result.map(row => {
     const topics = JSON.parse(row.sink_topics as string);
     const tables = topics.map(t => t.split('.').at(-1));
-    const newRow: Partial<PipelineResult> = {...row, tables}
+    const newRow: Partial<PipelineResult> = {...row, tables};
 
     delete newRow.sink_topics;
 
