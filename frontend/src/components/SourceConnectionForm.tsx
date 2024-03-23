@@ -31,15 +31,12 @@ const SourceConnectionForm = ({
   const [rawTablesAndColumnsData, setrawTablesAndColumnsData] =
     useState<rawTablesAndColumnsData>([]);
 
-  console.log("RAAAAW", rawTablesAndColumnsData);
-
   return (
     <>
       {!isValidSourceConnection && (
         <SourceForm
           formStateObj={formStateObj}
           setFormStateObj={setFormStateObj}
-          isValidSourceConnection={isValidSourceConnection}
           setIsValidSourceConnection={setIsValidSourceConnection}
           setrawTablesAndColumnsData={setrawTablesAndColumnsData}
           showAlertSnackbar={showAlertSnackbar}
