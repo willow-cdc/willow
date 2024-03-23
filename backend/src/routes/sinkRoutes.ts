@@ -40,7 +40,7 @@ router.post('/create', async (req: TypedRequest<SinkRequestBody>, res, next) => 
     await database.end();
 
     sinks.add(connectionName, consumer);
-    
+
     res.json({ message: 'Consumer created!' });
   } catch (err) {
     next(err);
@@ -87,10 +87,10 @@ router.delete('/:name', async (req, res, next) => {
     }
 
     await database.connect();
-    const sink = await database.deleteSink(name);
+    await database.deleteSink(name);
     await database.end();
 
-    res.json(sink);
+    res.json({ message: 'Sink deleted successfully!' });
   } catch (error) {
     next(error);
   }

@@ -1,4 +1,5 @@
 import { Client } from 'pg';
+import { DatabaseError } from '../utils/utils';
 
 interface SourceRow {
   name?: string;
@@ -50,9 +51,9 @@ interface ConnectionDatabase {
   ) => Promise<number>;
   insertSink: (name: string, url: string, username: string, topics: string) => Promise<number>;
   retrieveSource: (connectionName: string) => Promise<SourceRow | undefined>;
-  deleteSource: (connectionName: string) => Promise<boolean>;
+  deleteSource: (connectionName: string) => Promise<void>;
   retrieveSink: (connectionName: string) => Promise<SinkRow | undefined>;
-  deleteSink: (connectionName: string) => Promise<boolean>;
+  deleteSink: (connectionName: string) => Promise<void>;
   retrieveAllSources: () => Promise<SourceRow[] | unknown[]>;
   retrieveAllSinks: () => Promise<SinkRow[] | unknown[]>;
   insertPipeline: (sourceName: string, sinkName: string) => Promise<boolean>;
@@ -150,20 +151,24 @@ export default class Database implements ConnectionDatabase {
     return activity;
   }
 
-  public async deleteSource(connectionName: string): Promise<boolean> {
+  public async deleteSource(connectionName: string): Promise<void> {
     const DELETE_SOURCE_INFO = 'DELETE FROM sources WHERE name = $1';
 
     const result = await this.client.query(DELETE_SOURCE_INFO, [connectionName]);
     const rowCount = result.rowCount as number;
-    return rowCount === 1;
+    if (rowCount !== 1) {
+      throw new DatabaseError('Unable to delete sink from database.');
+    }
   }
 
-  public async deleteSink(connectionName: string): Promise<boolean> {
+  public async deleteSink(connectionName: string): Promise<void> {
     const DELETE_SINK_INFO = 'DELETE FROM sinks WHERE name = $1';
 
     const result = await this.client.query(DELETE_SINK_INFO, [connectionName]);
     const rowCount = result.rowCount as number;
-    return rowCount === 1;
+    if (rowCount !== 1) {
+      throw new DatabaseError('Unable to delete sink from database.');
+    }
   }
 
   // Insert into join table
