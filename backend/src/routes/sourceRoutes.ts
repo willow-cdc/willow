@@ -1,7 +1,7 @@
 // routes for managing/checking/setting up source database connections
 import express from 'express';
 import { TypedRequest, SourceRequestBody, FinalSourceRequestBody } from './types';
-import { HttpError, extractDbInfo, setupConnectorPayload } from '../utils/utils';
+import { extractDbInfo, setupConnectorPayload } from '../utils/utils';
 import { Client } from 'pg';
 import Database from '../lib/dataPersistence';
 import axios from 'axios';
@@ -26,10 +26,7 @@ router.post('/verify', async (req: TypedRequest<SourceRequestBody>, res, next) =
     await client.end();
     res.json({ data });
   } catch (error) {
-    if (error instanceof Error) {
-      const err = new HttpError(400, `Verification failed with error: ${error.message}`);
-      next(err);
-    }
+    next(error);
   }
 });
 
@@ -64,10 +61,7 @@ router.post('/connect', async (req: TypedRequest<FinalSourceRequestBody>, res, n
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     res.json({ data });
   } catch (error) {
-    if (error instanceof Error) {
-      const err = new HttpError(400, `Connection failed with error: ${error.message}`);
-      next(err);
-    }
+    next(error);
   }
 });
 
@@ -90,7 +84,6 @@ router.get('/:name', async (req, res, next) => {
   const database = new Database('postgres://postgres:postgres@db:5432');
 
   try {
-
     await database.connect();
     const source = await database.retrieveSource(name);
     await database.end();
