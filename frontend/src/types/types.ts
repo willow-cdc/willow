@@ -37,7 +37,7 @@ export type SelectDataFormColumnObj = {
   dbzColumnValue: string;
 };
 
-interface SelectDataFormDataObj {
+export interface SelectDataFormDataObj {
   table_name: string;
   schema_name: string;
   dbzTableValue: string;
@@ -52,18 +52,21 @@ export interface KafkaConnectPayload extends SourceFormConnectionDetails {
   formData: SelectDataFormData;
 }
 
-export interface PipeLineObj {
-  source_name: string;
+export interface PipeLine extends PipeLineMinimal {
   source_database: string;
   source_host: string;
   source_port: number;
   source_user: string;
-  sink_name: string;
   sink_url: string;
   sink_user: string;
-  pipeline_id: string;
   tables: string[];
 }
 
-export type PipeLineArr = PipeLineObj[];
+export interface PipeLineMinimal {
+  source_name: string;
+  sink_name: string;
+  pipeline_id: string;
+}
+
+export type PipeLineArr = PipeLineMinimal[];
 export type AlertSeverity = "error" | "warning" | "info" | "success";

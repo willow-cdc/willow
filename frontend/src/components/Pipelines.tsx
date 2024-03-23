@@ -1,76 +1,11 @@
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 import { useEffect, useState } from "react";
 import { getAllPipelines } from "../services/pipelines";
 import { PipeLineArr } from "../types/types";
-import { useNavigate } from "react-router-dom";
-
-const mockData = {
-  data: [
-    {
-      source_name: "source12",
-      source_database: "test",
-      source_host: "0.tcp.ngrok.io",
-      source_port: 10244,
-      source_user: "postgres",
-      sink_name: "sink1",
-      sink_url:
-        "redis://redis-14994.c256.us-east-1-2.ec2.cloud.redislabs.com:14994",
-      sink_user: "default",
-      pipeline_id: 1,
-      tables: ["demo"],
-    },
-    {
-      source_name: "secondsource",
-      source_database: "test",
-      source_host: "0.tcp.ngrok.io",
-      source_port: 10244,
-      source_user: "postgres",
-      sink_name: "secondsink",
-      sink_url:
-        "redis://redis-14994.c256.us-east-1-2.ec2.cloud.redislabs.com:14994",
-      sink_user: "default",
-      pipeline_id: 2,
-      tables: ["demo", "numbers"],
-    },
-    {
-      source_name: "publication_test_source",
-      source_database: "test",
-      source_host: "0.tcp.ngrok.io",
-      source_port: 10244,
-      source_user: "postgres",
-      sink_name: "publication_test_sink",
-      sink_url:
-        "redis://redis-14994.c256.us-east-1-2.ec2.cloud.redislabs.com:14994",
-      sink_user: "default",
-      pipeline_id: 3,
-      tables: ["demo", "publication_test", "numbers"],
-    },
-    {
-      source_name: "seconddbsource",
-      source_database: "alexbair",
-      source_host: "0.tcp.ngrok.io",
-      source_port: 10244,
-      source_user: "alexbair",
-      sink_name: "seconddbsink",
-      sink_url:
-        "redis://redis-14994.c256.us-east-1-2.ec2.cloud.redislabs.com:14994",
-      sink_user: "default",
-      pipeline_id: 4,
-      tables: ["test"],
-    },
-  ],
-};
+import PipelineTableRow from "./PipelineTableRow";
 
 const Pipelines = () => {
   const [pipelinesData, setpipelinesData] = useState<PipeLineArr>([]);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPipeLinesData = async () => {
@@ -83,8 +18,6 @@ const Pipelines = () => {
     };
     fetchPipeLinesData();
   }, []);
-
-  console.log("PIPES", pipelinesData);
 
   return (
     <TableContainer
@@ -101,23 +34,9 @@ const Pipelines = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {pipelinesData.map((row) => (
-            <TableRow
-              onClick={() => navigate(`/pipelines/${row.pipeline_id}`)}
-              hover
-              key={row.pipeline_id}
-              sx={{
-                "&:last-child td, &:last-child th": { border: 0 },
-                cursor: "pointer",
-              }}
-            >
-              <TableCell component="th" scope="row">
-                {row.pipeline_id}
-              </TableCell>
-              <TableCell align="center">{row.source_name}</TableCell>
-              <TableCell align="center">{row.sink_name}</TableCell>
-            </TableRow>
-          ))}
+          {pipelinesData.map((row) => 
+            <PipelineTableRow key={row.pipeline_id} row={row}/>
+          )}
         </TableBody>
       </Table>
     </TableContainer>

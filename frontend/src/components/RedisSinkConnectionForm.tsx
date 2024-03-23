@@ -1,8 +1,17 @@
-import { Button, TextField, Typography, Grid } from "@mui/material";
+import { TextField, Typography, Grid } from "@mui/material";
 import { useState } from "react";
 import { postSinkCreate } from "../services/sink";
 import { AlertSeverity } from "../types/types";
 import { useNavigate } from "react-router-dom";
+import SubmitButton from "./SubmitButton";
+
+interface RedisSinkConnectionFormProps {
+  topics: string[];
+  url: string;
+  username: string;
+  password: string;
+  showAlertSnackbar: (message: string, severity: AlertSeverity) => void;
+}
 
 const RedisSinkConnectionForm = ({
   topics,
@@ -10,13 +19,7 @@ const RedisSinkConnectionForm = ({
   username,
   password,
   showAlertSnackbar,
-}: {
-  topics: string[];
-  url: string;
-  username: string;
-  password: string;
-  showAlertSnackbar: (message: string, severity: AlertSeverity) => void;
-}) => {
+}: RedisSinkConnectionFormProps) => {
   const [connectionName, setConnectionName] = useState<string>("");
   const navigate = useNavigate();
 
@@ -62,9 +65,7 @@ const RedisSinkConnectionForm = ({
             />
           </Grid>
         </Grid>
-        <Button type="submit" variant="contained" color="success">
-          Create Connection
-        </Button>
+        <SubmitButton content='Create Connection'/>
       </form>
     </>
   );

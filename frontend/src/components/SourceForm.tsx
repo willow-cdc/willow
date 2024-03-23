@@ -1,11 +1,8 @@
 import {
-  Button,
   TextField,
   Grid,
   Typography,
   Container,
-  FormControl,
-  Box,
 } from "@mui/material";
 import React from "react";
 import {
@@ -14,26 +11,28 @@ import {
   rawTablesAndColumnsData,
 } from "../types/types";
 import { postSourceVerify } from "../services/source";
+import SubmitButton from "./SubmitButton";
 
-const SourceForm = ({
-  formStateObj,
-  setFormStateObj,
-  isValidSourceConnection,
-  setIsValidSourceConnection,
-  setrawTablesAndColumnsData,
-  showAlertSnackbar,
-}: {
+interface SourceFormProps {
   formStateObj: SourceFormConnectionDetails;
   setFormStateObj: React.Dispatch<
     React.SetStateAction<SourceFormConnectionDetails>
   >;
-  isValidSourceConnection: boolean;
   setIsValidSourceConnection: React.Dispatch<React.SetStateAction<boolean>>;
   setrawTablesAndColumnsData: React.Dispatch<
     React.SetStateAction<rawTablesAndColumnsData>
   >;
   showAlertSnackbar: (message: string, severity: AlertSeverity) => void;
-}) => {
+}
+
+const SourceForm = ({
+  formStateObj,
+  setFormStateObj,
+  setIsValidSourceConnection,
+  setrawTablesAndColumnsData,
+  showAlertSnackbar,
+}: SourceFormProps) => {
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
@@ -47,6 +46,12 @@ const SourceForm = ({
       showAlertSnackbar("An error occured. Please try again.", "error");
       console.log(error);
     }
+  }
+
+  function handleChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    setFormStateObj(prevState => {
+      return {...prevState, [event.target.name]: event.target.value}
+    });
   }
 
   return (
@@ -71,12 +76,8 @@ const SourceForm = ({
                 fullWidth
                 margin="normal"
                 value={formStateObj.connectionName}
-                onChange={(e) => {
-                  setFormStateObj({
-                    ...formStateObj,
-                    connectionName: e.target.value,
-                  });
-                }}
+                name="connectionName"
+                onChange={handleChange}
               />
             </Grid>
             <Grid item xs={12}>
@@ -92,24 +93,20 @@ const SourceForm = ({
                 fullWidth
                 margin="normal"
                 value={formStateObj.host}
-                onChange={(e) => {
-                  setFormStateObj({ ...formStateObj, host: e.target.value });
-                }}
+                name="host"
+                onChange={handleChange}
               />
             </Grid>
             <Grid item xs={6}>
-              <FormControl fullWidth margin="normal">
                 <TextField
                   size="small"
                   required
                   label="port"
                   fullWidth
                   value={formStateObj.port}
-                  onChange={(e) => {
-                    setFormStateObj({ ...formStateObj, port: e.target.value });
-                  }}
+                  name="port"
+                  onChange={handleChange}
                 />
-              </FormControl>
             </Grid>
             <Grid item xs={12}>
               <Typography marginTop={-3} align="center" variant="body2">
@@ -127,9 +124,8 @@ const SourceForm = ({
                 fullWidth
                 margin="normal"
                 value={formStateObj.dbName}
-                onChange={(e) => {
-                  setFormStateObj({ ...formStateObj, dbName: e.target.value });
-                }}
+                name="dbName"
+                onChange={handleChange}
               />
             </Grid>
             <Grid item xs={6}>
@@ -146,9 +142,8 @@ const SourceForm = ({
                 fullWidth
                 margin="normal"
                 value={formStateObj.user}
-                onChange={(e) => {
-                  setFormStateObj({ ...formStateObj, user: e.target.value });
-                }}
+                name="user"
+                onChange={handleChange}
               />
             </Grid>
             <Grid item xs={6}>
@@ -160,12 +155,8 @@ const SourceForm = ({
                 fullWidth
                 margin="normal"
                 value={formStateObj.password}
-                onChange={(e) => {
-                  setFormStateObj({
-                    ...formStateObj,
-                    password: e.target.value,
-                  });
-                }}
+                name="password"
+                onChange={handleChange}
               />
             </Grid>
             <Grid item xs={12}>
@@ -175,16 +166,7 @@ const SourceForm = ({
               </Typography>
             </Grid>
           </Grid>
-          <Box marginTop={3} display="flex" justifyContent="center">
-            <Button
-              disabled={isValidSourceConnection}
-              color="willowGreen"
-              type="submit"
-              variant="contained"
-            >
-              Connect
-            </Button>
-          </Box>
+          <SubmitButton content="Connect"/>
         </form>
       </Container>
     </>
