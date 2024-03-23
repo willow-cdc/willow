@@ -6,7 +6,7 @@ import { TypedRequest, SinkRequestBody } from './types';
 import Database from '../lib/dataPersistence';
 import { sinks } from '../data/sinks';
 import { validateSinkBody, validateSinkConnectionDetails } from '../utils/validation';
-import { parseSourceName, DatabaseError } from '../utils/utils';
+import { parseSourceName } from '../utils/utils';
 const router = express.Router();
 
 // check sink cache is accessible
@@ -87,12 +87,7 @@ router.delete('/:name', async (req, res, next) => {
     }
 
     await database.connect();
-    const deleted = await database.deleteSink(name);
-
-    if (!deleted) {
-      throw new DatabaseError('Unable to delete sink from database.');
-    }
-
+    await database.deleteSink(name);
     await database.end();
 
     res.json({ message: 'Sink deleted successfully!' });
