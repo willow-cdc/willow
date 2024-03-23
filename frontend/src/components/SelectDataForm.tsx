@@ -1,17 +1,8 @@
 import {
   Grid,
-  Typography,
   Container,
-  Box,
-  Switch,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  ListSubheader,
-  Button,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import {
   AlertSeverity,
   SelectDataFormColumnObj,
@@ -20,31 +11,34 @@ import {
   rawTablesAndColumnsData,
 } from "../types/types";
 import { postSourceKafkaConnect } from "../services/source";
-import { useContext } from "react";
 import TopicsContext from "../context/TopicsContext";
+import SelectDataFormInstructions from "./SelectDataFormInstructions";
+import SubmitButton from "./SubmitButton";
+import GridBoxList from "./GridBoxList";
+import ListItemWithSwitch from "./ListItemWithSwitch";
+
+interface SelectDataFormProps {
+  rawTablesAndColumnsData: rawTablesAndColumnsData;
+  formStateObj: SourceFormConnectionDetails;
+  handleNext: () => void;
+  showAlertSnackbar: (message: string, severity: AlertSeverity) => void;
+}
 
 const SelectDataForm = ({
   rawTablesAndColumnsData,
   formStateObj,
   handleNext,
   showAlertSnackbar,
-}: {
-  rawTablesAndColumnsData: rawTablesAndColumnsData;
-  formStateObj: SourceFormConnectionDetails;
-  handleNext: () => void;
-  showAlertSnackbar: (message: string, severity: AlertSeverity) => void;
-}) => {
+}: SelectDataFormProps) => {
   const [formData, setFormData] = useState<SelectDataFormData>([]);
-  const [activeColumns, setActiveColumns] = useState<SelectDataFormColumnObj[]>(
-    []
-  );
+  const [activeColumns, setActiveColumns] = useState<SelectDataFormColumnObj[]>([]);
   const { setTopics } = useContext(TopicsContext);
 
   const handleTableSwitchChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setFormData((old) =>
-      old.map((obj) => {
+    setFormData((prev) =>
+      prev.map((obj) => {
         if (`${obj.schema_name}.${obj.table_name}` === event.target.value) {
           return { ...obj, selected: event.target.checked };
         } else {
@@ -54,15 +48,15 @@ const SelectDataForm = ({
     );
   };
 
-  const handleColumTableDisplay = (value: string) => {
+  const handleColumnTableDisplay = (value: string) => {
     const [schema, table] = value.split(".");
     const formDataObj = formData.find(
       (obj) => obj.schema_name === schema && obj.table_name === table
     );
 
-    if (formDataObj != undefined) {
-      const columnArrClone = formDataObj.columns.map((obja) => {
-        return { ...obja };
+    if (formDataObj) {
+      const columnArrClone = formDataObj.columns.map((obj) => {
+        return { ...obj };
       });
       setActiveColumns(columnArrClone);
     }
@@ -75,8 +69,8 @@ const SelectDataForm = ({
     const [schema, table, column] = value.split(".");
 
     let newActiveArr!: SelectDataFormColumnObj[];
-    setFormData((old) => {
-      return old.map((obj) => {
+    setFormData((prev) => {
+      return prev.map((obj) => {
         if (obj.schema_name !== schema || obj.table_name !== table) {
           return obj;
         } else {
@@ -118,152 +112,73 @@ const SelectDataForm = ({
   };
 
   useEffect(() => {
-    const result = [];
+    const result: SelectDataFormData = [];
 
-    for (let i = 0; i < rawTablesAndColumnsData.length; i++) {
-      const currentSchemaTables = rawTablesAndColumnsData[i].tables;
-      for (let j = 0; j < currentSchemaTables.length; j++) {
-        const currentTable = currentSchemaTables[j];
-        const hasPrimaryKeys = currentTable.primaryKeys.length > 0;
+    rawTablesAndColumnsData.forEach(schemaTables => {
+      schemaTables.tables.forEach(table => {
+        const hasPrimaryKeys = table.primaryKeys.length > 0;
+        const schemaName = schemaTables.schema_name;
+        const tableName = table.table_name;
+        const columns = table.columns.map(column => {
+          return {
+            column,
+            selected: true, 
+            dbzColumnValue: `${schemaName}.${tableName}.${column}`}
+        })
+        
         result.push({
-          table_name: currentTable.table_name,
-          schema_name: rawTablesAndColumnsData[i].schema_name,
-          dbzTableValue: `${rawTablesAndColumnsData[i].schema_name}.${currentTable.table_name}`,
-          columns: currentTable.columns.map((column) => {
-            return {
-              column,
-              selected: true,
-              dbzColumnValue: `${rawTablesAndColumnsData[i].schema_name}.${currentTable.table_name}.${column}`,
-            };
-          }),
+          table_name: tableName,
+          schema_name: schemaName,
+          dbzTableValue: `${schemaName}.${tableName}`,
+          columns,
           selected: hasPrimaryKeys,
           visible: hasPrimaryKeys,
-        });
-      }
-    }
+        })
+      })
+    })
+
     setFormData(result);
   }, [rawTablesAndColumnsData]);
+
   return (
     <>
       <Container maxWidth="md">
-        <Typography variant="h4" gutterBottom>
-          SELECT DATA
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          Instructions for data: tables, settings, schema. Instructions for
-          data: tables, settings, schema. Instructions for data: tables,
-          settings, schema. Instructions for data: tables, settings, schema.
-          Instructions for data: tables, settings, schema.
-        </Typography>
-        <Typography marginTop={4} variant="h4" gutterBottom>
-          Tables and Columns
-        </Typography>
-        <Typography marginBottom={2} variant="body1" gutterBottom>
-          Please select the tables you would like to capture and stream.
-        </Typography>
+        <SelectDataFormInstructions />
         <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Box
-              height={300}
-              overflow={"auto"}
-              sx={{ background: "#D9D9D9", borderRadius: 2 }}
-            >
-              <List
-                subheader={
-                  <ListSubheader sx={{ background: "#D9D9D9" }}>
-                    Tables
-                  </ListSubheader>
-                }
-              >
-                {formData.map((data) => {
-                  return (
-                    data.visible &&
-                    <ListItem
-                      sx={{ padding: 0 }}
-                      key={`${data.schema_name}.${data.table_name}`}
-                      secondaryAction={
-                        <Switch
-                          color="willowGreen"
-                          checked={data.selected}
-                          onChange={handleTableSwitchChange}
-                          value={`${data.schema_name}.${data.table_name}`}
-                          inputProps={{
-                            "aria-label": `${data.schema_name}.${data.table_name}`,
-                          }}
-                        />
-                      }
-                    >
-                      <ListItemButton
-                        onClick={() =>
-                          handleColumTableDisplay(
-                            `${data.schema_name}.${data.table_name}`
-                          )
-                        }
-                        sx={{ paddingTop: 0, paddingBottom: 0 }}
-                      >
-                        <ListItemText primary={data.table_name}></ListItemText>
-                      </ListItemButton>
-                    </ListItem>
-                  );
-                })}
-              </List>
-            </Box>
-          </Grid>
-          <Grid item xs={6}>
-            <Box
-              height={300}
-              overflow={"auto"}
-              sx={{ background: "#D9D9D9", borderRadius: 2 }}
-            >
-              {activeColumns.length > 0 && (
-                <List
-                  subheader={
-                    <ListSubheader sx={{ background: "#D9D9D9" }}>
-                      Columns
-                    </ListSubheader>
-                  }
-                >
-                  {activeColumns.map((data) => {
-                    return (
-                      <ListItem
-                        sx={{ padding: 0 }}
-                        key={data.dbzColumnValue}
-                        secondaryAction={
-                          <Switch
-                            color="willowGreen"
-                            checked={data.selected}
-                            onChange={(e) =>
-                              handleColumnSwitchChange(e, data.dbzColumnValue)
-                            }
-                            value={data.dbzColumnValue}
-                            inputProps={{
-                              "aria-label": data.dbzColumnValue,
-                            }}
-                          />
-                        }
-                      >
-                        <ListItemText
-                          sx={{ paddingLeft: 2 }}
-                          primary={data.column}
-                        ></ListItemText>
-                      </ListItem>
-                    );
-                  })}
-                </List>
-              )}
-            </Box>
-          </Grid>
+          <GridBoxList xs={6} heading='Tables' showChildren={true}>
+            {formData.map((data) => {
+              const value = `${data.schema_name}.${data.table_name}`
+
+              return (
+                data.visible &&
+                  <ListItemWithSwitch 
+                    key={value} 
+                    value={value} 
+                    selected={data.selected} 
+                    text={data.table_name} 
+                    onSwitchChange={handleTableSwitchChange} 
+                    onButtonClick={() => handleColumnTableDisplay(value)}
+                  />
+                );
+              })}
+          </GridBoxList>
+          <GridBoxList xs={6} heading='Columns' showChildren={activeColumns.length > 0}>
+            {activeColumns.map((data) => {
+              const value = data.dbzColumnValue;
+
+              return (
+                <ListItemWithSwitch 
+                  key={value} 
+                  value={value} 
+                  selected={data.selected} 
+                  text={data.column} 
+                  onSwitchChange={(e) => handleColumnSwitchChange(e, value)} 
+                />
+              );
+            })}
+          </GridBoxList>
         </Grid>
-        <Box marginTop={3} display="flex" justifyContent="center">
-          <Button
-            onClick={handleKafkaConnectSubmit}
-            color="willowGreen"
-            type="submit"
-            variant="contained"
-          >
-            Submit
-          </Button>
-        </Box>
+        <SubmitButton onClick={handleKafkaConnectSubmit}/>
       </Container>
     </>
   );
