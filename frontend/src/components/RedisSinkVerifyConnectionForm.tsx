@@ -1,6 +1,15 @@
-import { Button, TextField, Typography, Grid } from "@mui/material";
+import { TextField, Typography, Grid } from "@mui/material";
 import { postSinkVerify } from "../services/sink";
 import { AlertSeverity, RedisConnectionDetails } from "../types/types";
+import SubmitButton from "./SubmitButton";
+
+interface RedisSinkVerifyConnectionFormProps {
+  isValidConnection: boolean;
+  setIsValidConnection: React.Dispatch<React.SetStateAction<boolean>>;
+  formStateObj: RedisConnectionDetails;
+  setFormStateObj: React.Dispatch<React.SetStateAction<RedisConnectionDetails>>;
+  showAlertSnackbar: (message: string, severity: AlertSeverity) => void;
+}
 
 const RedisSinkVerifyConnectionForm = ({
   isValidConnection,
@@ -8,13 +17,7 @@ const RedisSinkVerifyConnectionForm = ({
   formStateObj,
   setFormStateObj,
   showAlertSnackbar,
-}: {
-  isValidConnection: boolean;
-  setIsValidConnection: React.Dispatch<React.SetStateAction<boolean>>;
-  formStateObj: RedisConnectionDetails;
-  setFormStateObj: React.Dispatch<React.SetStateAction<RedisConnectionDetails>>;
-  showAlertSnackbar: (message: string, severity: AlertSeverity) => void;
-}) => {
+}: RedisSinkVerifyConnectionFormProps) => {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
@@ -26,6 +29,12 @@ const RedisSinkVerifyConnectionForm = ({
       showAlertSnackbar("An error occured. Please try again.", "error");
       console.log(error);
     }
+  }
+
+  function handleChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    setFormStateObj(prevState => {
+      return {...prevState, [event.target.name]: event.target.value}
+    });
   }
 
   return (
@@ -48,10 +57,9 @@ const RedisSinkVerifyConnectionForm = ({
             label="url"
             fullWidth
             margin="normal"
+            name="url"
             value={formStateObj.url}
-            onChange={(e) => {
-              setFormStateObj({ ...formStateObj, url: e.target.value });
-            }}
+            onChange={handleChange}
             disabled={isValidConnection}
           />
         </Grid>
@@ -63,13 +71,9 @@ const RedisSinkVerifyConnectionForm = ({
             label="username"
             fullWidth
             margin="normal"
+            name="username"
             value={formStateObj.username}
-            onChange={(e) => {
-              setFormStateObj({
-                ...formStateObj,
-                username: e.target.value,
-              });
-            }}
+            onChange={handleChange}
             disabled={isValidConnection}
           />
         </Grid>
@@ -82,22 +86,14 @@ const RedisSinkVerifyConnectionForm = ({
             label="password"
             fullWidth
             margin="normal"
+            name="password"
             value={formStateObj.password}
-            onChange={(e) => {
-              setFormStateObj({
-                ...formStateObj,
-                password: e.target.value,
-              });
-            }}
+            onChange={handleChange}
             disabled={isValidConnection}
           />
         </Grid>
       </Grid>
-      {isValidConnection ? null : (
-        <Button type="submit" variant="contained" color="success">
-          Verify Connection
-        </Button>
-      )}
+      {!isValidConnection && <SubmitButton content='Verify Connection'/>}
     </form>
   );
 };
