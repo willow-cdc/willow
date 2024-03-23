@@ -1,8 +1,8 @@
 import React from "react";
 import { Typography, List, ListItem, ListItemText, Box } from "@mui/material";
-import { PipeLineObj } from "../types/types";
+import { PipeLine } from "../types/types";
 
-const Source = ({pipeLineData}: {pipeLineData: PipeLineObj}) => {
+const Source = ({pipeLineData}: {pipeLineData: PipeLine}) => {
   return (
     <Box
       height={550}

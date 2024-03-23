@@ -1,14 +1,14 @@
 import { Typography, Box, Container, Grid } from "@mui/material";
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { PipeLineObj } from '../types/types';
+import { PipeLine } from '../types/types';
 import { getPipeLineById } from '../services/pipelines';
 import Source from './Source';
 import Sink from "./Sink";
 
 const IndividualPipeline = () => {
   const { pipeline_id } = useParams();
-  const [pipeLineData, setPipeLineData] = useState<PipeLineObj>(null);
+  const [pipeLineData, setPipeLineData] = useState<PipeLine>(null);
 
   useEffect(() => {
     const fetchPipeLineData = async () => {

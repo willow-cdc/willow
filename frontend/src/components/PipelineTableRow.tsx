@@ -1,8 +1,8 @@
-import { PipeLineObj } from '../types/types';
+import { PipeLineMinimal } from '../types/types';
 import { TableRow, TableCell } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-const PipelineTableRow = ({ row }: { row: PipeLineObj }) => {
+const PipelineTableRow = ({ row }: { row: PipeLineMinimal }) => {
   const navigate = useNavigate();
 
   return (

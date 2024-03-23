@@ -1,7 +1,7 @@
 import { Typography, List, ListItem, ListItemText, Box } from '@mui/material';
-import { PipeLineObj } from '../types/types';
+import { PipeLine } from '../types/types';
 
-const Sink = ({ pipeLineData }: { pipeLineData: PipeLineObj }) => {
+const Sink = ({ pipeLineData }: { pipeLineData: PipeLine }) => {
   return (
     <Box
       height={550}
