@@ -37,7 +37,7 @@ export type SelectDataFormColumnObj = {
   dbzColumnValue: string;
 };
 
-interface SelectDataFormDataObj {
+export interface SelectDataFormDataObj {
   table_name: string;
   schema_name: string;
   dbzTableValue: string;
