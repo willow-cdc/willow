@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { RedisError, ValidationError, DatabaseError } from '../utils/utils';
+import { RedisError, ValidationError, DatabaseError, HttpError } from '../utils/utils';
 import axios from 'axios';
 import { AxiosResponseData } from './types';
 
@@ -7,7 +7,7 @@ export function errorHandler(err: unknown, _request: Request, response: Response
   if (err instanceof Error) {
     console.error(err.message);
 
-    if (err instanceof RedisError || err instanceof ValidationError || err instanceof DatabaseError) {
+    if (err instanceof HttpError || err instanceof RedisError || err instanceof ValidationError || err instanceof DatabaseError) {
       const { status, message } = err;
       response.status(status).json({ status, message });
     } else if (err.message.includes('does not exist')) {
