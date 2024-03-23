@@ -1,11 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { RedisError, ValidationError, DatabaseError } from '../utils/utils';
 import axios from 'axios';
-
-interface AxiosResponseData {
-  error_code: number;
-  message: string;
-}
+import { AxiosResponseData } from './types';
 
 export function errorHandler(err: unknown, _request: Request, response: Response, _next: NextFunction) {
   if (err instanceof Error) {
