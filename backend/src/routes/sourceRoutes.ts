@@ -1,7 +1,7 @@
 // routes for managing/checking/setting up source database connections
 import express from 'express';
 import { TypedRequest, SourceRequestBody, FinalSourceRequestBody } from './types';
-import { extractDbInfo, setupConnectorPayload } from '../utils/utils';
+import { extractDbInfo, setupConnectorPayload, DatabaseError } from '../utils/utils';
 import { Client } from 'pg';
 import Database from '../lib/dataPersistence';
 import axios from 'axios';
@@ -57,8 +57,8 @@ router.post('/connect', async (req: TypedRequest<FinalSourceRequestBody>, res, n
     );
 
     await database.end();
-    
-    res.json({ message: "Source connector created!" });
+
+    res.json({ message: 'Source connector created!' });
   } catch (error) {
     next(error);
   }
@@ -99,12 +99,16 @@ router.delete('/:name', async (req, res, next) => {
 
   try {
     await axios.delete(`http://connect:8083/connectors/${name}`);
-
     await database.connect();
-    const source = await database.deleteSource(name);
+    const deleted = await database.deleteSource(name);
+
+    if (!deleted) {
+      throw new DatabaseError('Unable to delete source from database.');
+    }
+
     await database.end();
 
-    res.json(source);
+    res.json({ message: 'Source deleted successfully!' });
   } catch (error) {
     next(error);
   }
