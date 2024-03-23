@@ -44,7 +44,7 @@ router.post('/connect', async (req: TypedRequest<FinalSourceRequestBody>, res, n
   try {
     validateSourceBody(source);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const { data } = await axios.post('http://connect:8083/connectors/', kafkaConnectPayload);
+    await axios.post('http://connect:8083/connectors/', kafkaConnectPayload);
     await database.connect();
 
     await database.insertSource(
@@ -58,8 +58,7 @@ router.post('/connect', async (req: TypedRequest<FinalSourceRequestBody>, res, n
 
     await database.end();
     
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    res.json({ data });
+    res.json({ message: "Source connector created!" });
   } catch (error) {
     next(error);
   }
