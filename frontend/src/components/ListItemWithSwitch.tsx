@@ -1,4 +1,4 @@
-import { ListItem, Switch, ListItemButton, ListItemText } from '@mui/material';
+import { ListItem, Switch, ListItemButton, ListItemText } from "@mui/material";
 
 interface TableListItemProps {
   value: string;
@@ -6,6 +6,8 @@ interface TableListItemProps {
   onSwitchChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   text: string;
   onButtonClick?: () => void;
+  index?: number;
+  selectedIndex?: number;
 }
 
 const ListItemWithSwitch = ({
@@ -14,7 +16,13 @@ const ListItemWithSwitch = ({
   text,
   onSwitchChange,
   onButtonClick,
+  index,
+  selectedIndex,
 }: TableListItemProps) => {
+  const indexPropsPassed = () => {
+    return typeof index === "number" && typeof selectedIndex === "number";
+  };
+
   return (
     <ListItem
       sx={{ padding: 0 }}
@@ -25,13 +33,14 @@ const ListItemWithSwitch = ({
           onChange={onSwitchChange}
           value={value}
           inputProps={{
-            'aria-label': value,
+            "aria-label": value,
           }}
         />
       }
     >
-      {onButtonClick ? (
+      {onButtonClick && indexPropsPassed() ? (
         <ListItemButton
+          selected={selectedIndex === index}
           onClick={onButtonClick}
           sx={{ paddingTop: 0, paddingBottom: 0 }}
         >
