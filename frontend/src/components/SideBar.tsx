@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext } from "react";
 import {
   Drawer,
   List,
@@ -10,13 +10,13 @@ import HomeIcon from "@mui/icons-material/Home";
 import RouteIcon from "@mui/icons-material/Route";
 import { Link } from "react-router-dom";
 import Logo from "./Logo";
+import SideBarSelectionContext from "../context/SideBarSelectionContext";
 
 const SideBar = () => {
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const { selectedSideBarIndex, setSelectedSideBarIndex } = useContext(
+    SideBarSelectionContext
+  );
 
-  const handleListItemClick = (index: number) => {
-    setSelectedIndex(index);
-  };
   return (
     <>
       <Drawer
@@ -36,13 +36,13 @@ const SideBar = () => {
           <ListItemButton
             component={Link}
             to="/"
-            onClick={() => handleListItemClick(0)}
-            selected={selectedIndex === 0}
+            onClick={() => setSelectedSideBarIndex(0)}
+            selected={selectedSideBarIndex === 0}
           >
             <ListItemIcon
               sx={{
                 color: (theme) =>
-                  selectedIndex === 0
+                  selectedSideBarIndex === 0
                     ? theme.palette.willowGreen.main
                     : "inherit",
               }}
@@ -54,13 +54,13 @@ const SideBar = () => {
           <ListItemButton
             component={Link}
             to="/pipelines"
-            onClick={() => handleListItemClick(1)}
-            selected={selectedIndex === 1}
+            onClick={() => setSelectedSideBarIndex(1)}
+            selected={selectedSideBarIndex === 1}
           >
             <ListItemIcon
               sx={{
                 color: (theme) =>
-                  selectedIndex === 1
+                  selectedSideBarIndex === 1
                     ? theme.palette.willowGreen.main
                     : "inherit",
               }}

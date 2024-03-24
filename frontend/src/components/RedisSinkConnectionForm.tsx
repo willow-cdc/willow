@@ -1,9 +1,10 @@
 import { TextField, Typography, Grid } from "@mui/material";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { postSinkCreate } from "../services/sink";
 import { AlertSeverity } from "../types/types";
 import { useNavigate } from "react-router-dom";
 import SubmitButton from "./SubmitButton";
+import SideBarSelectionContext from "../context/SideBarSelectionContext";
 
 interface RedisSinkConnectionFormProps {
   topics: string[];
@@ -22,6 +23,7 @@ const RedisSinkConnectionForm = ({
 }: RedisSinkConnectionFormProps) => {
   const [connectionName, setConnectionName] = useState<string>("");
   const navigate = useNavigate();
+  const { setSelectedSideBarIndex } = useContext(SideBarSelectionContext);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -36,7 +38,10 @@ const RedisSinkConnectionForm = ({
       const data = await postSinkCreate(connectionDetails);
       console.log(data);
       showAlertSnackbar("Connection to sink created.", "success");
-      navigate("/pipelines");
+      setTimeout(() => {
+        setSelectedSideBarIndex(1);
+        navigate("/pipelines");
+      }, 1500);
     } catch (error) {
       showAlertSnackbar("An error occured. Please try again.", "error");
       console.log(error);
@@ -65,7 +70,7 @@ const RedisSinkConnectionForm = ({
             />
           </Grid>
         </Grid>
-        <SubmitButton content='Create Connection'/>
+        <SubmitButton content="Create Connection" />
       </form>
     </>
   );
