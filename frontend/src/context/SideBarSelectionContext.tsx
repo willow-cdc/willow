@@ -1,5 +1,6 @@
 import React from "react";
 import { createContext, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 interface ContextObj {
   selectedSideBarIndex: number;
@@ -13,7 +14,10 @@ export const SideBarSelectionContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [selectedSideBarIndex, setSelectedSideBarIndex] = useState(0);
+  const location = useLocation();
+  const initialStateValue = location.pathname === "/pipelines" ? 1 : 0;
+  const [selectedSideBarIndex, setSelectedSideBarIndex] =
+    useState(initialStateValue);
 
   return (
     <SideBarSelectionContext.Provider
