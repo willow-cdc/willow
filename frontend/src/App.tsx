@@ -8,6 +8,7 @@ import { Container, alpha } from "@mui/material";
 import Home from "./components/Home";
 import Pipelines from "./components/Pipelines";
 import IndividualPipeline from "./components/IndividualPipeline";
+import UnknownRoute from "./components/UnknownRoute";
 
 // Augment the palette to include an willowGreen color
 declare module "@mui/material/styles" {
@@ -105,7 +106,7 @@ function App() {
                       element={<IndividualPipeline />}
                     />
                   </Route>
-                  <Route path="*" element={<p>NOT FOUND ROUTE TO MAKE??</p>} />
+                  <Route path="*" element={<UnknownRoute />} />
                 </Routes>
               </Container>
             </Container>
