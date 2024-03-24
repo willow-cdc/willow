@@ -74,7 +74,7 @@ export default function FormStepper() {
         </Stepper>
         <Snackbar
           open={snackbarOpen}
-          autoHideDuration={20000}
+          autoHideDuration={5000}
           onClose={handleClose}
           anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
