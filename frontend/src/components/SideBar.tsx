@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Drawer, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import {
+  Drawer,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import RouteIcon from "@mui/icons-material/Route";
 import { Link } from "react-router-dom";
@@ -8,10 +14,7 @@ import Logo from "./Logo";
 const SideBar = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const handleListItemClick = (
-    _event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-    index: number
-  ) => {
+  const handleListItemClick = (index: number) => {
     setSelectedIndex(index);
   };
   return (
@@ -33,7 +36,7 @@ const SideBar = () => {
           <ListItemButton
             component={Link}
             to="/"
-            onClick={(event) => handleListItemClick(event, 0)}
+            onClick={() => handleListItemClick(0)}
             selected={selectedIndex === 0}
           >
             <ListItemIcon
@@ -46,27 +49,13 @@ const SideBar = () => {
             >
               <HomeIcon />
             </ListItemIcon>
-            <ListItemText
-              primary="Home"
-              sx={{
-                color: (theme) =>
-                  selectedIndex === 0
-                    ? theme.palette.willowGreen.main
-                    : "inherit",
-              }}
-            />
+            <ListItemText primary="Home" />
           </ListItemButton>
           <ListItemButton
             component={Link}
             to="/pipelines"
-            onClick={(event) => handleListItemClick(event, 1)}
+            onClick={() => handleListItemClick(1)}
             selected={selectedIndex === 1}
-            sx={{
-              color: (theme) =>
-                selectedIndex === 1
-                  ? theme.palette.willowGreen.main
-                  : "inherit",
-            }}
           >
             <ListItemIcon
               sx={{
@@ -78,15 +67,7 @@ const SideBar = () => {
             >
               <RouteIcon />
             </ListItemIcon>
-            <ListItemText
-              primary="Pipelines"
-              sx={{
-                color: (theme) =>
-                  selectedIndex === 1
-                    ? theme.palette.willowGreen.main
-                    : "inherit",
-              }}
-            />
+            <ListItemText primary="Pipelines" />
           </ListItemButton>
         </List>
       </Drawer>

@@ -63,7 +63,7 @@ const theme = createTheme({
         root: {
           "&.Mui-selected": {
             backgroundColor: alpha("#a0cc9a", 0.3), // Change selected color here
-            color: "white",
+            color: "#409935",
             "&:hover": {
               backgroundColor: alpha("#a0cc9a", 0.3), // Change hover color for selected item here
             },
