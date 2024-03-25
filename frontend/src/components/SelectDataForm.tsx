@@ -153,7 +153,7 @@ const SelectDataForm = ({
           <GridBoxList xs={6} heading="Tables" showChildren={true}>
             {formData.map((data, index) => {
               const value = `${data.schema_name}.${data.table_name}`;
-
+              const isFocused = index === selectedIndex;
               return (
                 data.visible && (
                   <ListItemWithSwitch
@@ -166,8 +166,7 @@ const SelectDataForm = ({
                       handleListItemSelectedStyle(index);
                       handleColumnTableDisplay(value);
                     }}
-                    index={index}
-                    selectedIndex={selectedIndex}
+                    isFocused={isFocused}
                   />
                 )
               );

@@ -6,8 +6,7 @@ interface TableListItemProps {
   onSwitchChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   text: string;
   onButtonClick?: () => void;
-  index?: number;
-  selectedIndex?: number;
+  isFocused?: boolean;
 }
 
 const ListItemWithSwitch = ({
@@ -16,13 +15,8 @@ const ListItemWithSwitch = ({
   text,
   onSwitchChange,
   onButtonClick,
-  index,
-  selectedIndex,
+  isFocused,
 }: TableListItemProps) => {
-  const indexPropsPassed = () => {
-    return typeof index === "number" && typeof selectedIndex === "number";
-  };
-
   return (
     <ListItem
       sx={{ padding: 0 }}
@@ -38,9 +32,9 @@ const ListItemWithSwitch = ({
         />
       }
     >
-      {onButtonClick && indexPropsPassed() ? (
+      {onButtonClick ? (
         <ListItemButton
-          selected={selectedIndex === index}
+          selected={isFocused}
           onClick={onButtonClick}
           sx={{ paddingTop: 0, paddingBottom: 0 }}
         >
