@@ -13,8 +13,8 @@ import SelectDataFormInstructions from "./SelectDataFormInstructions";
 import SubmitButton from "./SubmitButton";
 import GridBoxList from "./GridBoxList";
 import { isOneTableSelected } from "../utils/validation";
-import TableListItemWithSwitch from "./TableListItemSwitch";
-import ColumnListItemWithSwitch from "./ColumnListItemSwitch";
+import TableListItemWithSwitch from "./TableListItemWithSwitch";
+import ColumnListItemWithSwitch from "./ColumnListItemWithSwitch";
 import ConnectionNameTextField from "./ConnectionNameTextField";
 
 interface SelectDataFormProps {
