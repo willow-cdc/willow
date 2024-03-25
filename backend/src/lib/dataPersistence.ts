@@ -32,8 +32,8 @@ export interface Pipeline {
   sink_name: string;
   sink_url: string;
   sink_user: string;
-  sink_topics: string;
   pipeline_id: string;
+  tables: string | string[];
 }
 
 interface ConnectionDatabase {
@@ -189,9 +189,8 @@ export default class Database implements ConnectionDatabase {
 
   public async retrievePipeline(id: string): Promise<Pipeline[] | unknown[]> {
     const GET_PIPELINE_INFO = `SELECT 
-          sources.name AS source_name, sources.db AS source_database, sources.host AS source_host, sources.port AS source_port, 
-          sources.dbUser AS source_user, sinks.name AS sink_name, sinks.url AS sink_url, sinks.username AS sink_user, 
-          sinks.topics AS sink_topics, ss.id AS pipeline_id FROM sources 
+          sources.name AS source_name, sources.db AS source_database, sources.host AS source_host, sources.port AS source_port, sources.tables AS tables,
+          sources.dbUser AS source_user, sinks.name AS sink_name, sinks.url AS sink_url, sinks.username AS sink_user, ss.id AS pipeline_id FROM sources 
         INNER JOIN sourceSink AS ss 
           ON sources.name = ss.source_name 
         INNER JOIN sinks 

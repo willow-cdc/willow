@@ -1,4 +1,4 @@
-import { SinkRequestBody, SourceRequestBody } from "../routes/types";
+import { SinkRequestBody, SourceRequestBody, FinalSourceRequestBody } from "../routes/types";
 import { ValidationError } from "./utils";
 
 const MIN_PORT = 0;
@@ -45,7 +45,7 @@ export function validateSourceConnectionDetails(body: SourceRequestBody) {
   }
 }
 
-export function validateSourceBody(body: SourceRequestBody) {
+export function validateSourceBody(body: FinalSourceRequestBody) {
   const {connectionName} = body;
 
   validateSourceConnectionDetails(body);
