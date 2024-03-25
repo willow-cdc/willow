@@ -11,3 +11,7 @@ export const isOneTableSelected = (formData: SelectDataFormData) => {
     throw new TableSelectionError("Please select at least one table");
   }
 };
+
+export const isValidConnectionName = (connectionName: string) => {
+  return /^[\w\d.-]+$/i.test(connectionName);
+};

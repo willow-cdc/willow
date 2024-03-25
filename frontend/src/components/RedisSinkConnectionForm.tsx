@@ -67,6 +67,7 @@ const RedisSinkConnectionForm = ({
               onChange={(e) => {
                 setConnectionName(e.target.value);
               }}
+              inputProps={{ maxLength: 20 }}
             />
           </Grid>
         </Grid>

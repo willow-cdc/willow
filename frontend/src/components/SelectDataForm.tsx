@@ -1,4 +1,4 @@
-import { Grid, Container, TextField, Typography } from "@mui/material";
+import { Grid, Container, Typography } from "@mui/material";
 import { useEffect, useState, useContext } from "react";
 import {
   AlertSeverity,
@@ -15,6 +15,7 @@ import GridBoxList from "./GridBoxList";
 import { isOneTableSelected } from "../utils/validation";
 import TableListItemWithSwitch from "./TableListItemSwitch";
 import ColumnListItemWithSwitch from "./ColumnListItemSwitch";
+import ConnectionNameTextField from "./ConnectionNameTextField";
 
 interface SelectDataFormProps {
   rawTablesAndColumnsData: rawTablesAndColumnsData;
@@ -112,7 +113,10 @@ const SelectDataForm = ({
     setActiveColumns(newActiveArr);
   };
 
-  const handleKafkaConnectSubmit = async () => {
+  const handleKafkaConnectSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
     try {
       isOneTableSelected(formData);
       const submissionObj = { ...formStateObj, formData };
@@ -165,69 +169,65 @@ const SelectDataForm = ({
   return (
     <>
       <Container maxWidth="md">
-        <SelectDataFormInstructions />
-        <Grid container spacing={2}>
-          <GridBoxList xs={6} heading="Tables" showChildren={true}>
-            {formData.map((data, index) => {
-              const value = `${data.schema_name}.${data.table_name}`;
-              const isFocused = index === selectedIndex;
-              return (
-                data.visible && (
-                  <TableListItemWithSwitch
+        <form onSubmit={handleKafkaConnectSubmit}>
+          <SelectDataFormInstructions />
+          <Grid container spacing={2}>
+            <GridBoxList xs={6} heading="Tables" showChildren={true}>
+              {formData.map((data, index) => {
+                const value = `${data.schema_name}.${data.table_name}`;
+                const isFocused = index === selectedIndex;
+                return (
+                  data.visible && (
+                    <TableListItemWithSwitch
+                      key={value}
+                      value={value}
+                      selected={data.selected}
+                      text={data.table_name}
+                      onSwitchChange={handleTableSwitchChange}
+                      onButtonClick={() => {
+                        handleListItemSelectedStyle(index);
+                        handleColumnTableDisplay(value);
+                      }}
+                      isFocused={isFocused}
+                    />
+                  )
+                );
+              })}
+            </GridBoxList>
+            <GridBoxList
+              xs={6}
+              heading="Columns"
+              showChildren={activeColumns.length > 0}
+            >
+              {activeColumns.map((data) => {
+                const value = data.dbzColumnValue;
+
+                return (
+                  <ColumnListItemWithSwitch
                     key={value}
                     value={value}
                     selected={data.selected}
-                    text={data.table_name}
-                    onSwitchChange={handleTableSwitchChange}
-                    onButtonClick={() => {
-                      handleListItemSelectedStyle(index);
-                      handleColumnTableDisplay(value);
-                    }}
-                    isFocused={isFocused}
+                    text={data.column}
+                    onSwitchChange={(e) => handleColumnSwitchChange(e, value)}
+                    isPrimaryKey={data.isPrimaryKey}
                   />
-                )
-              );
-            })}
-          </GridBoxList>
-          <GridBoxList
-            xs={6}
-            heading="Columns"
-            showChildren={activeColumns.length > 0}
-          >
-            {activeColumns.map((data) => {
-              const value = data.dbzColumnValue;
-
-              return (
-                <ColumnListItemWithSwitch
-                  key={value}
-                  value={value}
-                  selected={data.selected}
-                  text={data.column}
-                  onSwitchChange={(e) => handleColumnSwitchChange(e, value)}
-                  isPrimaryKey={data.isPrimaryKey}
-                />
-              );
-            })}
-          </GridBoxList>
-          <Grid item xs={12}>
-            <TextField
-              size="small"
-              required
-              label="connection name"
-              fullWidth
-              margin="normal"
-              value={formStateObj.connectionName}
-              name="connectionName"
-              onChange={handleChange}
-            />
+                );
+              })}
+            </GridBoxList>
+            <Grid item xs={12}>
+              <ConnectionNameTextField
+                handleChange={handleChange}
+                formStateObj={formStateObj}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography margin={-2} align="center" variant="body2">
+                Provide a unique name for this source connection.
+              </Typography>
+            </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <Typography margin={-2} align="center" variant="body2">
-              Provide a unique name for this source connection.
-            </Typography>
-          </Grid>
-        </Grid>
-        <SubmitButton onClick={handleKafkaConnectSubmit} />
+          <SubmitButton />
+        </form>
       </Container>
     </>
   );
