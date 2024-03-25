@@ -1,6 +1,6 @@
 import { ListItem, Switch, ListItemText } from "@mui/material";
 
-interface TableListItemProps {
+interface ColumnListItemProps {
   value: string;
   selected: boolean;
   onSwitchChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -14,7 +14,7 @@ const ColumnListItemWithSwitch = ({
   text,
   onSwitchChange,
   isPrimaryKey,
-}: TableListItemProps) => {
+}: ColumnListItemProps) => {
   return (
     <ListItem
       sx={{ padding: 0 }}
