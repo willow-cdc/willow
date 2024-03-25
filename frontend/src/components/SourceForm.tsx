@@ -64,23 +64,6 @@ const SourceForm = ({
             the source database and what is expected to happen.
           </Typography>
           <Grid container rowSpacing={4} columnSpacing={2} alignItems="center">
-            <Grid item xs={12}>
-              <TextField
-                size="small"
-                required
-                label="connection name"
-                fullWidth
-                margin="normal"
-                value={formStateObj.connectionName}
-                name="connectionName"
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Typography marginTop={-3} align="center" variant="body2">
-                Provide a unique name for this source connection.
-              </Typography>
-            </Grid>
             <Grid item xs={6}>
               <TextField
                 size="small"
@@ -99,6 +82,7 @@ const SourceForm = ({
                 required
                 label="port"
                 fullWidth
+                margin="normal"
                 value={formStateObj.port}
                 name="port"
                 onChange={handleChange}

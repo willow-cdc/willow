@@ -1,4 +1,4 @@
-import { Grid, Container } from "@mui/material";
+import { Grid, Container, TextField, Typography } from "@mui/material";
 import { useEffect, useState, useContext } from "react";
 import {
   AlertSeverity,
@@ -19,6 +19,9 @@ interface SelectDataFormProps {
   formStateObj: SourceFormConnectionDetails;
   handleNext: () => void;
   showAlertSnackbar: (message: string, severity: AlertSeverity) => void;
+  setFormStateObj: React.Dispatch<
+    React.SetStateAction<SourceFormConnectionDetails>
+  >;
 }
 
 const SelectDataForm = ({
@@ -26,6 +29,7 @@ const SelectDataForm = ({
   formStateObj,
   handleNext,
   showAlertSnackbar,
+  setFormStateObj,
 }: SelectDataFormProps) => {
   const [formData, setFormData] = useState<SelectDataFormData>([]);
   const [activeColumns, setActiveColumns] = useState<SelectDataFormColumnObj[]>(
@@ -37,6 +41,14 @@ const SelectDataForm = ({
   const handleListItemSelectedStyle = (index: number) => {
     setSelectedIndex(index);
   };
+
+  function handleChange(
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
+    setFormStateObj((prevState) => {
+      return { ...prevState, [event.target.name]: event.target.value };
+    });
+  }
 
   const handleTableSwitchChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -191,6 +203,23 @@ const SelectDataForm = ({
               );
             })}
           </GridBoxList>
+          <Grid item xs={12}>
+            <TextField
+              size="small"
+              required
+              label="connection name"
+              fullWidth
+              margin="normal"
+              value={formStateObj.connectionName}
+              name="connectionName"
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Typography margin={-2} align="center" variant="body2">
+              Provide a unique name for this source connection.
+            </Typography>
+          </Grid>
         </Grid>
         <SubmitButton onClick={handleKafkaConnectSubmit} />
       </Container>
