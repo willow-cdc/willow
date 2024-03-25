@@ -158,6 +158,7 @@ export const setupConnectorPayload = (source: FinalSourceRequestBody) => {
       'decimal.handling.mode': 'double',
       'publication.name': 'willow_publication',
       'slot.name': `willow_${uuid}`,
+      'publication.autocreate.mode': 'filtered',
     },
   };
 
