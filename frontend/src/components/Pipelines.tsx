@@ -1,4 +1,12 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import { getAllPipelines } from "../services/pipelines";
 import { PipeLineArr } from "../types/types";
@@ -34,9 +42,9 @@ const Pipelines = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {pipelinesData.map((row) => 
-            <PipelineTableRow key={row.pipeline_id} row={row}/>
-          )}
+          {pipelinesData.map((row) => (
+            <PipelineTableRow key={row.pipeline_id} row={row} />
+          ))}
         </TableBody>
       </Table>
     </TableContainer>

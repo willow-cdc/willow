@@ -1,4 +1,4 @@
-import { ListItem, Switch, ListItemButton, ListItemText } from '@mui/material';
+import { ListItem, Switch, ListItemButton, ListItemText } from "@mui/material";
 
 interface TableListItemProps {
   value: string;
@@ -6,6 +6,7 @@ interface TableListItemProps {
   onSwitchChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   text: string;
   onButtonClick?: () => void;
+  isFocused?: boolean;
 }
 
 const ListItemWithSwitch = ({
@@ -14,6 +15,7 @@ const ListItemWithSwitch = ({
   text,
   onSwitchChange,
   onButtonClick,
+  isFocused,
 }: TableListItemProps) => {
   return (
     <ListItem
@@ -25,13 +27,14 @@ const ListItemWithSwitch = ({
           onChange={onSwitchChange}
           value={value}
           inputProps={{
-            'aria-label': value,
+            "aria-label": value,
           }}
         />
       }
     >
       {onButtonClick ? (
         <ListItemButton
+          selected={isFocused}
           onClick={onButtonClick}
           sx={{ paddingTop: 0, paddingBottom: 0 }}
         >

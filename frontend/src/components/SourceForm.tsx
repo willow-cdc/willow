@@ -1,9 +1,4 @@
-import {
-  TextField,
-  Grid,
-  Typography,
-  Container,
-} from "@mui/material";
+import { TextField, Grid, Typography, Container } from "@mui/material";
 import React from "react";
 import {
   AlertSeverity,
@@ -32,7 +27,6 @@ const SourceForm = ({
   setrawTablesAndColumnsData,
   showAlertSnackbar,
 }: SourceFormProps) => {
-
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
@@ -48,9 +42,11 @@ const SourceForm = ({
     }
   }
 
-  function handleChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    setFormStateObj(prevState => {
-      return {...prevState, [event.target.name]: event.target.value}
+  function handleChange(
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
+    setFormStateObj((prevState) => {
+      return { ...prevState, [event.target.name]: event.target.value };
     });
   }
 
@@ -98,15 +94,15 @@ const SourceForm = ({
               />
             </Grid>
             <Grid item xs={6}>
-                <TextField
-                  size="small"
-                  required
-                  label="port"
-                  fullWidth
-                  value={formStateObj.port}
-                  name="port"
-                  onChange={handleChange}
-                />
+              <TextField
+                size="small"
+                required
+                label="port"
+                fullWidth
+                value={formStateObj.port}
+                name="port"
+                onChange={handleChange}
+              />
             </Grid>
             <Grid item xs={12}>
               <Typography marginTop={-3} align="center" variant="body2">
@@ -166,7 +162,7 @@ const SourceForm = ({
               </Typography>
             </Grid>
           </Grid>
-          <SubmitButton content="Connect"/>
+          <SubmitButton content="Connect" />
         </form>
       </Container>
     </>
