@@ -2,7 +2,7 @@
 import express from 'express';
 import axios from 'axios';
 import Database, { BasicPipeline, Pipeline} from '../lib/dataPersistence';
-import { formatPipelineRows, HttpError, PipelineResult} from '../utils/utils';
+import { formatTableFields, HttpError} from '../utils/utils';
 import { sinks } from '../data/sinks';
 
 const router = express.Router();
@@ -27,11 +27,11 @@ router.get('/:id', async (req, res, next) => {
   try {
     await database.connect();
 
-    const result = await database.retrievePipeline(id) as PipelineResult[];
+    const result = await database.retrievePipeline(id) as Pipeline[];
 
     await database.end();
-    const data = formatPipelineRows(result);
-    if (data.length < 1) {
+    const data = formatTableFields(result);
+    if (result.length < 1) {
       throw new HttpError(404, `Pipeline with id ${id} not found.`);
     }
     res.json({data: data[0]});

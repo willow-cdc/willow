@@ -1,5 +1,5 @@
 import { Client } from 'pg';
-import { FinalSourceRequestBody, FormTableObj } from '../routes/types';
+import { FinalSourceRequestBody } from '../routes/types';
 import { Pipeline } from '../lib/dataPersistence';
 import shortUuid from 'short-uuid';
 
@@ -29,10 +29,6 @@ interface PrimaryKeyQueryRow {
 
 interface DebeziumConfig {
   [property: string]: string;
-}
-
-export interface PipelineResult extends Pipeline {
-  tables: string[];
 }
 
 const formatResult = (rows: QueryRow[]) => {
@@ -180,15 +176,13 @@ export const parseSourceName = (topics: string[]) => {
   return delimitedSourceName.join('.');
 };
 
-export const formatPipelineRows = (result: PipelineResult[]) => {
+export const formatTableFields = (result: Pipeline[]): Pipeline[] => {
   return result.map((row) => {
-    const topics = JSON.parse(row.sink_topics as string);
-    const tables = topics.map((t) => t.split('.').at(-1));
-    const newRow: Partial<PipelineResult> = { ...row, tables };
+    if (!Array.isArray(row.tables)) {
+      row.tables = row.tables.split(',');
+    }
 
-    delete newRow.sink_topics;
-
-    return newRow;
+    return row;
   });
 };
 
