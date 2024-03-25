@@ -18,9 +18,9 @@ CREATE TABLE sinks (
     topics varchar NOT NULL
 );
 
+-- create pipeline table
 CREATE TABLE sourceSink (
     id serial PRIMARY KEY,
-    source_name varchar NOT NULL REFERENCES sources (name),
-    sink_name varchar NOT NULL REFERENCES sinks (name)
+    source_name varchar UNIQUE NOT NULL REFERENCES sources(name) ON DELETE CASCADE,
+    sink_name varchar UNIQUE NOT NULL REFERENCES sinks(name) ON DELETE CASCADE
 );
-

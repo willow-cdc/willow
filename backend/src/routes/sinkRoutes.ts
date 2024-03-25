@@ -9,7 +9,6 @@ import { validateSinkBody, validateSinkConnectionDetails } from '../utils/valida
 import { parseSourceName } from '../utils/utils';
 const router = express.Router();
 
-// check sink cache is accessible
 router.post('/check', async (req: TypedRequest<SinkRequestBody>, res, next) => {
   const { url, username, password } = req.body;
   try {
@@ -21,7 +20,6 @@ router.post('/check', async (req: TypedRequest<SinkRequestBody>, res, next) => {
   }
 });
 
-// create sink cache connection
 router.post('/create', async (req: TypedRequest<SinkRequestBody>, res, next) => {
   const { url, username, password, topics, connectionName } = req.body;
   const redis = new Redis(url, password, username);
@@ -44,55 +42,6 @@ router.post('/create', async (req: TypedRequest<SinkRequestBody>, res, next) => 
     res.json({ message: 'Consumer created!' });
   } catch (err) {
     next(err);
-  }
-});
-
-router.get('/', async (_req, res, next) => {
-  const database = new Database('postgres://postgres:postgres@db:5432');
-
-  try {
-    await database.connect();
-    const s = await database.retrieveAllSinks();
-    await database.end();
-
-    res.json(s);
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.get('/:name', async (req, res, next) => {
-  const name = req.params.name;
-  const database = new Database('postgres://postgres:postgres@db:5432');
-
-  try {
-    await database.connect();
-    const sink = await database.retrieveSink(name);
-    await database.end();
-
-    res.json(sink);
-  } catch (error) {
-    next(error);
-  }
-});
-
-router.delete('/:name', async (req, res, next) => {
-  const name = req.params.name;
-  const database = new Database('postgres://postgres:postgres@db:5432');
-
-  try {
-    const sinkInMemory = sinks.delete(name);
-    if (sinkInMemory) {
-      await sinkInMemory.consumer.shutdown();
-    }
-
-    await database.connect();
-    await database.deleteSink(name);
-    await database.end();
-
-    res.json({ message: 'Sink deleted successfully!' });
-  } catch (error) {
-    next(error);
   }
 });
 

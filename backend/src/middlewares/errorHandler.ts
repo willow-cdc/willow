@@ -10,7 +10,7 @@ export function errorHandler(err: unknown, _request: Request, response: Response
     if (err instanceof HttpError || err instanceof RedisError || err instanceof ValidationError || err instanceof DatabaseError) {
       const { status, message } = err;
       response.status(status).json({ status, message });
-    } else if (err.message.includes('does not exist')) {
+    } else if (err.message.includes('does not exist') || err.message.includes('password authentication failed')) {
       const status = 400;
       response.status(status).json({ status, message: `Connecting to Source Postgres Error: ${err.message}` });
     } else if (axios.isAxiosError(err)) {

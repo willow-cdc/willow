@@ -33,8 +33,8 @@ function isValidTopics(topicsArr: string[]) {
   return topicsArr.filter(t => t !== '').length > 0;
 }
 
-export function validateSourceBody(body: SourceRequestBody) {
-  const {user, password, host, port, dbName, connectionName} = body;
+export function validateSourceConnectionDetails(body: SourceRequestBody) {
+  const {user, password, host, port, dbName} = body;
 
   if (!isPresent(user, password, host, dbName)) {
     throw new ValidationError(MISSING_PARAMETERS_MESSAGE);
@@ -43,6 +43,12 @@ export function validateSourceBody(body: SourceRequestBody) {
   if (!isValidPort(port)) {
     throw new ValidationError(INVALID_PORT_MESSAGE);
   }
+}
+
+export function validateSourceBody(body: SourceRequestBody) {
+  const {connectionName} = body;
+
+  validateSourceConnectionDetails(body);
 
   if (!isValidConnectionName(connectionName)) {
     throw new ValidationError(INVALID_CONNECTION_NAME_MESSAGE);
