@@ -5,7 +5,7 @@ import { extractDbInfo, setupConnectorPayload } from '../utils/utils';
 import { Client } from 'pg';
 import Database from '../lib/dataPersistence';
 import axios from 'axios';
-import { validateSourceBody } from '../utils/validation';
+import { validateSourceConnectionDetails, validateSourceBody } from '../utils/validation';
 
 const router = express.Router();
 
@@ -20,7 +20,7 @@ router.post('/verify', async (req: TypedRequest<SourceRequestBody>, res, next) =
   });
 
   try {
-    validateSourceBody(source);
+    validateSourceConnectionDetails(source);
     await client.connect();
     const data = await extractDbInfo(client);
     await client.end();
