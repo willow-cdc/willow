@@ -8,7 +8,6 @@ export interface SourceRequestBody {
   host: string;
   port: string;
   dbName: string;
-  connectionName: string;
 }
 
 type FormColumnObj = {
@@ -29,6 +28,7 @@ type FormData = FormTableObj[];
 
 export interface FinalSourceRequestBody extends SourceRequestBody {
   formData: FormData;
+  connectionName: string;
 }
 
 export interface SinkRequestBody {
