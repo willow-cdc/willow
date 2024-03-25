@@ -117,42 +117,24 @@ export const extractDbInfo = async (client: Client) => {
   return formatResult(schemaTableColumnRows);
 };
 
-const hasAllUnselectedColumns = (table: FormTableObj) => {
-  return table.columns.every((column) => !column.selected);
-};
-
 const addTablesAndColumnsToConfig = (source: FinalSourceRequestBody, config: DebeziumConfig) => {
-  // determine tables that are excluded and save their corresponding Debezium-friendly names
-  const tablesToExclude = source.formData.filter((table) => !table.selected).map((table) => table.dbzTableValue);
+  const selectedTables = source.formData.filter((table) => table.selected);
 
-  // determine tables that are included
-  const tablesToInclude = source.formData.filter((table) => table.selected);
+  const includedTables: string[] = [];
+  const includedColumns: string[] = [];
 
-  const columnsToExclude: string[] = [];
+  selectedTables.forEach((table) => {
+    const selectedColumns = table.columns.filter((column) => column.selected).map((column) => column.dbzColumnValue);
 
-  // iterate through the included tables and exclude non-selected columns
-  tablesToInclude.forEach((table) => {
-    table.columns.forEach((column) => {
-      // if all of a table's columns are excluded, exclude the whole table
-      if (hasAllUnselectedColumns(table)) {
-        tablesToExclude.push(table.dbzTableValue);
-        // otherwise if the column is not selected, then exclude it
-      } else if (!column.selected) {
-        columnsToExclude.push(column.dbzColumnValue);
-      }
-    });
+    if (selectedColumns.length > 0) {
+      includedTables.push(table.dbzTableValue);
+      includedColumns.push(...selectedColumns);
+    }
   });
 
-  // remove duplicate excluded tables
-  const uniqueTablesToExclude = [...new Set(tablesToExclude)];
-
-  // add to config if there are any tables or columns to exclude
-  if (uniqueTablesToExclude.length > 0) {
-    config['table.exclude.list'] = uniqueTablesToExclude.join(',');
-  }
-
-  if (columnsToExclude.length > 0) {
-    config['column.exclude.list'] = columnsToExclude.join(',');
+  if (includedTables.length > 0) {
+    config['table.include.list'] = includedTables.join(',');
+    config['column.include.list'] = includedColumns.join(',');
   }
 };
 
