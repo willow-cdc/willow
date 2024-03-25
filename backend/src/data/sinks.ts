@@ -9,7 +9,7 @@ interface SinkManager {
   sinks: Sink[];
   find: (name: string) => Sink | undefined;
   add: (name: string, consumer: KafkaConsumer) => Sink;
-  delete: (name: string) => Sink | undefined;
+  delete: (name: string) => Promise< Sink | undefined>;
   getAll: () => Sink[];
 }
 
@@ -29,10 +29,11 @@ export const sinks: SinkManager  = {
     this.sinks.push(sink);
     return sink;
   },
-  delete(name: string) {
+  async delete(name: string) {
     const sink = this.find(name);
     if (sink) {
       this.sinks = this.sinks.filter(s => s.name !== name);
+      await sink.consumer.shutdown();
     }
 
     return sink;
