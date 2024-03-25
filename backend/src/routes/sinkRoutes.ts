@@ -2,11 +2,12 @@
 import express from 'express';
 import Redis from '../lib/redis';
 import KafkaConsumer from '../lib/consumer';
-import { TypedRequest, SinkRequestBody } from './types';
+import { TypedRequest } from './types/commonTypes';
+import { SinkRequestBody } from './types/sinkRoutesTypes';
 import Database from '../lib/dataPersistence';
 import { sinks } from '../data/sinks';
 import { validateSinkBody, validateSinkConnectionDetails } from '../utils/validation';
-import { parseSourceName } from '../utils/utils';
+import { parseSourceName } from '../utils/routeHelpers';
 const router = express.Router();
 
 router.post('/check', async (req: TypedRequest<SinkRequestBody>, res, next) => {

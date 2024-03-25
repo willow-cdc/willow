@@ -1,7 +1,8 @@
 import { type Consumer, type ConsumerSubscribeTopics, Kafka, type EachMessagePayload } from 'kafkajs';
-import { RedisSink } from './types';
+import { RedisSink } from './types/redisTypes';
+import { ConsumerSink } from './types/consumerTypes';
 
-export default class KafkaConsumer {
+export default class KafkaConsumer implements ConsumerSink {
   private readonly kafkaConsumer: Consumer;
   private readonly redis: RedisSink;
 

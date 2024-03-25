@@ -2,8 +2,8 @@
 
 import { type EachMessagePayload } from 'kafkajs';
 import { createClient } from 'redis';
-import { Key, Value, RedisSink } from './types';
-import { RedisError, NoPrimaryKeyError } from '../utils/utils';
+import { RedisError, NoPrimaryKeyError } from '../utils/errors';
+import { RedisSink, Key, Value } from './types/redisTypes';
 
 // CONSTANTS
 const TRUNCATE = 't';

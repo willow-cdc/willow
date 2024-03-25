@@ -1,8 +1,10 @@
 // routes for retrieving existing pipelines
 import express from 'express';
 import axios from 'axios';
-import Database, { BasicPipeline, Pipeline} from '../lib/dataPersistence';
-import { formatTableFields, HttpError} from '../utils/utils';
+import Database from '../lib/dataPersistence';
+import { BasicPipeline, Pipeline } from '../lib/types/dataPersistenceTypes';
+import { formatTableFields } from '../utils/routeHelpers';
+import { HttpError } from '../utils/errors';
 import { sinks } from '../data/sinks';
 
 const router = express.Router();

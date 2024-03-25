@@ -1,7 +1,9 @@
 // routes for managing/checking/setting up source database connections
 import express from 'express';
-import { TypedRequest, SourceRequestBody, FinalSourceRequestBody } from './types';
-import { extractDbInfo, setupConnectorPayload } from '../utils/utils';
+import { TypedRequest } from './types/commonTypes';
+import { SourceRequestBody, FinalSourceRequestBody } from './types/sourceRoutesTypes';
+import { extractDbInfo } from '../utils/sourceDbHelpers';
+import { setupConnectorPayload } from '../utils/debeziumHelpers';
 import { Client } from 'pg';
 import Database from '../lib/dataPersistence';
 import axios from 'axios';
