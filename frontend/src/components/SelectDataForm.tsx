@@ -12,7 +12,9 @@ import TopicsContext from "../context/TopicsContext";
 import SelectDataFormInstructions from "./SelectDataFormInstructions";
 import SubmitButton from "./SubmitButton";
 import GridBoxList from "./GridBoxList";
-import ListItemWithSwitch from "./ListItemWithSwitch";
+import { isOneTableSelected } from "../utils/validation";
+import TableListItemWithSwitch from "./TableListItemSwitch";
+import ColumnListItemWithSwitch from "./ColumnListItemSwitch";
 
 interface SelectDataFormProps {
   rawTablesAndColumnsData: rawTablesAndColumnsData;
@@ -111,11 +113,12 @@ const SelectDataForm = ({
   };
 
   const handleKafkaConnectSubmit = async () => {
-    const submissionObj = { ...formStateObj, formData };
-    const topics = submissionObj.formData
-      .filter((obj) => obj.selected === true)
-      .map((obj) => `${submissionObj.connectionName}.${obj.dbzTableValue}`);
     try {
+      isOneTableSelected(formData);
+      const submissionObj = { ...formStateObj, formData };
+      const topics = submissionObj.formData
+        .filter((obj) => obj.selected === true)
+        .map((obj) => `${submissionObj.connectionName}.${obj.dbzTableValue}`);
       console.log(submissionObj);
       await postSourceKafkaConnect(submissionObj);
       showAlertSnackbar("Data selection successful.", "success");
@@ -129,17 +132,19 @@ const SelectDataForm = ({
 
   useEffect(() => {
     const result: SelectDataFormData = [];
-
+    console.log(rawTablesAndColumnsData);
     rawTablesAndColumnsData.forEach((schemaTables) => {
       schemaTables.tables.forEach((table) => {
         const hasPrimaryKeys = table.primaryKeys.length > 0;
         const schemaName = schemaTables.schema_name;
         const tableName = table.table_name;
         const columns = table.columns.map((column) => {
+          const isPrimaryKey = table.primaryKeys.includes(column);
           return {
             column,
             selected: true,
             dbzColumnValue: `${schemaName}.${tableName}.${column}`,
+            isPrimaryKey,
           };
         });
 
@@ -168,7 +173,7 @@ const SelectDataForm = ({
               const isFocused = index === selectedIndex;
               return (
                 data.visible && (
-                  <ListItemWithSwitch
+                  <TableListItemWithSwitch
                     key={value}
                     value={value}
                     selected={data.selected}
@@ -193,12 +198,13 @@ const SelectDataForm = ({
               const value = data.dbzColumnValue;
 
               return (
-                <ListItemWithSwitch
+                <ColumnListItemWithSwitch
                   key={value}
                   value={value}
                   selected={data.selected}
                   text={data.column}
                   onSwitchChange={(e) => handleColumnSwitchChange(e, value)}
+                  isPrimaryKey={data.isPrimaryKey}
                 />
               );
             })}
