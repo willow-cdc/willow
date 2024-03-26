@@ -50,6 +50,7 @@ const SourceConnectionForm = ({
             formStateObj={formStateObj}
             handleNext={handleNext}
             showAlertSnackbar={showAlertSnackbar}
+            setFormStateObj={setFormStateObj}
           />
         </>
       )}

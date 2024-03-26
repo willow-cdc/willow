@@ -7,6 +7,7 @@ import {
 } from "../types/types";
 import { postSourceVerify } from "../services/source";
 import SubmitButton from "./SubmitButton";
+import PortTextField from "./PortTextField";
 
 interface SourceFormProps {
   formStateObj: SourceFormConnectionDetails;
@@ -64,23 +65,6 @@ const SourceForm = ({
             the source database and what is expected to happen.
           </Typography>
           <Grid container rowSpacing={4} columnSpacing={2} alignItems="center">
-            <Grid item xs={12}>
-              <TextField
-                size="small"
-                required
-                label="connection name"
-                fullWidth
-                margin="normal"
-                value={formStateObj.connectionName}
-                name="connectionName"
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Typography marginTop={-3} align="center" variant="body2">
-                Provide a unique name for this source connection.
-              </Typography>
-            </Grid>
             <Grid item xs={6}>
               <TextField
                 size="small"
@@ -94,14 +78,9 @@ const SourceForm = ({
               />
             </Grid>
             <Grid item xs={6}>
-              <TextField
-                size="small"
-                required
-                label="port"
-                fullWidth
-                value={formStateObj.port}
-                name="port"
-                onChange={handleChange}
+              <PortTextField
+                formStateObj={formStateObj}
+                handleChange={handleChange}
               />
             </Grid>
             <Grid item xs={12}>

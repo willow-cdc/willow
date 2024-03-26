@@ -35,6 +35,7 @@ export type SelectDataFormColumnObj = {
   column: string;
   selected: boolean;
   dbzColumnValue: string;
+  isPrimaryKey: boolean;
 };
 
 export interface SelectDataFormDataObj {

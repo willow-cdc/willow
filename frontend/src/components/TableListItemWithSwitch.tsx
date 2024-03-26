@@ -5,11 +5,11 @@ interface TableListItemProps {
   selected: boolean;
   onSwitchChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   text: string;
-  onButtonClick?: () => void;
-  isFocused?: boolean;
+  onButtonClick: () => void;
+  isFocused: boolean;
 }
 
-const ListItemWithSwitch = ({
+const TableListItemWithSwitch = ({
   value,
   selected,
   text,
@@ -32,19 +32,15 @@ const ListItemWithSwitch = ({
         />
       }
     >
-      {onButtonClick ? (
-        <ListItemButton
-          selected={isFocused}
-          onClick={onButtonClick}
-          sx={{ paddingTop: 0, paddingBottom: 0 }}
-        >
-          <ListItemText primary={text}></ListItemText>
-        </ListItemButton>
-      ) : (
-        <ListItemText sx={{ paddingLeft: 2 }} primary={text}></ListItemText>
-      )}
+      <ListItemButton
+        selected={isFocused}
+        onClick={onButtonClick}
+        sx={{ paddingTop: 0, paddingBottom: 0 }}
+      >
+        <ListItemText primary={text}></ListItemText>
+      </ListItemButton>
     </ListItem>
   );
 };
 
-export default ListItemWithSwitch;
+export default TableListItemWithSwitch;
