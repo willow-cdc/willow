@@ -19,10 +19,10 @@ export function errorHandler(err: unknown, _request: Request, response: Response
     } else if (axios.isAxiosError(err) && err.response) {
       const data = err.response.data as AxiosResponseData;
       status = data.error_code;
-      message = `Axios Error: ${data.message}`
+      message = `Axios Error: ${data.message}`;
     } else if (/duplicate key value violates unique constraint/.test(String(err))) {
       status = 400;
-      message = `Postgres Query Error: ${err.message}`
+      message = `Postgres Query Error: ${err.message}`;
     } else {
       status = 500;
       message = 'Unknown error occurred.';

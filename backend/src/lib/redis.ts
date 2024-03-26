@@ -1,11 +1,8 @@
-// connection to redis & sending to redis
-
 import { type EachMessagePayload } from 'kafkajs';
 import { createClient } from 'redis';
 import { RedisError, NoPrimaryKeyError } from '../utils/errors';
 import { RedisSink, Key, Value } from './types/redisTypes';
 
-// CONSTANTS
 const TRUNCATE = 't';
 const DELETE = 'd';
 
@@ -45,20 +42,19 @@ export default class Redis implements RedisSink {
 
   public async processKafkaMessage(messagePayload: EachMessagePayload): Promise<void> {
     const { message } = messagePayload;
-    // console.log('HERE', message);
     const key = message.key;
     const value = message.value;
 
+    // handle tombstone events
     if (value === null) {
-      // handle tombstone events
       return;
     }
 
     const parsedValue = this.parseValue(value);
     const operation = this.determineOperation(parsedValue);
 
+    // handle truncate events
     if (key === null && operation === TRUNCATE) {
-      // handle truncate events - the entire table is cleared out! no rows remaining
       console.log('TRUNCATE EVENT');
       const keyPattern = this.determineRedisKeyPattern(parsedValue) + '*';
       await this.deleteKeysMatchingPattern(keyPattern);
@@ -105,10 +101,8 @@ export default class Redis implements RedisSink {
   }
 
   private determineRedisKey(parsedMessageKey: Key, parsedValue: Value) {
-    // extract value of primary key
-    const primaryKey = Object.values(parsedMessageKey.payload).join('.'); // allows for multiple primary keys.
+    const primaryKey = Object.values(parsedMessageKey.payload).join('.');
 
-    // Redis key is database.table.primaryKey1.primaryKey2...primaryKeyN
     const redisKey = this.determineRedisKeyPattern(parsedValue) + primaryKey;
     console.log('Redis key should be: ', redisKey);
     return redisKey;

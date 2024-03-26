@@ -1,4 +1,3 @@
-// routes for retrieving existing pipelines
 import express from 'express';
 import axios from 'axios';
 import Database from '../lib/dataPersistence';

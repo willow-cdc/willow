@@ -1,4 +1,3 @@
-// routes for managing/checking/setting up source database connections
 import express from 'express';
 import { TypedRequest } from './types/commonTypes';
 import { SourceRequestBody, FinalSourceRequestBody } from './types/sourceRoutesTypes';
