@@ -16,7 +16,7 @@ export default class KafkaConsumer implements ConsumerSink {
     this.kafkaConsumer = this.createKafkaConsumer(clientId, brokerArr, groupId);
   }
 
-  public async startConsumer(topicsArray: string[]): Promise<void> {
+  public async start(topicsArray: string[]): Promise<void> {
     const topic: ConsumerSubscribeTopics = {
       topics: topicsArray,
       fromBeginning: true,

@@ -13,10 +13,10 @@ export default class Redis implements RedisSink {
   private readonly client: ReturnType<typeof createClient>;
 
   public constructor(url: string, password: string, username: string) {
-    this.client = this.createNewClient(url, password, username);
+    this.client = this.create(url, password, username);
   }
 
-  public createNewClient(url: string, password: string, username: string): ReturnType<typeof createClient> {
+  public create(url: string, password: string, username: string): ReturnType<typeof createClient> {
     const client = createClient({ url, password, username });
     return client;
   }

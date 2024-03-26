@@ -30,7 +30,7 @@ router.post('/create', async (req: TypedRequest<SinkRequestBody>, res, next) => 
   try {
     validateSinkBody(req.body);
     await redis.connect();
-    await consumer.startConsumer(topics);
+    await consumer.start(topics);
 
     await database.connect();
     await database.insertSink(connectionName, url, username, JSON.stringify(topics));

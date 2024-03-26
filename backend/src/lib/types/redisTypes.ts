@@ -3,7 +3,7 @@ import { createClient } from 'redis';
 
 // interface for the public instance methods of the Redis class in redis.ts
 export interface RedisSink {
-  createNewClient(url: string, password: string, username: string): ReturnType<typeof createClient>;
+  create(url: string, password: string, username: string): ReturnType<typeof createClient>;
   connect(): void;
   processKafkaMessage(messagePayload: EachMessagePayload): Promise<void>;
   disconnect(): Promise<void>;
