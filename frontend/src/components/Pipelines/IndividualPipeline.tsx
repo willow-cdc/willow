@@ -1,8 +1,8 @@
 import { Typography, Box, Container, Grid } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { PipeLine } from "../types/types";
-import { getPipeLineById } from "../services/pipelines";
+import { PipeLine } from "../../types/types";
+import { getPipeLineById } from "../../services/pipelines";
 import Source from "./Source";
 import Sink from "./Sink";
 

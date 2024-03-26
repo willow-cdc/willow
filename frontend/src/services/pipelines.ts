@@ -14,3 +14,9 @@ export const getPipeLineById = async (id: number) => {
   );
   return data.data as PipeLine;
 };
+
+export const deletePipelineById = async (id: number) => {
+  await axios.delete(
+    `http://localhost:3000/pipelines/${id}` // this would need to be 'backend' instead of localhost in the future
+  );
+};

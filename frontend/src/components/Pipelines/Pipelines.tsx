@@ -8,8 +8,8 @@ import {
   Paper,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getAllPipelines } from "../services/pipelines";
-import { PipeLineArr } from "../types/types";
+import { getAllPipelines } from "../../services/pipelines";
+import { PipeLineArr } from "../../types/types";
 import PipelineTableRow from "./PipelineTableRow";
 
 const Pipelines = () => {
@@ -39,11 +39,16 @@ const Pipelines = () => {
             <TableCell>Pipeline</TableCell>
             <TableCell align="center">Source</TableCell>
             <TableCell align="center">Sink</TableCell>
+            <TableCell align="center"></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {pipelinesData.map((row) => (
-            <PipelineTableRow key={row.pipeline_id} row={row} />
+            <PipelineTableRow
+              key={row.pipeline_id}
+              row={row}
+              setpipelinesData={setpipelinesData}
+            />
           ))}
         </TableBody>
       </Table>

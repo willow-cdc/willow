@@ -4,11 +4,11 @@ import {
   AlertSeverity,
   SourceFormConnectionDetails,
   rawTablesAndColumnsData,
-} from "../types/types";
-import { postSourceVerify } from "../services/source";
-import SubmitButton from "./SubmitButton";
+} from "../../../types/types";
+import { postSourceVerify } from "../../../services/source";
+import SubmitButton from "../SubmitButton";
 import PortTextField from "./PortTextField";
-import { displayErrorMessage } from "../utils/utils";
+import { displayErrorMessage } from "../../../utils/utils";
 
 interface SourceFormProps {
   formStateObj: SourceFormConnectionDetails;

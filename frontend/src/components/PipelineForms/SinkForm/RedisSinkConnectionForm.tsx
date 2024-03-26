@@ -1,11 +1,11 @@
 import { TextField, Typography, Grid } from "@mui/material";
 import { useState, useContext } from "react";
-import { postSinkCreate } from "../services/sink";
-import { AlertSeverity } from "../types/types";
+import { postSinkCreate } from "../../../services/sink";
+import { AlertSeverity } from "../../../types/types";
 import { useNavigate } from "react-router-dom";
-import SubmitButton from "./SubmitButton";
-import SideBarSelectionContext from "../context/SideBarSelectionContext";
-import { displayErrorMessage } from "../utils/utils";
+import SubmitButton from "../SubmitButton";
+import SideBarSelectionContext from "../../../context/SideBarSelectionContext";
+import { displayErrorMessage } from "../../../utils/utils";
 
 interface RedisSinkConnectionFormProps {
   topics: string[];

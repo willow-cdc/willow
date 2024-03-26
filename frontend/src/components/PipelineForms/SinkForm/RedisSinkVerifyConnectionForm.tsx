@@ -1,8 +1,8 @@
 import { TextField, Typography, Grid } from "@mui/material";
-import { postSinkVerify } from "../services/sink";
-import { AlertSeverity, RedisConnectionDetails } from "../types/types";
-import SubmitButton from "./SubmitButton";
-import { displayErrorMessage } from "../utils/utils";
+import { postSinkVerify } from "../../../services/sink";
+import { AlertSeverity, RedisConnectionDetails } from "../../../types/types";
+import SubmitButton from "../SubmitButton";
+import { displayErrorMessage } from "../../../utils/utils";
 
 interface RedisSinkVerifyConnectionFormProps {
   isValidConnection: boolean;
