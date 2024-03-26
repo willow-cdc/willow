@@ -8,6 +8,7 @@ import {
 import { postSourceVerify } from "../services/source";
 import SubmitButton from "./SubmitButton";
 import PortTextField from "./PortTextField";
+import { displayErrorMessage } from "../utils/utils";
 
 interface SourceFormProps {
   formStateObj: SourceFormConnectionDetails;
@@ -38,8 +39,7 @@ const SourceForm = ({
     } catch (error) {
       setIsValidSourceConnection(false);
       setrawTablesAndColumnsData([]);
-      showAlertSnackbar("An error occured. Please try again.", "error");
-      console.log(error);
+      displayErrorMessage(error, showAlertSnackbar);
     }
   }
 

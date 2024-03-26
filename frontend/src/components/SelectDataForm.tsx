@@ -16,6 +16,7 @@ import { isOneTableSelected } from "../utils/validation";
 import TableListItemWithSwitch from "./TableListItemWithSwitch";
 import ColumnListItemWithSwitch from "./ColumnListItemWithSwitch";
 import ConnectionNameTextField from "./ConnectionNameTextField";
+import { displayErrorMessage } from "../utils/utils";
 
 interface SelectDataFormProps {
   rawTablesAndColumnsData: rawTablesAndColumnsData;
@@ -123,20 +124,17 @@ const SelectDataForm = ({
       const topics = submissionObj.formData
         .filter((obj) => obj.selected === true)
         .map((obj) => `${submissionObj.connectionName}.${obj.dbzTableValue}`);
-      console.log(submissionObj);
       await postSourceKafkaConnect(submissionObj);
       showAlertSnackbar("Data selection successful.", "success");
       handleNext();
       setTopics(topics);
     } catch (error) {
-      showAlertSnackbar("An error occured. Please try again.", "error");
-      console.log(error);
+      displayErrorMessage(error, showAlertSnackbar);
     }
   };
 
   useEffect(() => {
     const result: SelectDataFormData = [];
-    console.log(rawTablesAndColumnsData);
     rawTablesAndColumnsData.forEach((schemaTables) => {
       schemaTables.tables.forEach((table) => {
         const hasPrimaryKeys = table.primaryKeys.length > 0;

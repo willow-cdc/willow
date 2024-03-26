@@ -5,6 +5,7 @@ import { AlertSeverity } from "../types/types";
 import { useNavigate } from "react-router-dom";
 import SubmitButton from "./SubmitButton";
 import SideBarSelectionContext from "../context/SideBarSelectionContext";
+import { displayErrorMessage } from "../utils/utils";
 
 interface RedisSinkConnectionFormProps {
   topics: string[];
@@ -35,16 +36,14 @@ const RedisSinkConnectionForm = ({
         topics,
         connectionName,
       };
-      const data = await postSinkCreate(connectionDetails);
-      console.log(data);
+      await postSinkCreate(connectionDetails);
       showAlertSnackbar("Connection to sink created.", "success");
       setTimeout(() => {
         setSelectedSideBarIndex(1);
         navigate("/pipelines");
       }, 1500);
     } catch (error) {
-      showAlertSnackbar("An error occured. Please try again.", "error");
-      console.log(error);
+      displayErrorMessage(error, showAlertSnackbar);
     }
   }
 

@@ -2,6 +2,7 @@ import { TextField, Typography, Grid } from "@mui/material";
 import { postSinkVerify } from "../services/sink";
 import { AlertSeverity, RedisConnectionDetails } from "../types/types";
 import SubmitButton from "./SubmitButton";
+import { displayErrorMessage } from "../utils/utils";
 
 interface RedisSinkVerifyConnectionFormProps {
   isValidConnection: boolean;
@@ -21,19 +22,19 @@ const RedisSinkVerifyConnectionForm = ({
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
-      const data = await postSinkVerify(formStateObj);
+      await postSinkVerify(formStateObj);
       setIsValidConnection(true);
       showAlertSnackbar("Connection to sink successful.", "success");
-      console.log(data);
     } catch (error) {
-      showAlertSnackbar("An error occured. Please try again.", "error");
-      console.log(error);
+      displayErrorMessage(error, showAlertSnackbar);
     }
   }
 
-  function handleChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    setFormStateObj(prevState => {
-      return {...prevState, [event.target.name]: event.target.value}
+  function handleChange(
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
+    setFormStateObj((prevState) => {
+      return { ...prevState, [event.target.name]: event.target.value };
     });
   }
 
@@ -51,6 +52,7 @@ const RedisSinkVerifyConnectionForm = ({
       <Grid container spacing={1} alignItems="center">
         <Grid item xs={12}>
           <TextField
+            placeholder="redis://redis-url:port"
             size="small"
             required
             variant="outlined"
@@ -93,7 +95,7 @@ const RedisSinkVerifyConnectionForm = ({
           />
         </Grid>
       </Grid>
-      {!isValidConnection && <SubmitButton content='Verify Connection'/>}
+      {!isValidConnection && <SubmitButton content="Verify Connection" />}
     </form>
   );
 };
