@@ -33,11 +33,20 @@ export default class Redis implements RedisSink {
   }
 
   public async connect(): Promise<void> {
-    await this.client
-      .on('error', (err: Error) => {
-        throw new RedisError(401, err.message);
-      })
-      .connect();
+    this.attachEventListeners(this.client);
+    await this.client.connect();
+  }
+
+  private attachEventListeners(client: ReturnType<typeof createClient>) {
+    client.on('error', (err: Error) => {
+      console.log('Redis encountered an error!', err);
+    }).on('connect', () => {
+      console.log('Redis is connected.');
+    }).on('reconnecting', () => {
+      console.log('Redis is reconnecting.');
+    }).on('ready', () => {
+      console.log('Redis is ready.');
+    });
   }
 
   public async processKafkaMessage(messagePayload: EachMessagePayload): Promise<void> {
