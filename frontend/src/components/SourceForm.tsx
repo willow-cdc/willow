@@ -59,10 +59,11 @@ const SourceForm = ({
             CONNECT TO SOURCE
           </Typography>
           <Typography variant="body1" gutterBottom>
-            Instructions for connecting the source PostgreSQL database and what
-            is expected to happen. Instructions for connecting the source
-            database and what is expected to happen. Instructions for connecting
-            the source database and what is expected to happen.
+            Below you will enter the details for the PostgreSQL database from
+            which you would like to stream database changes. Once a connection
+            is verified and established with this database, you will select the
+            tables and columns and then provide a unique name for the
+            connection.
           </Typography>
           <Grid container rowSpacing={4} columnSpacing={2} alignItems="center">
             <Grid item xs={6}>

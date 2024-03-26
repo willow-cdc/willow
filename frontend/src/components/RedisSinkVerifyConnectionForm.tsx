@@ -44,10 +44,11 @@ const RedisSinkVerifyConnectionForm = ({
         CONNECT TO SINK
       </Typography>
       <Typography variant="body1" gutterBottom>
-        Instructions for connecting the sink Redis cache and what is expected to
-        happen. Instructions for connecting the sink cache and what is expected
-        to happen. Instructions for connecting the sink cache and what is
-        expected to happen.
+        This step will establish the connection to your target redis cache where
+        changes to your source database will be sent. Please provide your redis
+        connection string along with your username and password credentials.
+        Once the connection to the redis cache is verified, please provide a
+        unique name for this sink connection.
       </Typography>
       <Grid container spacing={1} alignItems="center">
         <Grid item xs={12}>

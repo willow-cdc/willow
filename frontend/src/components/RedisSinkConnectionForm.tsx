@@ -50,7 +50,7 @@ const RedisSinkConnectionForm = ({
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <Typography variant="h4" gutterBottom>
+        <Typography sx={{ marginTop: 3 }} variant="h4" gutterBottom>
           CREATE SINK CONNECTION
         </Typography>
         <Grid container spacing={1} alignItems="center">
@@ -61,7 +61,7 @@ const RedisSinkConnectionForm = ({
               variant="outlined"
               label="connection name"
               fullWidth
-              margin="normal"
+              margin="none"
               value={connectionName}
               onChange={(e) => {
                 setConnectionName(e.target.value);
