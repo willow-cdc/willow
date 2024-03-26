@@ -1,5 +1,6 @@
-import { SinkRequestBody, SourceRequestBody, FinalSourceRequestBody } from "../routes/types";
-import { ValidationError } from "./utils";
+import { SourceRequestBody, FinalSourceRequestBody } from "../routes/types/sourceRoutesTypes";
+import { SinkRequestBody } from "../routes/types/sinkRoutesTypes";
+import { ValidationError } from "./errors";
 
 const MIN_PORT = 0;
 const MAX_PORT = 65535;

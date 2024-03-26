@@ -10,7 +10,6 @@ interface SinkManager {
   find: (name: string) => Sink | undefined;
   add: (name: string, consumer: KafkaConsumer) => Sink;
   delete: (name: string) => Promise< Sink | undefined>;
-  getAll: () => Sink[];
 }
 
 export const sinks: SinkManager  = {
@@ -38,7 +37,4 @@ export const sinks: SinkManager  = {
 
     return sink;
   },
-  getAll() {
-    return this.sinks;
-  }
 };

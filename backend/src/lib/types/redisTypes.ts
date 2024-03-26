@@ -3,19 +3,19 @@ import { createClient } from 'redis';
 
 // interface for the public instance methods of the Redis class in redis.ts
 export interface RedisSink {
-  createNewClient(url: string, password: string, username: string): ReturnType<typeof createClient>;
+  create(url: string, password: string, username: string): ReturnType<typeof createClient>;
   connect(): void;
   processKafkaMessage(messagePayload: EachMessagePayload): Promise<void>;
   disconnect(): Promise<void>;
 }
 
-// Types for Debezium event messages, used in redis.ts
+// Types for Debezium event messages
 
 // SHARED
 
 interface Row {
   // represents an object that contains the column name as the key and a specific row's value in that column
-  [key: string]: string | number | boolean; // will want to revisit this - does this cover all possible types? MAP? STRUCT? BYTES? Do we even want to handle those?
+  [key: string]: string | number | boolean;
 }
 
 // KEYS
