@@ -31,7 +31,7 @@ router.post('/verify', async (req: TypedRequest<SourceRequestBody>, res, next) =
   }
 });
 
-router.post('/connect', async (req: TypedRequest<FinalSourceRequestBody>, res, next) => {
+router.post('/create', async (req: TypedRequest<FinalSourceRequestBody>, res, next) => {
   const source = req.body;
   const kafkaConnectPayload = setupConnectorPayload(source);
   const database = new Database('postgres://postgres:postgres@db:5432');
@@ -58,7 +58,7 @@ router.post('/connect', async (req: TypedRequest<FinalSourceRequestBody>, res, n
 
     await database.end();
 
-    res.json({ message: 'Source connector created!' });
+    res.status(201).json({ message: 'Source connector created!' });
   } catch (error) {
     next(error);
   }
