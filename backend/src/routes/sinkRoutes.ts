@@ -10,7 +10,7 @@ import { parseSourceName } from '../utils/routeHelpers';
 
 const router = express.Router();
 
-router.post('/check', async (req: TypedRequest<SinkRequestBody>, res, next) => {
+router.post('/verify', async (req: TypedRequest<SinkRequestBody>, res, next) => {
   const { url, username, password } = req.body;
   try {
     validateSinkConnectionDetails(url, username, password);
@@ -40,7 +40,7 @@ router.post('/create', async (req: TypedRequest<SinkRequestBody>, res, next) => 
 
     sinks.add(connectionName, consumer);
 
-    res.json({ message: 'Consumer created!' });
+    res.status(201).json({ message: 'Consumer created!' });
   } catch (err) {
     next(err);
   }

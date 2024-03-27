@@ -13,8 +13,8 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan("common"));
 
-app.use('/consumer', sinkRoutes);
-app.use('/source', sourceRoutes);
+app.use('/sinks', sinkRoutes);
+app.use('/sources', sourceRoutes);
 app.use('/pipelines', pipelineRoutes);
 
 app.use(unknownEndpointHandler);
