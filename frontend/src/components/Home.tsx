@@ -26,7 +26,7 @@ const Home = () => {
           color="willowGreen"
           variant="contained"
         >
-          Create a Pipeline
+          Create a CDC Pipeline
         </Button>
       </Grid>
     </Grid>

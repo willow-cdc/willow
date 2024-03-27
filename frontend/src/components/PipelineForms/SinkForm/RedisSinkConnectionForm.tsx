@@ -1,10 +1,11 @@
 import { TextField, Typography, Grid } from "@mui/material";
 import { useState, useContext } from "react";
-import { postSinkCreate } from "../services/sink";
-import { AlertSeverity } from "../types/types";
+import { postSinkCreate } from "../../../services/sink";
+import { AlertSeverity } from "../../../types/types";
 import { useNavigate } from "react-router-dom";
-import SubmitButton from "./SubmitButton";
-import SideBarSelectionContext from "../context/SideBarSelectionContext";
+import SubmitButton from "../SubmitButton";
+import SideBarSelectionContext from "../../../context/SideBarSelectionContext";
+import { displayErrorMessage } from "../../../utils/utils";
 
 interface RedisSinkConnectionFormProps {
   topics: string[];
@@ -35,23 +36,21 @@ const RedisSinkConnectionForm = ({
         topics,
         connectionName,
       };
-      const data = await postSinkCreate(connectionDetails);
-      console.log(data);
+      await postSinkCreate(connectionDetails);
       showAlertSnackbar("Connection to sink created.", "success");
       setTimeout(() => {
         setSelectedSideBarIndex(1);
         navigate("/pipelines");
       }, 1500);
     } catch (error) {
-      showAlertSnackbar("An error occured. Please try again.", "error");
-      console.log(error);
+      displayErrorMessage(error, showAlertSnackbar);
     }
   }
 
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <Typography variant="h4" gutterBottom>
+        <Typography sx={{ marginTop: 3 }} variant="h4" gutterBottom>
           CREATE SINK CONNECTION
         </Typography>
         <Grid container spacing={1} alignItems="center">
@@ -62,7 +61,7 @@ const RedisSinkConnectionForm = ({
               variant="outlined"
               label="connection name"
               fullWidth
-              margin="normal"
+              margin="none"
               value={connectionName}
               onChange={(e) => {
                 setConnectionName(e.target.value);

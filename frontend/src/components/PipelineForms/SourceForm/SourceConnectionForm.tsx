@@ -3,7 +3,7 @@ import {
   SourceFormConnectionDetails,
   rawTablesAndColumnsData,
   AlertSeverity,
-} from "../types/types";
+} from "../../../types/types";
 import SourceForm from "./SourceForm";
 import SelectDataForm from "./SelectDataForm";
 

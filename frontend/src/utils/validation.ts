@@ -1,6 +1,6 @@
 import { SelectDataFormData } from "../types/types";
 
-class TableSelectionError extends Error {
+export class TableSelectionError extends Error {
   constructor(message: string) {
     super(message);
   }

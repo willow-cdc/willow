@@ -1,7 +1,7 @@
 import { TextField } from "@mui/material";
-import { SourceFormConnectionDetails } from "../types/types";
+import { SourceFormConnectionDetails } from "../../../types/types";
 import { useState } from "react";
-import { isValidConnectionName } from "../utils/validation";
+import { isValidConnectionName } from "../../../utils/validation";
 
 interface ConnectionNameTextFieldProps {
   formStateObj: SourceFormConnectionDetails;

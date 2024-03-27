@@ -1,10 +1,10 @@
 import { Container } from "@mui/material";
 import { useState } from "react";
-import { AlertSeverity, RedisConnectionDetails } from "../types/types";
+import { AlertSeverity, RedisConnectionDetails } from "../../../types/types";
 import RedisSinkConnectionForm from "./RedisSinkConnectionForm";
 import RedisSinkVerifyConnectionForm from "./RedisSinkVerifyConnectionForm";
 import { useContext } from "react";
-import TopicsContext from "../context/TopicsContext";
+import TopicsContext from "../../../context/TopicsContext";
 
 const RedisSinkForm = ({
   showAlertSnackbar,
@@ -12,7 +12,7 @@ const RedisSinkForm = ({
   showAlertSnackbar: (message: string, severity: AlertSeverity) => void;
 }) => {
   const [formStateObj, setFormStateObj] = useState<RedisConnectionDetails>({
-    url: "", // url must have "redis://" specified. should we change this?
+    url: "",
     username: "",
     password: "",
   });

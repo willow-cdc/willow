@@ -1,7 +1,8 @@
 import { TextField, Typography, Grid } from "@mui/material";
-import { postSinkVerify } from "../services/sink";
-import { AlertSeverity, RedisConnectionDetails } from "../types/types";
-import SubmitButton from "./SubmitButton";
+import { postSinkVerify } from "../../../services/sink";
+import { AlertSeverity, RedisConnectionDetails } from "../../../types/types";
+import SubmitButton from "../SubmitButton";
+import { displayErrorMessage } from "../../../utils/utils";
 
 interface RedisSinkVerifyConnectionFormProps {
   isValidConnection: boolean;
@@ -21,19 +22,19 @@ const RedisSinkVerifyConnectionForm = ({
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
-      const data = await postSinkVerify(formStateObj);
+      await postSinkVerify(formStateObj);
       setIsValidConnection(true);
       showAlertSnackbar("Connection to sink successful.", "success");
-      console.log(data);
     } catch (error) {
-      showAlertSnackbar("An error occured. Please try again.", "error");
-      console.log(error);
+      displayErrorMessage(error, showAlertSnackbar);
     }
   }
 
-  function handleChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    setFormStateObj(prevState => {
-      return {...prevState, [event.target.name]: event.target.value}
+  function handleChange(
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
+    setFormStateObj((prevState) => {
+      return { ...prevState, [event.target.name]: event.target.value };
     });
   }
 
@@ -43,14 +44,16 @@ const RedisSinkVerifyConnectionForm = ({
         CONNECT TO SINK
       </Typography>
       <Typography variant="body1" gutterBottom>
-        Instructions for connecting the sink Redis cache and what is expected to
-        happen. Instructions for connecting the sink cache and what is expected
-        to happen. Instructions for connecting the sink cache and what is
-        expected to happen.
+        This step will establish the connection to your target redis cache where
+        changes to your source database will be sent. Please provide your redis
+        connection string along with your username and password credentials.
+        Once the connection to the redis cache is verified, please provide a
+        unique name for this sink connection.
       </Typography>
       <Grid container spacing={1} alignItems="center">
         <Grid item xs={12}>
           <TextField
+            placeholder="redis://redis-url:port"
             size="small"
             required
             variant="outlined"
@@ -93,7 +96,7 @@ const RedisSinkVerifyConnectionForm = ({
           />
         </Grid>
       </Grid>
-      {!isValidConnection && <SubmitButton content='Verify Connection'/>}
+      {!isValidConnection && <SubmitButton content="Verify Connection" />}
     </form>
   );
 };

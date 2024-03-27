@@ -1,12 +1,12 @@
-import { Typography, List, ListItem, ListItemText, Box } from '@mui/material';
-import { PipeLine } from '../types/types';
+import { Typography, List, ListItem, ListItemText, Box } from "@mui/material";
+import { PipeLine } from "../../types/types";
 
 const Sink = ({ pipeLineData }: { pipeLineData: PipeLine }) => {
   return (
     <Box
       height={550}
-      overflow={'auto'}
-      sx={{ background: '#D9D9D9', borderRadius: 2, paddingTop: 2 }}
+      overflow={"auto"}
+      sx={{ background: "#D9D9D9", borderRadius: 2, paddingTop: 2 }}
     >
       <Typography variant="h6" align="center">
         Sink
@@ -14,19 +14,19 @@ const Sink = ({ pipeLineData }: { pipeLineData: PipeLine }) => {
       <List>
         <ListItem>
           <ListItemText
-            primary={'Sink Name:'}
+            primary={"Sink Name:"}
             secondary={pipeLineData.sink_name}
           />
         </ListItem>
         <ListItem>
           <ListItemText
-            primary={'Sink Url:'}
+            primary={"Sink Url:"}
             secondary={pipeLineData.sink_url}
           />
         </ListItem>
         <ListItem>
           <ListItemText
-            primary={'Sink User:'}
+            primary={"Sink User:"}
             secondary={pipeLineData.sink_user}
           />
         </ListItem>

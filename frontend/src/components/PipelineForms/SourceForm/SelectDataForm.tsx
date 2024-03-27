@@ -6,16 +6,20 @@ import {
   SelectDataFormData,
   SourceFormConnectionDetails,
   rawTablesAndColumnsData,
-} from "../types/types";
-import { postSourceKafkaConnect } from "../services/source";
-import TopicsContext from "../context/TopicsContext";
+} from "../../../types/types";
+import { postSourceKafkaConnect } from "../../../services/source";
+import TopicsContext from "../../../context/TopicsContext";
 import SelectDataFormInstructions from "./SelectDataFormInstructions";
-import SubmitButton from "./SubmitButton";
+import SubmitButton from "../SubmitButton";
 import GridBoxList from "./GridBoxList";
-import { isOneTableSelected } from "../utils/validation";
+import { isOneTableSelected } from "../../../utils/validation";
 import TableListItemWithSwitch from "./TableListItemWithSwitch";
 import ColumnListItemWithSwitch from "./ColumnListItemWithSwitch";
 import ConnectionNameTextField from "./ConnectionNameTextField";
+import {
+  displayErrorMessage,
+  formatrawTablesAndColumnsData,
+} from "../../../utils/utils";
 
 interface SelectDataFormProps {
   rawTablesAndColumnsData: rawTablesAndColumnsData;
@@ -123,45 +127,17 @@ const SelectDataForm = ({
       const topics = submissionObj.formData
         .filter((obj) => obj.selected === true)
         .map((obj) => `${submissionObj.connectionName}.${obj.dbzTableValue}`);
-      console.log(submissionObj);
       await postSourceKafkaConnect(submissionObj);
       showAlertSnackbar("Data selection successful.", "success");
       handleNext();
       setTopics(topics);
     } catch (error) {
-      showAlertSnackbar("An error occured. Please try again.", "error");
-      console.log(error);
+      displayErrorMessage(error, showAlertSnackbar);
     }
   };
 
   useEffect(() => {
-    const result: SelectDataFormData = [];
-    console.log(rawTablesAndColumnsData);
-    rawTablesAndColumnsData.forEach((schemaTables) => {
-      schemaTables.tables.forEach((table) => {
-        const hasPrimaryKeys = table.primaryKeys.length > 0;
-        const schemaName = schemaTables.schema_name;
-        const tableName = table.table_name;
-        const columns = table.columns.map((column) => {
-          const isPrimaryKey = table.primaryKeys.includes(column);
-          return {
-            column,
-            selected: true,
-            dbzColumnValue: `${schemaName}.${tableName}.${column}`,
-            isPrimaryKey,
-          };
-        });
-
-        result.push({
-          table_name: tableName,
-          schema_name: schemaName,
-          dbzTableValue: `${schemaName}.${tableName}`,
-          columns,
-          selected: hasPrimaryKeys,
-          visible: hasPrimaryKeys,
-        });
-      });
-    });
+    const result = formatrawTablesAndColumnsData(rawTablesAndColumnsData);
 
     setFormData(result);
   }, [rawTablesAndColumnsData]);

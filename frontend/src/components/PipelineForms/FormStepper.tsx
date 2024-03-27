@@ -3,10 +3,10 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import { Snackbar, Alert } from "@mui/material";
-import SourceConnectionForm from "./SourceConnectionForm";
-import RedisSinkForm from "./RedisSinkForm";
+import SourceConnectionForm from "./SourceForm/SourceConnectionForm";
+import RedisSinkForm from "./SinkForm/RedisSinkForm";
 import { useState } from "react";
-import { AlertSeverity } from "../types/types";
+import { AlertSeverity } from "../../types/types";
 
 const steps = ["CONNECT TO SOURCE", "CONNECT TO CACHE"];
 

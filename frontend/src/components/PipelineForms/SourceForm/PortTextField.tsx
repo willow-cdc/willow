@@ -1,5 +1,5 @@
 import { TextField } from "@mui/material";
-import { SourceFormConnectionDetails } from "../types/types";
+import { SourceFormConnectionDetails } from "../../../types/types";
 import { ChangeEvent } from "react";
 
 interface PortTextFieldProps {
