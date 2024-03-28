@@ -2,7 +2,11 @@ import supertest from 'supertest';
 import app from '../../src/app';
 const api = supertest(app);
 import Database from '../../src/lib/dataPersistence';
-import { BasicPipeline } from './../../src/lib/types/dataPersistenceTypes';
+
+import axios from 'axios';
+jest.mock('axios');
+import { sinks } from '../../src/data/sinks';
+jest.mock('../../src/data/sinks');
 
 /*
 Insert dummy data in DB.
@@ -55,9 +59,7 @@ afterEach(async () => {
   } catch (err) {
     console.error(err);
   }
-
 });
-
 
 /* 
 INSERT INTO sources (name, db, tables, host, port, dbUser) VALUES ('source_name', 'test', 'demo,numbers', '4.tcp.ngrok.to', '12536', 'postgres');
@@ -76,15 +78,79 @@ INSERT INTO sourceSink (source_name, sink_name) VALUES ('source_name', 'sink_nam
   
 */
 
-describe('/pipelines', () => {
+describe('GET /pipelines', () => {
   test('returns status code 200 if successfully able to get request', async () => {
     const result = await api.get('/pipelines/');
-    console.log(result.body);
+
     expect(result.statusCode).toEqual(200);
   });
 
   test('returns all pipelines', async () => {
     const result = await api.get('/pipelines');
     expect(result.body.data).toHaveLength(1);
-  })
+    expect(result.body.data[0]).toEqual({
+      pipeline_id: 2,
+      source_name: 'source_name',
+      sink_name: 'sink_name',
+    });
+  });
+});
+
+describe('GET /pipelines/:id', () => {
+  test('returns status code 200 if successfully able to get request', async () => {
+    const allPipelines = await api.get('/pipelines');
+    const pipelineId = allPipelines.body.data[0].pipeline_id as string;
+    const result = await api.get(`/pipelines/${pipelineId}`);
+
+    expect(result.statusCode).toEqual(200);
+  });
+
+  test('returns a single pipeline', async () => {
+    const allPipelines = await api.get('/pipelines');
+    const pipelineId = allPipelines.body.data[0].pipeline_id as string;
+    const result = await api.get(`/pipelines/${pipelineId}`);
+
+    expect(result.body.data).toHaveProperty('tables');
+    expect(result.body.data).toHaveProperty('pipeline_id');
+    expect(result.body.data).toEqual({
+      source_name: 'source_name',
+      source_database: 'testDb',
+      source_host: 'host',
+      source_port: 12345,
+      tables: ['table1', 'table2'],
+      source_user: 'testDbUser',
+      sink_name: 'sink_name',
+      sink_url: 'redis://redisURL.com',
+      sink_user: 'username',
+      pipeline_id: pipelineId,
+    });
+  });
+
+  test('returns status code 404 for a non-existant pipeline', async () => {
+    const result = await api.get(`/pipelines/0`);
+
+    expect(result.statusCode).toEqual(404);
+  });
+
+  test('returns status code 404 for a non-existant pipeline', async () => {
+    const result = await api.get(`/pipelines/0`);
+
+    expect(result.body.message).toMatch(/Pipeline with id 0 not found./);
+  });
+});
+
+describe('DELETE /pipelines/:id', () => {
+  test('returns status code 200 if successfully able to delete pipeline', async () => {
+    // axios.delete = jest.fn();
+
+    const allPipelines = await api.get('/pipelines');
+    const pipelineId = allPipelines.body.data[0].pipeline_id as string;
+    const result = await api.delete(`/pipelines/${pipelineId}`);
+
+    expect(result.statusCode).toEqual(200);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(axios.delete).toHaveBeenCalledWith(`http://connect:8083/connectors/source_name`);
+    expect(sinks.delete).toHaveBeenCalledWith('sink_name');
+    expect(result.body.message).toBe('Pipeline deleted.');
+  });
 });
