@@ -46,8 +46,6 @@ describe('POST /sources/create', () => {
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json');
 
-    console.log(result.body);
-
     expect(result.statusCode).toEqual(201);
   });
 
@@ -57,8 +55,6 @@ describe('POST /sources/create', () => {
       .send(invalidCreateRequestBody)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json');
-
-    console.log(result.body);
 
     expect(result.statusCode).toEqual(400);
   });
