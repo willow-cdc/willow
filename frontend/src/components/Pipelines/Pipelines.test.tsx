@@ -5,22 +5,6 @@ import { getAllPipelines } from "../../services/pipelines";
 import { MemoryRouter } from "react-router-dom";
 vi.mock("../../services/pipelines");
 
-// vi.mock("react-router-dom", async (importOriginal) => {
-//   const mod = await importOriginal<typeof import("react-router-dom")>();
-//   return {
-//     ...mod,
-//     useNavigate: () => vi.fn(),
-//   };
-// });
-
-// vi.mock("../../services/pipelines", async (importOriginal) => {
-//   const mod = await importOriginal<typeof import("../../services/pipelines")>();
-//   return {
-//     ...mod,
-//     getAllPipelines: vi.fn(),
-//   };
-// });
-
 test("Pipelines table renders with data", async () => {
   vi.mocked(getAllPipelines).mockResolvedValue([
     { pipeline_id: "1", source_name: "hello", sink_name: "hello" },
@@ -43,5 +27,12 @@ test("Pipelines table renders no data", async () => {
     </MemoryRouter>
   );
 
-  expect(await screen.queryByText("1")).toBe(null);
+  let nonExist = false;
+  try {
+    await screen.findByText("1");
+  } catch (error) {
+    nonExist = true;
+  }
+
+  expect(nonExist).toEqual(true);
 });
