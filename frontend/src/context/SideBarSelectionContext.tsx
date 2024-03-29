@@ -15,7 +15,7 @@ export const SideBarSelectionContextProvider = ({
   children: React.ReactNode;
 }) => {
   const location = useLocation();
-  const initialStateValue = location.pathname === "/pipelines" ? 1 : 0;
+  const initialStateValue = location.pathname.includes("/pipelines") ? 1 : 0;
   const [selectedSideBarIndex, setSelectedSideBarIndex] =
     useState(initialStateValue);
 
