@@ -29,7 +29,6 @@ services:
       - CONFIG_STORAGE_TOPIC=my_connect_configs
       - OFFSET_STORAGE_TOPIC=my_connect_offsets
       - STATUS_STORAGE_TOPIC=my_connect_statuses
-  # This is our custom Node backend that consumes Kafka messages and updates a Redis cache
   backend:
     container_name: backend
     ports:
