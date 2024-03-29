@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import "./styles/App.css";
 import FormStepper from "./components/PipelineForms/FormStepper";
@@ -15,31 +15,29 @@ import { theme } from "./styles/Theme";
 function App() {
   return (
     <>
-      <BrowserRouter>
-        <SideBarSelectionContextProvider>
-          <TopicsContextProvider>
-            <ThemeProvider theme={theme}>
-              <Container sx={{ display: "flex" }}>
-                <SideBar />
-                <Container sx={{ flexGrow: 1 }}>
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/new" element={<FormStepper />} />
-                    <Route path="/pipelines">
-                      <Route index element={<Pipelines />} />
-                      <Route
-                        path=":pipeline_id"
-                        element={<IndividualPipeline />}
-                      />
-                    </Route>
-                    <Route path="*" element={<UnknownRoute />} />
-                  </Routes>
-                </Container>
+      <SideBarSelectionContextProvider>
+        <TopicsContextProvider>
+          <ThemeProvider theme={theme}>
+            <Container sx={{ display: "flex" }}>
+              <SideBar />
+              <Container sx={{ flexGrow: 1 }}>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/new" element={<FormStepper />} />
+                  <Route path="/pipelines">
+                    <Route index element={<Pipelines />} />
+                    <Route
+                      path=":pipeline_id"
+                      element={<IndividualPipeline />}
+                    />
+                  </Route>
+                  <Route path="*" element={<UnknownRoute />} />
+                </Routes>
               </Container>
-            </ThemeProvider>
-          </TopicsContextProvider>
-        </SideBarSelectionContextProvider>
-      </BrowserRouter>
+            </Container>
+          </ThemeProvider>
+        </TopicsContextProvider>
+      </SideBarSelectionContextProvider>
     </>
   );
 }
