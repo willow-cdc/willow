@@ -13,11 +13,15 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan("common"));
 
-app.use('/sinks', sinkRoutes);
-app.use('/sources', sourceRoutes);
-app.use('/pipelines', pipelineRoutes);
+app.use('/api/sinks', sinkRoutes);
+app.use('/api/sources', sourceRoutes);
+app.use('/api/pipelines', pipelineRoutes);
+app.use(errorHandler);
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static("dist"));
+}
 
 app.use(unknownEndpointHandler);
-app.use(errorHandler);
 
 export default app;
