@@ -8,6 +8,7 @@
     "test": "NODE_ENV=test jest --verbose --runInBand --forceExit",
     "dev": "NODE_ENV=development ts-node-dev src/index.ts",
     "start": "npm run build:ui && NODE_ENV=production ts-node src/index.ts",
+    "docker:start": "NODE_ENV=production ts-node src/index.ts",
     "tsc": "tsc"
   },
   "keywords": [],
