@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build:ui": "rm -rf dist && cd ../frontend/ && npm run build && cp -r dist ../backend",
     "test": "NODE_ENV=test jest --verbose --runInBand --forceExit",
     "dev": "NODE_ENV=development ts-node-dev src/index.ts",
-    "start": "NODE_ENV=production ts-node src/index.ts",
+    "start": "npm run build:ui && NODE_ENV=production ts-node src/index.ts",
     "tsc": "tsc"
   },
   "keywords": [],
