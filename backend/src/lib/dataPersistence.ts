@@ -98,7 +98,7 @@ export default class Database implements ConnectionDatabase {
     const result = await this.client.query(DELETE_SOURCE_INFO, [connectionName]);
     const rowCount = result.rowCount as number;
     if (rowCount !== 1) {
-      throw new DatabaseError('Unable to delete sink from database.');
+      throw new DatabaseError('Unable to delete source from database.');
     }
   }
 

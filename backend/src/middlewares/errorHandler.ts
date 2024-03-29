@@ -2,10 +2,13 @@ import { Request, Response, NextFunction } from 'express';
 import { RedisError, ValidationError, DatabaseError, HttpError } from '../utils/errors';
 import axios from 'axios';
 import { AxiosResponseData } from './types/errorHandlerTypes';
+import 'dotenv/config';
 
 export function errorHandler(err: unknown, _request: Request, response: Response, _next: NextFunction) {
   if (err instanceof Error) {
-    console.error(err.message);
+    if (process.env.NODE_ENV !== 'test') {
+      console.error(err.message);
+    }
 
     let status: number;
     let message: string;
