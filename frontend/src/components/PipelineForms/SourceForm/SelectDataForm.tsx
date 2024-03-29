@@ -1,4 +1,4 @@
-import { Grid, Container, Typography } from "@mui/material";
+import { Grid, Container } from "@mui/material";
 import { useEffect, useState, useContext } from "react";
 import {
   AlertSeverity,
@@ -195,11 +195,6 @@ const SelectDataForm = ({
                 handleChange={handleChange}
                 formStateObj={formStateObj}
               />
-            </Grid>
-            <Grid item xs={12}>
-              <Typography margin={-2} align="center" variant="body2">
-                Provide a unique name for this source connection.
-              </Typography>
             </Grid>
           </Grid>
           <SubmitButton />

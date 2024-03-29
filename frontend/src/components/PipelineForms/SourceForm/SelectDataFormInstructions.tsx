@@ -7,15 +7,11 @@ const SelectDataFormInstructions = () => {
         SELECT DATA
       </Typography>
       <Typography variant="body1" gutterBottom>
-        Please select the tables and columns you would like to listen to below.
-        Once you have done this provide a unique name for this source
-        connection.
+        Please select the tables and columns you would like to listen to, and provide
+        a unique name for this source connection. At least one table must be selected. 
       </Typography>
       <Typography marginTop={4} variant="h4" gutterBottom>
         Tables and Columns
-      </Typography>
-      <Typography marginBottom={2} variant="body1" gutterBottom>
-        Please select the tables you would like to capture and stream.
       </Typography>
     </>
   );

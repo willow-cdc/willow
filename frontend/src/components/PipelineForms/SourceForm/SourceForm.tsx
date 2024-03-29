@@ -59,10 +59,9 @@ const SourceForm = ({
             CONNECT TO SOURCE
           </Typography>
           <Typography variant="body1" gutterBottom>
-            Below you will enter the details for the PostgreSQL database from
-            which you would like to stream database changes. Once a connection
-            is verified and established with this database, you will select the
-            tables and columns and then provide a unique name for the
+            Enter the details for the PostgreSQL database. Once a connection
+            is established, select the
+            tables and columns, and provide a unique name for the
             connection.
           </Typography>
           <Grid container rowSpacing={4} columnSpacing={2} alignItems="center">
@@ -86,10 +85,7 @@ const SourceForm = ({
             </Grid>
             <Grid item xs={12}>
               <Typography marginTop={-3} align="center" variant="body2">
-                The host is the IP address for the database from which you want
-                to stream. This will need to be exposed publicly which can be
-                done by using a tool like ngrok or if your database has a public
-                IP and the correct settings.
+                The host is the IP address for the database. This needs to be exposed publicly.
               </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -135,12 +131,7 @@ const SourceForm = ({
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12}>
-              <Typography marginTop={-3} align="center" variant="body2">
-                This is the username and password for the database you entered
-                above.
-              </Typography>
-            </Grid>
+
           </Grid>
           <SubmitButton content="Connect" />
         </form>
