@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
-    <Grid container alignItems={"center"} spacing={15}>
+    <Grid container style={{height: "100%" }}alignItems={"center"} spacing={15}>
       <Grid item xs={6} style={{ marginLeft: "5%" }}>
         <img
           src={TransparentLogo}
