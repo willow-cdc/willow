@@ -6,3 +6,7 @@
 .homeLogo {
   height: 50em;
 }
+
+html, body, #root {
+  height: 100%;
+}

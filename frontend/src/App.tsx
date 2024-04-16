@@ -18,7 +18,7 @@ function App() {
       <SideBarSelectionContextProvider>
         <TopicsContextProvider>
           <ThemeProvider theme={theme}>
-            <Container sx={{ display: "flex" }}>
+            <Container sx={{ display: "flex", height: '100%' }}>
               <SideBar />
               <Container sx={{ flexGrow: 1 }}>
                 <Routes>
